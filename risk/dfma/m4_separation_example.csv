@@ -1,0 +1,13 @@
+part,qty,min_theoretical,handling_s,insertion_s
+chamber body,1,1,1.95,1.5
+lid,1,1,1.95,2.5
+lid screws M5,4,0,1.8,5.0
+mesh basket,1,1,1.95,2.0
+magnet bars,10,0,2.5,3.0
+magnet holder,1,0,1.95,4.0
+chip basket,1,1,1.95,1.5
+actuator,1,1,2.25,6.0
+actuator bracket,1,0,1.95,4.0
+bracket screws M5,4,0,1.8,5.0
+pressing plate,1,1,1.95,3.0
+gasket,1,0,3.0,6.5

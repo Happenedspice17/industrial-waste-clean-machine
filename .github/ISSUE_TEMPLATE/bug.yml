@@ -1,0 +1,14 @@
+name: Bug / field failure
+description: Something failed on the bench, floor or simulation
+labels: [bug]
+body:
+  - type: textarea
+    id: what
+    attributes: {label: "What happened (with log file and conditions)"}
+    validations: {required: true}
+  - type: input
+    id: req
+    attributes: {label: "Related requirement (SR-xxx)"}
+  - type: textarea
+    id: repro
+    attributes: {label: "Can the simulator reproduce it? (lesson 9)"}
