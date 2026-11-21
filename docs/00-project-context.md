@@ -159,7 +159,8 @@ NOM-052-SEMARNAT-2005 + LGPGIR, ISO 12100, ISO 13849-1, ISO 13850, IEC 60204-1, 
    EOL, needs own fusion).
 5. LiDAR supply (Sandorobotics out of stock at check), oil hose price, printed wheel hubs.
 6. Sensor role hierarchy (write it before coding, lesson 6).
-7. Vision task (ADR-0006, SR-015): proposed residue check on the cleaned strip, log-only until validated.
+7. Vision (ADR-0006, accepted): residue check (SR-015) + container-level cross-check (SR-016), log-only until TP-V01
+   passes (SR-017). Open: camera placement (DFMA) and USB hub power (WCCA).
 
 ## 12. Next-semester plan (priorities)
 

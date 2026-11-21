@@ -62,6 +62,18 @@ waste streams in separate containers. Capstone of *Proyecto Mecatrónico I/II*, 
    proposing a PR.
 10. **Removing code is engineering.** Prefer deleting dead paths over adding flags.
 11. If a request contradicts a lesson in `docs/01-lessons-learned.md` or a rule above, **say so before doing it**.
+12. **Definition of done — every task validates and documents itself.** Say explicitly which artifacts apply and write
+    them in the same PR; if one does not apply, write "N/A: <reason>" in the PR:
+
+    | Task touches | Required artifacts |
+    |---|---|
+    | Any behavior | Requirement SR-xxx (`/req`) + test protocol and test report (`docs/test-reports/`) |
+    | Part or assembly | DFMA worksheet (`/dfma`) + DFMEA rows (`/fmea`) + measured dimensions before CAD |
+    | Process step (build, assembly, operation) | PFMEA rows (`/fmea`) |
+    | Wiring, power, sensor interface | WCCA (`/wcca`) |
+    | Safety function | DFMEA + ISO/NOM check (`/iso`) + re-verification test |
+    | Decision between options | ADR (`/adr`) |
+    | Every task | Engineering log entry (`/log`): change, evidence, validation result |
 
 ## 4. Expert subagents (`.claude/agents/`)
 

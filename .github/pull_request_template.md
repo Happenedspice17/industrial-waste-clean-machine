@@ -11,6 +11,7 @@
 - [ ] Bench / floor test (date, conditions, log file)
 
 ## Risk
+- [ ] DFMA worksheet (parts/assemblies) or N/A with reason
 - [ ] DFMEA/PFMEA updated (or not affected)
 - [ ] WCCA updated (electrical changes)
 - [ ] Safety functions unchanged or re-verified (e-stop, watchdog, limits)

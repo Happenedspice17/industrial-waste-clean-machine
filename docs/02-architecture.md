@@ -30,7 +30,7 @@ Paused (obstacle/bumper, auto-resume when clear). Fault/E-stop (any state) → d
 | Obstacles ahead | LiDAR | — | Reflective metal: validate with field logs |
 | Pose | Encoders + IMU (MCU) | LiDAR scan match (Linux) re-anchors | Lesson 2–3 |
 | Heading | IMU (BNO055 IMU mode, no magnetometer) | Encoders | Magnetometer unreliable near steel |
-| Tank level | Float switches (majority filter) | — | Float shut-off is hardware |
+| Tank level | Float switches (majority filter) | Camera cross-check (SR-016, warning only) | Float shut-off is hardware |
 | Suction / blockage | MPX5010DP | Vacuum current (ACS712, optional) | Thresholds from measured readings |
 | Compactor force | Load cell + HX711 | Actuator current | ≤ 100 kgf |
 | Battery | Voltage divider (INA226 optional) | — | Cut-off ≈ 50 % DoD |

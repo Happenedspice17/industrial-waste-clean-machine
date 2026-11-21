@@ -1,6 +1,6 @@
-# ADR-0006: Vision assists only, starts in log-only mode, and the vision task is a residue check
+# ADR-0006: Vision assists only — residue check and container-level cross-check, enabled only after validation
 
-- Status: proposed · Date: 2026-11-21 · Requirements: R6, SR-015
+- Status: accepted (tasks confirmed by the project owner, 2026-11-21) · Requirements: R6, R9, SR-015, SR-016, SR-017
 
 ## Context
 R6 (vision, importance 6) has no defined task yet. M6 lists a USB webcam (COM-126) and an LED light; the pessimist
@@ -26,14 +26,20 @@ camera; this is what it did and what happened:
   adds one pass, a false negative is today's situation.
 - **B. Spill detection ahead:** set speed/tools before reaching a patch. Error cost: needless slow-downs; open-floor
   lighting = the maze-robot glare problem on a shinier floor.
+- **D. Container-level cross-check:** a camera looks at the liquid tank (translucent wall or sight strip) and the
+  chip basket and reports low / half / full. The float switches stay the authority; vision only flags a disagreement
+  ("check floats") in the log, LCD and web UI. Error cost: a needless operator check.
 - **C. Person / obstacle detection:** rejected. ISO 3691-4 4.8.2 stays with LiDAR + bumpers; a webcam is not a
   safety sensor.
 
 ## Decision
-1. Vision never stops, steers or blocks the robot and never feeds a safety function. Its only output is a re-pass
-   request (option A, recommended; team to confirm with SR-015).
-2. It starts in **log-only mode**: every frame decision goes to the raw run log next to the operator's ground truth.
-   An action flag (one per use, all off = display + log) is enabled only after SR-015 passes on the real floor.
+1. Vision has two tasks: **A residue check** (SR-015, output = re-pass request) and **D container-level
+   cross-check** (SR-016, output = "check floats" warning). It never stops, steers or blocks the robot and never
+   feeds a safety function; the float shut-off and level cut-off stay in hardware/MCU.
+2. **Validation gate (extra step, SR-017):** both tasks start in log-only mode. Every decision goes to the raw run log
+   next to the operator's ground truth. Each action flag (one per task, all off = display + log) is enabled only after
+   its validation protocol passes on the real robot (`docs/test-reports/TP-V01-vision-validation.md`) and the test
+   report is committed.
 3. Controlled lighting: shroud + own LED, fixed exposure and gain set from the phone calibration page on site, values
    read back and logged. Test a cross-polarized LED/lens pair against oil sheen (to verify).
 4. Before tuning: capture a labelled photo set on the real floor (clean, oil film, chips) under the robot's LED; the
@@ -41,9 +47,12 @@ camera; this is what it did and what happened:
 5. Reuse the integration fixes above: index ≥ 2, hot-plug thread, camera lock, background open, PD-powered hub.
 
 ## Consequences
-SR-015 added (draft). Sensor hierarchy row for vision updated in `docs/02-architecture.md`. Check that the COM-126
+SR-015, SR-016, SR-017 added (draft); DFMEA rows F-004–F-006. One camera cannot see the floor and both containers
+(deduced): placement (second USB camera or mirror) must go through DFMA, and the USB hub power budget through WCCA,
+before buying parts. Sensor hierarchy row for vision updated in `docs/02-architecture.md`. Check that the COM-126
 accepts manual exposure through V4L2 (`v4l2-ctl --list-ctrls`) before relying on it; if not, reuse the OV9281.
 Measure USB bandwidth/power with LiDAR + camera on the same hub (ADR-0001).
 
 ## Evidence
-Maze-robot code and change log cited above (simulation and one field run; no photo dataset). No tests on this robot yet.
+Maze-robot code and change log cited above (simulation and one field run; no photo dataset). No tests on this robot
+yet; validation protocol TP-V01 written, not run.

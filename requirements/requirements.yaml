@@ -168,3 +168,23 @@ system:
     acceptance: ">= 90 % agreement with operator labels over >= 200 frames on the real floor under the robot LED; 0 motion or stop commands issued by vision"
     status: draft
     verified_by: []
+  - id: SR-016
+    parent: R9
+    module: M6
+    priority: should
+    text: The vision function shall classify the fill level of the liquid tank and of the chip basket as low, half or full, agreeing with the float switches in at least 95 % of logged checks.
+    rationale: Container-level cross-check (ADR-0006 option D). Floats stay the authority; a disagreement only raises a "check floats" warning.
+    verification: Test
+    acceptance: ">= 95 % agreement with float states over >= 100 checks per container (fill and drain cycles); 0 stops or tool commands issued by vision"
+    status: draft
+    verified_by: []
+  - id: SR-017
+    parent: R6
+    module: M6
+    priority: must
+    text: Each vision output shall remain in log-only mode until its validation protocol TP-V01 passes on the real robot and the test report is committed.
+    rationale: Validation gate (ADR-0006); camera was untrustworthy on a glossy floor in the maze robot.
+    verification: Inspection
+    acceptance: "Action flags default to off in code; each enabled flag cites a committed TP-V01 report"
+    status: draft
+    verified_by: []

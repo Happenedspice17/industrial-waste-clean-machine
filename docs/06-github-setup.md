@@ -20,6 +20,13 @@
 | `ci.yml` (`firmware`) | clang-format check + cppcheck when `firmware/**` has C/C++ | Yes |
 | `cad.yml` | OpenSCAD render of changed parts to STL artifact | Yes (render must succeed) |
 
+## Who can push
+
+Only the repository owner (`Happenedspice17`) has write access; Claude Code pushes through the owner's account
+(Claude GitHub App). Team members contribute through forks + PRs or as read-only collaborators. Because the owner
+cannot approve their own PRs, `branch-protection.json` requires 0 approvals and relies on the `policy` and `python`
+checks; raise it to 1 if a second writer is added.
+
 ## Rulesets (run once with admin rights)
 
 ```bash
@@ -28,7 +35,7 @@ gh api -X PUT repos/$REPO/branches/main/protection --input .github/branch-protec
 gh api -X PUT repos/$REPO/branches/develop/protection --input .github/branch-protection.json
 ```
 
-If the CLI call is awkward, set the same rules in Settings → Rules → Rulesets: require PR, 1 approval, dismiss stale
+If the CLI call is awkward, set the same rules in Settings → Rules → Rulesets: require PR, required checks (approvals: 0 while solo), dismiss stale
 approvals, require status checks `policy` and `python` (plus `firmware`/`cad` when relevant), block force pushes,
 require linear history, restrict deletions.
 
