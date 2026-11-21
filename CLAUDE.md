@@ -79,6 +79,7 @@ waste streams in separate containers. Capstone of *Proyecto Mecatrónico I/II*, 
     | Camera, web UI, RPC, RFID, network, logs, dependencies, CI | Security review + threat model update (`/security`) |
     | Decision between options | ADR (`/adr`) |
     | Every task | Engineering log entry (`/log`): change, evidence, validation result |
+    | Every PR | `CHANGELOG.md` entry under Unreleased: PR number, date, type, what changed, validation, IDs (CI-checked) |
 
 ## 4. Expert subagents (`.claude/agents/`)
 

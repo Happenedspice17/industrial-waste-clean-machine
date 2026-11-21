@@ -10,6 +10,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       - uses: actions/setup-python@v5
         with:
           python-version: "3.11"
@@ -34,3 +36,8 @@ jobs:
         run: |
           echo "$BODY" | grep -Eq '(SR-[0-9]{3}|R[0-9]{1,2}|N/A \(tooling\))' || { echo "PR body must reference requirement IDs (SR-xxx) or 'N/A (tooling)'"; exit 1; }
           echo "$BODY" | grep -Eqi '^## Evidence' || { echo "PR body must keep the '## Evidence' section"; exit 1; }
+      - name: CHANGELOG entry
+        env:
+          BASE: ${{ github.base_ref }}
+        run: |
+          git diff --name-only "origin/$BASE...HEAD" | grep -qx 'CHANGELOG.md' || { echo "Add an entry to CHANGELOG.md under Unreleased"; exit 1; }
