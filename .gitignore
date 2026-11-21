@@ -1,0 +1,21 @@
+__pycache__/
+*.pyc
+.venv/
+.env
+.env.*
+secrets/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+build/
+dist/
+*.egg-info/
+# CAD outputs are CI artifacts, not sources
+cad/out/
+*.stl
+!cad/reference/*.stl
+# logs: keep raw run logs out of git; archive them in releases or LFS
+logs/
+*.log
+# generated docs
+docs/generated/

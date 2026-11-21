@@ -1,0 +1,36 @@
+name: branch-policy
+on:
+  pull_request:
+    types: [opened, edited, synchronize, reopened]
+permissions:
+  contents: read
+  pull-requests: read
+jobs:
+  policy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Branch name
+        env:
+          BRANCH_NAME: ${{ github.head_ref }}
+        run: python tools/check_branch.py "$BRANCH_NAME"
+      - name: Target branch rules
+        env:
+          BASE: ${{ github.base_ref }}
+          HEAD: ${{ github.head_ref }}
+        run: |
+          if [ "$BASE" = "main" ] && ! echo "$HEAD" | grep -Eq '^(develop|release/|hotfix/)'; then
+            echo "Only develop, release/* or hotfix/* can merge into main"; exit 1; fi
+      - name: PR title is a Conventional Commit
+        env:
+          TITLE: ${{ github.event.pull_request.title }}
+        run: python tools/check_commit_msg.py "$TITLE"
+      - name: PR body has requirements and evidence
+        env:
+          BODY: ${{ github.event.pull_request.body }}
+        run: |
+          echo "$BODY" | grep -Eq '(SR-[0-9]{3}|R[0-9]{1,2}|N/A \(tooling\))' || { echo "PR body must reference requirement IDs (SR-xxx) or 'N/A (tooling)'"; exit 1; }
+          echo "$BODY" | grep -Eqi '^## Evidence' || { echo "PR body must keep the '## Evidence' section"; exit 1; }

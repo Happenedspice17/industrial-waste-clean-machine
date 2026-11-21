@@ -1,0 +1,7 @@
+{
+  "fileFormatVersion": "1",
+  "parameterSets": {
+    "default": { "shaft_d": "6.0", "shaft_flat": "2.5", "hex_af": "12.0", "hex_len": "10", "bore_tol": "0.15", "hex_tol": "0.15" },
+    "tight": { "shaft_d": "6.0", "shaft_flat": "2.5", "hex_af": "12.0", "hex_len": "10", "bore_tol": "0.08", "hex_tol": "0.08" }
+  }
+}

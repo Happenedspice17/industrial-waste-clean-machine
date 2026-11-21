@@ -1,0 +1,33 @@
+name: ci
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+permissions:
+  contents: read
+jobs:
+  python:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+      - run: pip install -e ".[dev]"
+      - run: ruff check .
+      - run: ruff format --check .
+      - run: python tools/check_traceability.py
+      - run: python tools/fmea.py risk/dfmea.csv
+      - run: python tools/wcca.py risk/wcca.yaml
+      - run: pytest -q
+  firmware:
+    runs-on: ubuntu-latest
+    if: ${{ hashFiles('firmware/**/*.c', 'firmware/**/*.cpp', 'firmware/**/*.h', 'firmware/**/*.ino') != '' }}
+    steps:
+      - uses: actions/checkout@v4
+      - run: sudo apt-get update && sudo apt-get install -y clang-format cppcheck
+      - name: clang-format
+        run: find firmware -regex '.*\.\(c\|cpp\|h\|ino\)' -print0 | xargs -0 clang-format --dry-run --Werror
+      - name: cppcheck
+        run: cppcheck --enable=warning,style,performance,portability --error-exitcode=1 --inline-suppr -q firmware

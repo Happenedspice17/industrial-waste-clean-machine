@@ -1,0 +1,26 @@
+# Worst-case circuit analysis inputs. Run: python tools/wcca.py risk/wcca.yaml
+supply:
+  battery_v: {min: 10.5, nom: 12.8, max: 14.7}   # SLA discharged .. charging (verify charger profile)
+  mcu_vdd: {min: 3.2, nom: 3.3, max: 3.4}         # to verify against UNO Q docs
+dividers:
+  - name: battery_sense
+    req: Vout at Vbat_max <= 0.95*ADC_ref_min and resolution < 50 mV/bit equivalent
+    r_top: {nom: 33000, tol: 0.01}
+    r_bot: {nom: 8200, tol: 0.01}
+    vin_key: battery_v
+    vout_limit: 3.10
+logic:
+  - name: bumper_switch_to_mcu
+    driver: {voh_min: 3.2, vol_max: 0.1}          # switch with pull-up to 3.3 V
+    receiver: {vih_min: 2.31, vil_max: 0.99}      # 0.7/0.3 VDD typical CMOS - verify STM32U585 datasheet
+  - name: hx711_dout_to_mcu
+    driver: {voh_min: 2.9, vol_max: 0.4}          # HX711 powered at 3.3 V (verify module)
+    receiver: {vih_min: 2.31, vil_max: 0.99}
+power:
+  branches:
+    - {name: drive, nom_a: 3.0, peak_a: 12.0, fuse_a: 15, wire_awg: 14}
+    - {name: collection, nom_a: 10.0, peak_a: 25.0, fuse_a: 20, wire_awg: 12}
+    - {name: separation, nom_a: 2.0, peak_a: 8.0, fuse_a: 10, wire_awg: 16}
+    - {name: logic, nom_a: 1.5, peak_a: 3.0, fuse_a: 5, wire_awg: 18}
+  battery_wh_usable: 144
+  avg_load_w: 160

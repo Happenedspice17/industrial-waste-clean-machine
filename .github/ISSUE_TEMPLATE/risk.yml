@@ -1,0 +1,15 @@
+name: Risk / FMEA item
+description: New failure mode or hazard
+labels: [risk]
+body:
+  - type: input
+    id: item
+    attributes: {label: "Item / module"}
+    validations: {required: true}
+  - type: textarea
+    id: mode
+    attributes: {label: "Failure mode, effect, cause"}
+    validations: {required: true}
+  - type: input
+    id: sod
+    attributes: {label: "S / O / D estimate (1–10)"}

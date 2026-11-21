@@ -1,0 +1,190 @@
+# Single source of truth for requirements. Checked by tools/check_traceability.py
+# status: draft | approved | verified. Approved/verified SRs need verification, acceptance and verified_by.
+stakeholder:
+  - {id: R1, text: Lubricant suction / collection, importance: 10}
+  - {id: R2, text: Solid-chip separation, importance: 10}
+  - {id: R3, text: Compaction system, importance: 6}
+  - {id: R4, text: Compact size, importance: 2}
+  - {id: R5, text: Safety system, importance: 6}
+  - {id: R6, text: Vision system, importance: 6}
+  - {id: R7, text: Safe mobility, importance: 10}
+  - {id: R8, text: Route storage and mapping, importance: 6}
+  - {id: R9, text: Separate solid and liquid containers, importance: 10}
+  - {id: R10, text: Operating authorization, importance: 4}
+
+system:
+  - id: SR-001
+    parent: R1
+    module: M3
+    priority: must
+    text: The collection system shall recover at least 85 % of the spilled liquid mass in one pass over a 1 m2 test patch with the reference lubricant.
+    rationale: Metric M1 (liquid).
+    verification: Test
+    acceptance: ">= 85 % mass recovered, mean of 5 runs"
+    status: draft
+    verified_by: []
+  - id: SR-002
+    parent: R2
+    module: M4
+    priority: must
+    text: The separation module shall deliver a solid stream with at least 90 % mass free of drainable oil after compaction.
+    rationale: Metric M2 (solids).
+    verification: Test
+    acceptance: ">= 90 %"
+    status: draft
+    verified_by: []
+  - id: SR-003
+    parent: R9
+    module: M5
+    priority: must
+    text: The liquid stream in the storage tank shall contain no more than 5 % by mass of solids larger than 1 mm.
+    rationale: Metric M2 (liquid).
+    verification: Test
+    acceptance: "<= 5 % solids > 1 mm (filtered and weighed)"
+    status: draft
+    verified_by: []
+  - id: SR-004
+    parent: R7
+    module: M2
+    priority: must
+    standard: ISO 3691-4:2023 4.3
+    text: The robot shall limit its commanded speed to 0.38 m/s in any mode and to 0.15 m/s while cleaning.
+    rationale: Speed limit (ISO 3691-4 4.3).
+    verification: Test
+    acceptance: "Encoder log max <= 0.38 m/s (0.15 m/s cleaning)"
+    status: draft
+    verified_by: []
+  - id: SR-005
+    parent: R7
+    module: M2
+    priority: must
+    standard: ISO 3691-4:2023 4.2
+    text: The robot shall stop within 0.10 m from 0.38 m/s on a floor contaminated with the reference lubricant.
+    rationale: Braking on oil; calculation gives <= 7.4 cm at mu = 0.1.
+    verification: Test
+    acceptance: "Max of 10 runs <= 0.10 m"
+    status: draft
+    verified_by: []
+  - id: SR-006
+    parent: R5
+    module: M8
+    priority: must
+    standard: ISO 3691-4:2023 4.8.1; ISO 13850
+    text: Actuating the emergency stop shall remove power from all actuators through a hardware relay independent of software within 100 ms.
+    rationale: Safety does not depend on software.
+    verification: Test
+    acceptance: "All actuator rails < 1 V within 100 ms with firmware halted"
+    status: draft
+    verified_by: []
+  - id: SR-007
+    parent: R5
+    module: M7
+    priority: must
+    text: The MCU shall stop all motion if no valid command or heartbeat is received from Linux for longer than T_stale.
+    rationale: Lesson 1 — if Linux is late the robot stops. T_stale TBD (measure RPC latency; initial 300 ms).
+    verification: Test
+    acceptance: "Motion stops <= T_stale + 50 ms after heartbeat loss"
+    status: draft
+    verified_by: []
+  - id: SR-008
+    parent: R5
+    module: M5
+    priority: must
+    text: The vacuum unit shall be switched off before liquid reaches the vacuum port, by a float shut-off acting in hardware.
+    rationale: Protection term 8.
+    verification: Test
+    acceptance: "No liquid at port in 5 overfill tests"
+    status: draft
+    verified_by: []
+  - id: SR-009
+    parent: R3
+    module: M4
+    priority: must
+    text: The compactor shall limit pressing force to 100 kgf (981 N) +/- 5 % and run only with the chamber lid closed.
+    rationale: Protection term 9; NOM-004-STPS interlock.
+    verification: Test
+    acceptance: "Load-cell peak <= 1030 N; no motion with lid open"
+    status: draft
+    verified_by: []
+  - id: SR-010
+    parent: R10
+    module: M9
+    priority: must
+    text: The robot shall start a cleaning cycle only after a valid RFID card is read and the start button is pressed.
+    rationale: Authorized operation (R10).
+    verification: Test
+    acceptance: "0 starts in 20 unauthorized attempts"
+    status: draft
+    verified_by: []
+  - id: SR-011
+    parent: R8
+    module: M6
+    priority: should
+    text: The robot shall save a map and a cleaning route and repeat the route with a coverage rate of at least 100 m2/h and zero safety incidents.
+    rationale: Metric M3. Simulation estimate 167 m2/h (12 x 8 m cell).
+    verification: Test
+    acceptance: ">= 100 m2/h on stored route, 0 incidents, 3 runs"
+    status: draft
+    verified_by: []
+  - id: SR-012
+    parent: R4
+    module: M1
+    priority: should
+    text: The robot envelope shall not exceed 700 x 500 x 520 mm (L x W x H to LiDAR top).
+    rationale: Compact size; fits plant aisles.
+    verification: Inspection
+    acceptance: "Measured envelope within limits"
+    status: draft
+    verified_by: []
+  - id: SR-013
+    parent: SR-004
+    module: M2
+    priority: must
+    standard: ISO 3691-4:2023 4.3.1
+    text: The MCU shall stop all motion when the speed measured by the encoders exceeds 0.40 m/s.
+    rationale: Overspeed detection independent of the speed command.
+    verification: Test
+    acceptance: "Stop triggered at 0.40 m/s +/- 0.02 m/s in 5 injected-overspeed tests"
+    status: draft
+    verified_by: []
+  - id: SR-014
+    parent: R5
+    module: M9
+    priority: must
+    standard: ISO 3691-4:2023 4.1.14
+    text: After any stop caused by a fault or the emergency stop, the robot shall require a new valid RFID card read and a start-button press before moving again.
+    rationale: No automatic restart.
+    verification: Test
+    acceptance: "No motion after fault reset without card + button in 10 tests"
+    status: draft
+    verified_by: []
+  - id: SR-015
+    parent: R6
+    module: M6
+    priority: should
+    text: The vision function shall flag residue patches of at least 50 x 50 mm (oil film or chips) left on the cleaned strip, agreeing with operator inspection in at least 90 % of logged frames.
+    rationale: R6 task proposed in ADR-0006 (option A, team to confirm). Output is only a re-pass request; vision never stops, steers or blocks the robot.
+    verification: Test
+    acceptance: ">= 90 % agreement with operator labels over >= 200 frames on the real floor under the robot LED; 0 motion or stop commands issued by vision"
+    status: draft
+    verified_by: []
+  - id: SR-016
+    parent: R9
+    module: M6
+    priority: should
+    text: The vision function shall classify the fill level of the liquid tank and of the chip basket as low, half or full, agreeing with the float switches in at least 95 % of logged checks.
+    rationale: Container-level cross-check (ADR-0006 option D). Floats stay the authority; a disagreement only raises a "check floats" warning.
+    verification: Test
+    acceptance: ">= 95 % agreement with float states over >= 100 checks per container (fill and drain cycles); 0 stops or tool commands issued by vision"
+    status: draft
+    verified_by: []
+  - id: SR-017
+    parent: R6
+    module: M6
+    priority: must
+    text: Each vision output shall remain in log-only mode until its validation protocol TP-V01 passes on the real robot and the test report is committed.
+    rationale: Validation gate (ADR-0006); camera was untrustworthy on a glossy floor in the maze robot.
+    verification: Inspection
+    acceptance: "Action flags default to off in code; each enabled flag cites a committed TP-V01 report"
+    status: draft
+    verified_by: []

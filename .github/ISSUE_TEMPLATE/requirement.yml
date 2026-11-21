@@ -1,0 +1,18 @@
+name: Requirement
+description: New or changed requirement
+labels: [requirement]
+body:
+  - type: input
+    id: parent
+    attributes: {label: "Parent (R1–R10 or SR-xxx)"}
+    validations: {required: true}
+  - type: textarea
+    id: text
+    attributes: {label: "Requirement text (The <system> shall ...)"}
+    validations: {required: true}
+  - type: dropdown
+    id: verification
+    attributes: {label: Verification, options: [Test, Analysis, Inspection, Demonstration]}
+  - type: input
+    id: acceptance
+    attributes: {label: "Acceptance criterion (numeric)"}

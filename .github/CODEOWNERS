@@ -1,0 +1,7 @@
+# Replace with GitHub usernames per team (A chassis+mobility, B separation+storage, C power+safety+HMI, D control+nav+vision)
+# /firmware/          @team-d-user
+# /linux/             @team-d-user
+# /cad/               @team-a-user @team-b-user
+# /risk/              @team-c-user
+# /requirements/      @Happenedspice17
+* @Happenedspice17
