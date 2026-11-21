@@ -16,6 +16,7 @@
 - [ ] SCCAF register updated for YC/YS rows (or none)
 - [ ] WCCA updated (electrical changes)
 - [ ] Safety functions unchanged or re-verified (e-stop, watchdog, limits)
+- [ ] Security review / threat model updated (attack surface touched) or N/A
 
 ## Lessons-learned check
 - [ ] Thresholds from measured readings (midpoint)

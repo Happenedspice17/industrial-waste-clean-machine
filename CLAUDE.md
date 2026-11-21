@@ -11,8 +11,9 @@ waste streams in separate containers. Capstone of *Proyecto Mecatrónico I/II*, 
 
 - Controller: **Arduino UNO Q 2 GB (ABX00162)** — STM32U585 MCU (Zephyr + Arduino core, real time) + Qualcomm
   Dragonwing QRB2210 MPU (Debian Linux, Python), linked by the Arduino Bridge (RPC).
-- Status (Nov 2026): design phase complete (requirements, selection, conceptual design, 9 modules, priced BOM,
-  simulations). **No physical prototype or test results yet.** Next semester: build and validate.
+- Status (Nov 2026): **initial design, not frozen** (requirements, selection, conceptual design, 9 modules, priced
+  BOM, simulations). Waiting on the vacuum (suction rig) test to validate the collection concept (ADR-0004) before
+  freezing. **No physical prototype or test results yet.**
 - Team (7): Franco Zavala Morgan · María Ruiz Mejía · Manuel Harari López · Ian Carlo Olivares Chávez ·
   Carlos Emiliano Escamilla Garibay · Luis Roberto Sánchez Salgado · Juan Manuel Vásquez Paniagua.
   Advisor: Dr. Hiram Eredín Ponce Espinosa.
@@ -75,6 +76,7 @@ waste streams in separate containers. Capstone of *Proyecto Mecatrónico I/II*, 
     | Wiring, power, sensor interface | WCCA (`/wcca`) |
     | Safety function | DFMEA + ISO/NOM check (`/iso`) + re-verification test |
     | DFMEA row classed YC/YS | SCCAF register entry (`docs/08-sccaf.md`, `risk/sccaf.csv`) |
+    | Camera, web UI, RPC, RFID, network, logs, dependencies, CI | Security review + threat model update (`/security`) |
     | Decision between options | ADR (`/adr`) |
     | Every task | Engineering log entry (`/log`): change, evidence, validation result |
 
@@ -83,14 +85,14 @@ waste streams in separate containers. Capstone of *Proyecto Mecatrónico I/II*, 
 Use them proactively when the task matches:
 `systems-architect`, `requirements-engineer`, `dfma-fmea-engineer`, `wcca-engineer`, `embedded-safety-reviewer`,
 `iso-compliance`, `business-analyst`, `cad-parametric`, `sustainability-sdg`, `test-sim-engineer`, `git-gatekeeper`,
-`docs-writer`. Multi-agent rule: one file per agent, agents never commit, give them the key facts in the prompt,
+`docs-writer`, `cybersecurity-engineer`. Multi-agent rule: one file per agent, agents never commit, give them the key facts in the prompt,
 verify their claims (dates, order of events, commands) before integrating.
 
 ## 5. Slash commands (`.claude/commands/`)
 
 `/req` new requirement · `/fmea` DFMEA/PFMEA entry · `/dfma` assembly review · `/wcca` worst-case analysis ·
 `/iso` standards check · `/bmc` business canvas · `/econ` economic evaluation · `/impact` technological impact ·
-`/sdg` SDG assessment · `/cad` parametric part · `/review` pre-PR review · `/log` log entry · `/adr` decision record.
+`/sdg` SDG assessment · `/cad` parametric part · `/review` pre-PR review · `/log` log entry · `/adr` decision record · `/security` threat model + security review.
 
 ## 6. Commands that must pass
 
