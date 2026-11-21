@@ -203,8 +203,9 @@ Espinosa. The team is responsible for all content in this repository.
 robot, a maze solver for *Microcontroladores 2* (2nd place):
 [Happenedspice17/sumo-v-ia](https://github.com/Happenedspice17/sumo-v-ia).
 
-**AI assistance.** Since November 2026 the team uses **Claude Code** (Anthropic) as an engineering assistant. Under
-the team's direction it set up this repository from the team's kit, translated the Spanish deliverables to English,
+**AI assistance.** Since August 2026 the team has used **Claude** (Anthropic) as a chat assistant during the design
+phase. In November 2026 the team started using **Claude Code** (Anthropic) on this repository. Under the team's
+direction it set up this repository from the team's kit, translated the Spanish deliverables to English,
 drafted ADR-0006 (vision role) from the maze-robot history, requirements SR-015–SR-017, test protocol TP-V01, the
 glossary, the internal SCCAF and its check in `tools/fmea.py`, this README and the cybersecurity agent. Commits it
 helped write carry a `Co-Authored-By: Claude` trailer. Rules for AI output in this project:
