@@ -1,140 +1,337 @@
-# Autonomous Industrial Waste Cleaning and Separation Robot
+<div align="center">
 
+# 🤖 Autonomous Industrial Waste Cleaning and Separation Robot
+
+### Proyecto Mecatrónico I/II · Universidad Panamericana · Arduino UNO Q (STM32U585 + Qualcomm QRB2210)
+
+![Platform](https://img.shields.io/badge/platform-Arduino%20UNO%20Q-00979D?logo=arduino&logoColor=white)
+![MCU](https://img.shields.io/badge/real%20time-STM32U585%20·%20Zephyr-03234B)
+![Linux](https://img.shields.io/badge/decision-Debian%20·%20Python%20·%20OpenCV-3776AB?logo=python&logoColor=white)
+![Sensors](https://img.shields.io/badge/sensors-LiDAR%20·%20IMU%20·%20encoders%20·%20camera-orange)
+![CAD](https://img.shields.io/badge/CAD-OpenSCAD%20·%20PETG-yellow)
+![Status](https://img.shields.io/badge/status-initial%20design%20·%20not%20frozen-orange)
 [![CI](https://github.com/Happenedspice17/industrial-waste-clean-machine/actions/workflows/ci.yml/badge.svg?branch=develop)](https://github.com/Happenedspice17/industrial-waste-clean-machine/actions/workflows/ci.yml)
-![Status](https://img.shields.io/badge/status-initial%20design-orange)
-![Controller](https://img.shields.io/badge/controller-Arduino%20UNO%20Q-00979D)
-![Python](https://img.shields.io/badge/python-3.11%2B-3776AB)
-[![License: MIT](https://img.shields.io/badge/license-MIT-green)](LICENSE)
+[![License: MIT](https://img.shields.io/badge/license-MIT-lightgrey)](LICENSE)
 
-A compact autonomous mobile robot that cleans lubricant and metal chips from machining-plant floors during shift
-changes, separates the ferrous fraction and coarse solids on board, compacts the chips, and delivers **two separate
-waste streams**: recovered lubricant and drained, compacted chips.
+<img src="docs/img/robot_side_view.jpg" alt="Side view of the robot concept: brush, nozzle, separation chamber, tank, battery and UNO Q" width="760">
 
-Capstone project of *Proyecto Mecatrónico I/II* — Faculty of Engineering, Universidad Panamericana (Mexico), 2026–2027.
+*A ≈ 700 × 500 × 450 mm differential-drive robot that cleans oil and metal chips from a machining-plant floor during
+the shift change, separates the ferrous fraction and coarse solids on board, compacts the chips and delivers
+**two separate waste streams**: recovered lubricant and drained, compacted chips.*
 
-> **Project status (Nov 2026): initial design — not frozen.** Requirements, component selection, conceptual design,
-> nine modules, priced BOM, scenario analysis, economics and simulations are done. The design is waiting on the
-> **vacuum (suction rig) test** to validate the collection concept before it is frozen
-> ([ADR-0004](docs/adr/0004-collection-architecture.md)). No physical prototype or test results yet.
+</div>
 
 ---
 
-## Contents
+## 🚦 Project status
 
-- [The problem](#the-problem)
-- [The solution](#the-solution)
-- [System architecture](#system-architecture)
-- [Key figures](#key-figures)
-- [Safety by design](#safety-by-design)
-- [Repository layout](#repository-layout)
-- [Getting started](#getting-started)
-- [Engineering workflow](#engineering-workflow)
-- [Documentation](#documentation)
-- [Roadmap](#roadmap)
-- [Team](#team)
-- [Credits and AI use](#credits-and-ai-use)
-- [License](#license)
+| | |
+|---|---|
+| **Phase** | 🟠 **Initial design — not frozen** |
+| **Next gate** | 🌀 **Vacuum (suction rig) test** to validate the collection concept, option A vs B ([ADR-0004](docs/adr/0004-collection-architecture.md)) |
+| **Physical tests** | None yet — every number below is a calculation, estimate or simulation |
+| **Done so far** | Requirements, component selection, conceptual design, 9 modules, priced BOM, scenarios, economics, simulations |
+| **Checks** | Traceability, DFMEA + SCCAF, WCCA, lint and unit tests run on every PR (`python tools/check_all.py`) |
 
-## The problem
+---
 
-Machining shops, foundries and metal-forming lines accumulate oil, coolant and metal chips on their floors. Cleaning
-during production is unsafe, so contamination stays on walkways until a stoppage. Same-level falls cost U.S.
-manufacturing about **USD 1.20 B per year** (Liberty Mutual WSI 2023), and NOM-001-STPS-2008 7.4 requires floors free
-of liquids that cause slips. Commercial autonomous scrubbers (≈ USD 75,000 – MXN 2.0 M) clean with water and **do not
-separate waste**.
+## 👥 Team
 
-## The solution
+| Member | |
+|---|---|
+| **Franco Zavala Morgan** | **María Ruiz Mejía** |
+| **Manuel Harari López** | **Ian Carlo Olivares Chávez** |
+| **Carlos Emiliano Escamilla Garibay** | **Luis Roberto Sánchez Salgado** |
+| **Juan Manuel Vásquez Paniagua** | |
 
-During each shift change the robot follows a stored route over the work cell:
+**Advisor:** Dr. Hiram Eredín Ponce Espinosa · Faculty of Engineering, Universidad Panamericana (Mexico)
+
+---
+
+## 📚 Documentation
+
+| Document | For | Content |
+|---|---|---|
+| 🧭 [**Project context**](docs/00-project-context.md) | Everyone | Requirements, modules, BOM, interfaces, metrics, scenarios, economics, open decisions |
+| 🎓 [**Lessons learned**](docs/01-lessons-learned.md) | Engineering | 21 rules from our previous UNO Q robot, applied by default |
+| 🧠 [**Architecture**](docs/02-architecture.md) | Engineering | MCU/Linux split, protocol, states, sensor roles, safety chain |
+| ⚖️ [**Standards matrix**](docs/03-standards-matrix.md) | Safety / compliance | ISO 3691-4, NOM-001-STPS-2008 and more, with clauses and evidence |
+| 💼 [**Business**](docs/04-business.md) · 🌱 [**Sustainability**](docs/05-sustainability-sdg.md) | Evaluation | Canvas, economics, SWOT, impact, SDGs |
+| 🛡️ [**Internal SCCAF**](docs/08-sccaf.md) | Quality | Special characteristics YC/YS → CC/SC |
+| 📖 [**Glossary**](docs/07-glossary.md) | Everyone | Definitions and project lingo |
+| 🧾 [**Decision records**](docs/adr/) · 📙 [**Engineering log**](docs/engineering-log/) | Engineering process | Why each decision was made; one entry per stage |
+| 🗂️ [**Semester-1 deliverables**](docs/semester-1-deliverables/) | Course | Proposal, conceptual design, models, scenarios, impact, standards table, final presentation |
+
+---
+
+## 🎯 The problem
+
+Machining shops, foundries and metal-forming lines accumulate **oil, coolant and metal chips** on their floors.
+Cleaning during production is unsafe, so contamination stays on walkways until a stoppage.
+
+| | |
+|---|---|
+| **USD 1.20 B / year** | Cost of same-level falls in U.S. manufacturing, the 2nd most costly injury cause (Liberty Mutual WSI 2023) |
+| **290,527** | Work accidents in Mexico in 2023 (STPS/IMSS) |
+| **NOM-001-STPS-2008 7.4** | Floors must be free of liquids that cause slips or falls |
+| **≈ USD 75,000** | Commercial autonomous scrubber — cleans with water and **does not separate waste** |
+
+The challenge is not driving around: it is **picking up dense steel chips and oil with a 12 V vacuum, separating
+them on board and never mixing the two streams**, safely, with people and forklifts nearby.
+
+---
+
+## 💡 How it works
 
 ```mermaid
 flowchart LR
-    F[Floor: oil + chips] --> B[Brush + squeegee]
-    B --> N[Nozzle + hose]
-    N --> C[Sealed separation chamber]
-    C --> S1[Mesh basket: coarse solids]
-    C --> S2[Magnets: ferrous chips]
-    S2 --> K[Compactor ≤ 100 kgf]
-    K --> BK[(Removable chip basket)]
-    C -- liquid by gravity --> T[(20 L tank + drain valve)]
-    K -- drained oil --> T
+    F["🛢️ Floor<br/>oil + chips"] --> B["🧹 Brush + squeegee"]
+    B --> N["Nozzle + hose"]
+    N --> C["Sealed separation chamber"]
+    C --> S1["Mesh basket<br/>coarse solids"]
+    C --> S2["🧲 Magnets<br/>ferrous chips"]
+    S2 --> K["Compactor<br/>≤ 100 kgf"]
+    K --> BK[("Removable<br/>chip basket")]
+    C -- "liquid by gravity" --> T[("20 L tank<br/>+ drain valve")]
+    K -- "drained oil" --> T
+    V["12 V wet/dry vacuum"] -.-|"pulls air from chamber + tank<br/>float shut-off protects it"| T
 ```
 
-A 12 V wet/dry vacuum pulls clean air from the sealed chamber and tank; a float shut-off protects it from liquid.
-Operation is authorized with an RFID card and a start button, and status is shown on a signal tower, an LCD and a
-phone web page.
+```mermaid
+stateDiagram-v2
+    direction LR
+    [*] --> Idle
+    Idle --> Authorized: RFID card
+    Authorized --> Running: start button
+    Running --> Paused: obstacle / bumper
+    Paused --> Running: clear
+    Running --> Compacting: tank or basket full / route done
+    Compacting --> ReadyToEmpty
+    Running --> Fault: e-stop or fault (any state)
+    Fault --> Idle: deliberate restart (card + button)
+```
 
-## System architecture
+---
 
-**Controller:** Arduino UNO Q 2 GB — an STM32U585 MCU (Zephyr, real time) and a Qualcomm QRB2210 MPU (Debian Linux,
-Python) linked by the Arduino Bridge. Work is split by timing requirement, not by complexity
-([ADR-0002](docs/adr/0002-split-by-timing.md)):
+## 🧠 Architecture: two processors, two timing domains
 
-| Domain | Responsibilities | Rule |
+```mermaid
+flowchart LR
+    subgraph RT["⚡ STM32U585 · Zephyr — real time"]
+        direction TB
+        ENC["Encoders + BNO055 IMU"] --> MOV["Segment executor<br/>speed ≤ 0.38 m/s"]
+        SEN["Floats · MPX5010DP · HX711<br/>bumpers · battery"] --> SAFE["Stop conditions<br/>watchdog · T_stale"]
+        MOV --> DRV["BTS7960 drivers<br/>wheels · brush · compactor"]
+        SAFE --> DRV
+    end
+    subgraph AP["🐧 QRB2210 · Debian · Python — decisions"]
+        direction TB
+        LID["RPLIDAR A1M8"] --> NAV["Localize against saved map<br/>coverage route"]
+        CAM["USB camera + LED<br/>log-only until validated"] -.-> NAV
+        WEB["Phone web UI<br/>calibration · routes · status"]
+        LOG["Raw logs ~20 Hz"]
+    end
+    subgraph HW["🛑 Hardware — never software"]
+        ES["E-stop → 40 A relay"] --> BUS["Switched 12 V bus"]
+    end
+    NAV <== "Bridge RPC · heartbeat 100 ms" ==> MOV
+    BUS --> DRV
+```
+
+| Domain | What runs there | Rule |
 |---|---|---|
-| MCU (real time) | Motor and encoder loops, tool sequencing, floats, vacuum, force, bumpers, watchdog | Executes one motion segment and stops by itself; stops if Linux is late |
-| Linux (best effort) | LiDAR localization against a saved map, coverage route, vision, web UI, 20 Hz raw logging | Decides; never drives actuators directly |
-| Hardware | E-stop relay, fuses, float shut-off, slipping brush belt | Never depends on software |
+| **Real time** (STM32) | Motor + encoder loops, tool sequencing, floats, vacuum, force, bumpers, watchdog | Executes one segment and **stops by itself**; if Linux is late, the robot stops |
+| **Decision** (Linux) | LiDAR localization, coverage route, vision, web UI, logging | Decides; never drives actuators directly |
+| **Hardware** | E-stop relay, fuses, float shut-off, slipping brush belt | **Safety never depends on software** |
 
-| Module | Function | Main components |
-|---|---|---|
-| M1 Chassis | Carries modules | 2040 aluminum profile, panels, bumper bar, leak tray |
-| M2 Mobility | Differential drive | 2× JGB37-3530 gearmotors with encoders, 124 mm wheels, BTS7960 drivers |
-| M3 Collection | Loosen and pick up | Nylon brush (775 motor), squeegee, PETG nozzle, oil hose, 80 W wet/dry vacuum, MPX5010DP |
-| M4 Separation | Retain and compact solids | Stainless mesh basket, neodymium magnets, 150 kgf actuator, load cell + HX711 |
-| M5 Storage | Hold liquid | 20 L tank, ball drain valve, floats, float shut-off |
-| M6 Perception | Localize and detect | RPLIDAR A1M8, BNO055 IMU, USB camera + LED, 4 bumpers |
-| M7 Control | Compute | Arduino UNO Q, MOSFET and level-shifting boards |
-| M8 Power + safety | Energy and hard stop | 12 V 24 Ah SLA, buck converters, fuses, 40 A relays, e-stop |
-| M9 Operator interface | Authorize and inform | RC522 RFID, lit start button, 20×4 LCD, signal tower, web UI |
+### 🧩 Nine modules
 
-Vision is advisory only: a residue check and a container-level cross-check that stay in log-only mode until
-validated on the real robot ([ADR-0006](docs/adr/0006-vision-role.md)).
+| Module | Function | Main components | Listed MXN |
+|---|---|---|---:|
+| M1 Chassis | Carries modules | 2040 aluminum profile, panels, bumper bar, leak tray | 1,276.00 |
+| M2 Mobility | Differential drive | 2× JGB37-3530 + encoders, Talon 124 mm wheels, 2× BTS7960 | 3,011.00 |
+| M3 Collection | Loosen + pick up | Nylon brush (775 motor), squeegee, PETG nozzle, oil hose, 80 W vacuum, MPX5010DP | 1,472.00 |
+| M4 Separation | Retain + compact | Stainless basket, 10× neodymium magnets, 150 kgf actuator, load cell + HX711 | 1,087.00 |
+| M5 Storage | Hold liquid | 20 L tank, ½" ball valve, floats, float shut-off | 369.00 |
+| M6 Perception | Localize + detect | RPLIDAR A1M8, BNO055, USB camera + LED, 4 bumpers | 4,232.00 |
+| M7 Control | Compute | Arduino UNO Q 2 GB, MOSFET / level-shift boards | 1,122.00 |
+| M8 Power + safety | Energy + hard stop | 12 V 24 Ah SLA, 2× XL4015, fuses, 2× 40 A relay, LAY37 e-stop | 2,619.00 |
+| M9 Operator interface | Authorize + inform | RC522 RFID, lit button, 20×4 LCD, signal tower, web UI | 661.50 |
+| **Total (32 items)** | | *≈ 20,160 with tooling and 15 % contingency* | **15,849.50** |
 
-## Key figures
+---
 
-Every number carries its evidence level; nothing here is a physical test result yet.
+## 🛡️ Engineering validation toolkit
+
+Every task leaves its evidence in the same PR ([definition of done](CLAUDE.md)), and CI checks it automatically.
+
+| Method | What it answers | Where | Today |
+|---|---|---|---|
+| 📋 **Requirements + traceability** | Does every feature trace R → SR → test? | [`requirements.yaml`](requirements/requirements.yaml) | 10 stakeholder R · **17 SR** · checked in CI |
+| ⚠️ **DFMEA / PFMEA** | How can it fail, how bad, how likely, how detected? | [`risk/dfmea.csv`](risk/dfmea.csv) | **9 failure modes**, 5 with S ≥ 9 → mandatory actions |
+| 🛡️ **SCCAF** | Which characteristics are critical, and is the control agreed? | [`risk/sccaf.csv`](risk/sccaf.csv) | **7 special characteristics**: 4 YC · 3 YS |
+| ⚡ **WCCA** | Does every circuit work at the worst tolerance? | [`risk/wcca.yaml`](risk/wcca.yaml) | 8 checks: 7 ✅ · 1 ⚠️ |
+| 🔩 **DFMA** | Can we build it with fewer parts and less time? | [`risk/dfma/`](risk/dfma/) | M4 first pass: DE 11.3 % → simplify |
+| 💰 **Economic evaluation** | Is it worth it for a plant? | [`tools/econ.py`](tools/econ.py) | Payback 6.6 months (base) |
+| 🔐 **Threat model** | Can someone misuse camera, web UI, RPC or RFID? | [`/security`](.claude/agents/cybersecurity-engineer.md) | Agent ready; first model pending |
+| 🧾 **ADR + engineering log** | Why did we decide this, with what evidence? | [`docs/adr/`](docs/adr/) · [`log`](docs/engineering-log/) | 6 ADRs |
+
+### ⚠️ DFMEA — top risks (RPN = S × O × D)
+
+| ID | Item | Failure mode | S | O | D | RPN | Class |
+|---|---|---|:-:|:-:|:-:|:-:|:-:|
+| F-001 | M3 vacuum unit | Cannot lift steel chips | 7 | 6 | 4 | **168** | YS |
+| F-004 | M2 drive | Wheel slip on oil | 8 | 5 | 4 | **160** | YS |
+| F-005 | M7 MCU/Linux link | Robot moves on a stale command | **9** | 4 | 3 | 108 | YC |
+| F-008 | M6 vision | Wrong container level read | 5 | 5 | 4 | 100 | YS |
+| F-002 | M5 tank | Liquid reaches the vacuum port | **9** | 3 | 3 | 81 | YC |
+| F-006 | M4 compactor | Over-force / pinch | **9** | 3 | 3 | 81 | YC |
+| F-003 | M8 e-stop | Relay contacts weld | **10** | 2 | 4 | 80 | YC |
+
+The #1 risk is exactly why the design is not frozen: **can an 80 W 12 V vacuum lift steel chips?** The suction rig
+answers it before anything else is built.
+
+### 🛡️ SCCAF — special characteristics
+
+Adapted from Ford's Special Characteristics Communication and Agreement Form. The class is **computed** from the
+DFMEA, so it cannot drift; CI fails if a YC/YS row has no agreed control.
+
+| DFMEA severity | Occurrence | Design class | Agreed class |
+|---|---|---|---|
+| 9–10 | any | 🔴 **YC** potential critical | **CC** critical: error-proofing or 100 % check |
+| 5–8 | 4–10 | 🟡 **YS** potential significant | **SC** significant: measured check per build |
+| 5–8 / 1–4 | 1–3 / any | — | Normal controls |
+
+| SCCAF | Characteristic | Class | Control | Status |
+|---|---|:-:|---|---|
+| SC-001 | Chip lift rate at the nozzle (g/s) | 🟡 YS | Suction rig test before build | ⏳ open |
+| SC-002 | Float shut-off closes before liquid reaches the vacuum | 🔴 YC | Overfill test 5× after every tank change | ⏳ open |
+| SC-003 | Main relay rating vs worst-case inrush | 🔴 YC | WCCA + periodic e-stop test | ⏳ open |
+| SC-004 | Vision container level agrees with floats | 🟡 YS | TP-V01 fill/drain cycles | ⏳ open |
+| SC-005 | Stopping distance on oil from 0.38 m/s | 🟡 YS | Braking test 10× on reference oil | ⏳ open |
+| SC-006 | MCU stops on heartbeat loss | 🔴 YC | Fault injection after every firmware release | ⏳ open |
+| SC-007 | Compactor force limit + lid interlock | 🔴 YC | Load-cell log + interlock test | ⏳ open |
+
+### ⚡ WCCA — worst-case circuit analysis
+
+| Interface | Worst case | Status |
+|---|---|:-:|
+| Battery-sense divider → ADC | 2.06–2.97 V vs 3.1 V limit, **4.1 % margin** | ⚠️ tighten |
+| Bumper switch → MCU logic | 0.89 V margin high and low | ✅ |
+| HX711 DOUT → MCU logic | 0.59 V margin high and low | ✅ |
+| Drive branch | 12 A peak · 15 A fuse · 14 AWG (15 A) | ✅ |
+| Collection branch | 25 A peak · 20 A fuse · 12 AWG (20 A) | ✅ |
+| Separation branch | 8 A peak · 10 A fuse · 16 AWG (10 A) | ✅ |
+| Logic branch | 3 A peak · 5 A fuse · 18 AWG (7 A) | ✅ |
+| Runtime | 54 min at 160 W | ✅ |
+
+*Analysis with datasheet tolerances; UNO Q supply limits are still to verify, then re-run with measured parts.*
+
+### 🔩 DFMA and 💰 economics
+
+| DFMA — M4 separation (first pass) | |
+|---|---|
+| Parts / theoretical minimum | 27 / 6 |
+| Assembly time | 159 s |
+| Design efficiency (3·Nmin/Σt) | **11.3 %** → merge parts and reduce fasteners before CAD |
+
+| Economics (1 robot, 3 shifts, 900 cycles/yr) | Net benefit / yr | Payback | NPV (3 yr, 12 %) |
+|---|---:|---:|---:|
+| Optimistic | MXN 66,479 | 5.7 months | MXN 128,111 |
+| **Base** | **MXN 56,968** | **6.6 months** | **MXN 105,269** |
+| Pessimistic | MXN 23,011 | 24.7 months | MXN 7,928 |
+
+*Estimates. Biggest sensitivities: hours saved per day and disposal price.*
+
+---
+
+## 🔬 Engineering decisions (and why)
+
+Each decision has a record with options, criteria and evidence in [`docs/adr/`](docs/adr/).
+
+### 1. One board, two processors — [ADR-0001](docs/adr/0001-arduino-uno-q.md)
+**Need:** real-time I/O (motors, encoders, HX711) *and* Linux workloads (LiDAR, vision, web UI, logs).
+**Decision:** Arduino UNO Q 2 GB — the team already won 2nd place with it. **Consequence:** one USB-C port, so the
+LiDAR and camera need a hub with its own power supply.
+
+### 2. Split by timing, not by complexity — [ADR-0002](docs/adr/0002-split-by-timing.md)
+**Lesson from the maze robot:** the MCU executes each motion order and stops by itself; Linux decides between
+segments. Heartbeat every 100 ms; if it is lost, **the robot stops instead of driving on an old command**.
+
+### 3. The e-stop is wired, not coded — [ADR-0003](docs/adr/0003-hardware-estop.md)
+Mushroom e-stop in series with the main relay coil: all actuators lose power, logic stays on to report. Restart needs
+the RFID card **and** the start button.
+
+### 4. Suction first — [ADR-0004](docs/adr/0004-collection-architecture.md) · *open*
+**A:** brush + vacuum carry oil and chips. **B:** brush throws chips into a front hopper; the vacuum takes only
+liquid. Criteria are fixed before testing: choose A only if chip pickup ≥ 85 % with no clogging in 10 runs.
+
+### 5. IMU without magnetometer — [ADR-0005](docs/adr/0005-imu-selection.md)
+BNO055 in IMU mode: on-chip fusion, and no compass that steel machines would fool.
+
+### 6. Vision assists, never drives — [ADR-0006](docs/adr/0006-vision-role.md)
+**Lesson from the maze robot:** a glossy floor reflected the light and the camera saw walls that did not exist.
+Here vision only **flags residue for a second pass** and **cross-checks container levels against the floats**, and
+stays in log-only mode until protocol [TP-V01](docs/test-reports/TP-V01-vision-validation.md) passes on the real robot.
+
+---
+
+## 📊 Simulations and calculations
+
+<div align="center">
+<img src="docs/img/coverage_simulation.png" alt="Boustrophedon coverage simulation of a 12 x 8 m machining cell with three machines" width="620">
+</div>
 
 | Item | Value | Evidence |
 |---|---|---|
-| Target metrics | M1 recovery ≥ 85 % · M2 purity ≥ 95 % liquid / ≥ 90 % solids · M3 coverage ≥ 100 m²/h, 0 incidents | Acceptance criteria |
-| Coverage, 12 × 8 m cell | 96 % of free floor, 25.6 min, 167 m²/h, 68 Wh per cycle | Simulation |
-| Speed | ≤ 0.38 m/s (0.15 m/s cleaning); braking ≤ 7.4 cm on oil (μ = 0.1) | Calculation |
-| Energy | ≈ 160 W average, 144 Wh usable → ≈ 55 min per charge | Estimate |
-| Envelope | ≈ 700 × 500 × 450 mm (520 mm to LiDAR) | Design |
-| Listed BOM | MXN 15,849.50 (≈ 20,160 with tooling and 15 % contingency) | Supplier quotes, Oct 2026 |
-| Economics (1 robot, 3 shifts) | Net benefit MXN 56,968/yr · payback 6.6 months · NPV (3 yr, 12 %) MXN 105,269 | Estimate |
+| Coverage of a 12 × 8 m cell with 3 machines | **96 %** of free floor in **25.6 min** → **167 m²/h**, 68 Wh/cycle | Simulation |
+| Top speed | π · 0.124 m · 59 rpm / 60 ≈ **0.38 m/s** (0.15 m/s cleaning) | Calculation |
+| Braking on oil (μ = 0.1) | ≤ **7.4 cm** from 0.38 m/s | Calculation |
+| Energy | ≈ 160 W average, 144 Wh usable → **≈ 55 min** | Estimate |
 
-## Safety by design
+### ✅ Validated vs pending
 
-- **Hardware emergency stop:** the e-stop opens the main relay coil and removes power from every actuator; restart
-  requires an RFID card and the start button ([ADR-0003](docs/adr/0003-hardware-estop.md)).
-- **Fail-safe control link:** the MCU stops all motion if the Linux heartbeat is lost.
-- **Physical limits:** float shut-off at the vacuum port, compactor force limit with lid interlock, current limits,
-  fuse per branch, speed limit with overspeed detection.
-- **Special characteristics:** DFMEA rows with severity ≥ 5 are classed YC/YS and tracked to an agreed control in the
-  internal SCCAF ([docs/08-sccaf.md](docs/08-sccaf.md)).
-- **Standards in scope:** ISO 3691-4:2023, NOM-001-STPS-2008, ISO 12100, ISO 13849-1, ISO 13850, IEC 60204-1,
-  IEC 60529, NOM-052-SEMARNAT-2005 ([docs/03-standards-matrix.md](docs/03-standards-matrix.md)).
+| Aspect | Status | Next step |
+|---|---|---|
+| Coverage route | ✅ Simulation meets M3 (≥ 100 m²/h) | Repeat on a real floor (P4) |
+| Speed, braking, energy | ✅ Calculations | Measure on the oily floor |
+| Circuits | ⚠️ WCCA: battery-sense divider margin 4.1 % | Retune divider, re-run with measured parts |
+| **Vacuum lifts steel chips** | ⏳ **Pending — design gate** | **Suction rig, weeks 1–3** |
+| M1 recovery / M2 purity | ⏳ Pending | Weigh tank and basket, 1 m² patch |
+| Safety (e-stop, heartbeat, floats, force) | ⏳ Pending | Tests linked to SC-002, SC-003, SC-006, SC-007 |
+| Vision | ⏳ Log-only | TP-V01 |
 
-## Repository layout
+---
 
-```
-├── cad/             Parametric OpenSCAD parts (lib/, parts/, params/)
-├── docs/            Context, architecture, standards, business, glossary, SCCAF, ADRs, engineering log, deliverables
-├── firmware/mcu/    STM32U585 firmware (Zephyr / Arduino core)
-├── linux/           QRB2210 Python app (navigation, web UI, logging, vision)
-├── requirements/    requirements.yaml — single source of truth (R1–R10 → SR-xxx)
-├── risk/            DFMEA, SCCAF register, WCCA data
-├── sim/             Coverage, noisy-sensor and log-replay simulators
-├── tests/           Unit tests for the tools
-├── tools/           Checkers and calculators (traceability, FMEA, WCCA, DFMA, economics, git policy)
-└── .claude/         Claude Code agents, commands and safety hooks
-```
+## 🎓 Built on our previous robot
 
-## Getting started
+This team's [maze-solving robot](https://github.com/Happenedspice17/sumo-v-ia) (same Arduino UNO Q, **2nd place**)
+gave us [21 lessons](docs/01-lessons-learned.md) that we apply by default:
 
-Requirements: Python 3.11+, Git. OpenSCAD only for CAD work.
+- ⏱️ **Time is not distance** — references come from encoders, IMU and LiDAR, never open-loop timing.
+- 🗳️ **One bad reading never changes state alone** — min-of-3, two-read confirmation, capped votes.
+- 📏 **Thresholds at the midpoint of two measured readings**, never from CAD alone.
+- 🧪 **Simulate before tuning, log every run raw** and make the simulator reproduce field failures.
+- 📱 **Calibrate on site from a phone**, with the plant's own light.
+
+---
+
+## 🗂️ Repository layout
+
+| Folder | Content |
+|---|---|
+| [`docs/`](docs/) | Context, architecture, standards, business, glossary, SCCAF, ADRs, engineering log, test protocols, deliverables |
+| [`requirements/`](requirements/) | `requirements.yaml` — single source of truth (R1–R10 → SR-xxx) |
+| [`risk/`](risk/) | DFMEA, SCCAF register, WCCA inputs, DFMA worksheets |
+| [`tools/`](tools/) | Checkers and calculators: traceability, FMEA + SCCAF, WCCA, DFMA, economics, git policy |
+| [`cad/`](cad/) | Parametric OpenSCAD parts (`lib/`, `parts/`, `params/`) |
+| [`firmware/mcu/`](firmware/mcu/) · [`linux/`](linux/) | STM32U585 firmware · QRB2210 Python app (code starts after the suction gate) |
+| [`sim/`](sim/) | Coverage, noisy-sensor and log-replay simulators |
+| [`.claude/`](.claude/) | Claude Code agents (DFMEA, WCCA, safety, cybersecurity, …), commands and safety hooks |
+
+---
+
+## 🚀 Getting started
 
 ```bash
 git clone https://github.com/Happenedspice17/industrial-waste-clean-machine.git
@@ -142,58 +339,40 @@ cd industrial-waste-clean-machine
 python -m venv .venv && . .venv/bin/activate        # Windows: .venv\Scripts\activate
 pip install -e ".[dev]"
 pre-commit install --hook-type pre-commit --hook-type commit-msg
-python tools/check_all.py                           # branch, traceability, FMEA/SCCAF, WCCA, ruff, pytest
+python tools/check_all.py                           # traceability, DFMEA/SCCAF, WCCA, ruff, pytest
 ```
 
-Useful calculators: `python tools/fmea.py risk/dfmea.csv` (RPN ranking and YC/YS classes) ·
-`python tools/wcca.py risk/wcca.yaml` · `python tools/econ.py` · `python tools/dfma.py <worksheet.csv>`.
+```bash
+python tools/fmea.py risk/dfmea.csv                 # RPN ranking + YC/YS classes
+python tools/wcca.py risk/wcca.yaml                 # worst-case circuits
+python tools/dfma.py risk/dfma/m4_separation_example.csv
+python tools/econ.py                                # payback, NPV, tornado
+```
 
-## Engineering workflow
+### 🔁 Workflow
 
-1. **Requirement first** — every feature, part and test traces to an `SR-xxx` in `requirements/requirements.yaml`.
-2. **Branch** from `develop`: `<type>/<issue>-<short-desc>` (e.g., `feature/12-suction-rig-logger`).
-3. **Validate and document in the same PR** — the definition of done in [CLAUDE.md](CLAUDE.md) lists what each task
-   needs: DFMA, DFMEA/PFMEA, SCCAF entry, WCCA, ISO/NOM check, ADR, test protocol and report, engineering log entry.
-4. **Commit** with Conventional Commits (`feat(m3): …`, body `Refs: SR-xxx`) and open a PR to `develop`; CI must pass.
-5. **Release** by merging `develop` into `main`.
+1. **Requirement first** → `SR-xxx` in `requirements/requirements.yaml`.
+2. **Branch** from `develop` → `<type>/<issue>-<short-desc>`.
+3. **Validate and document in the same PR** → DFMA · DFMEA/PFMEA · SCCAF · WCCA · ISO/NOM · security · ADR · test
+   report · engineering log, or "N/A" with the reason.
+4. **Conventional Commit** (`feat(m3): …`, `Refs: SR-xxx`) → PR to `develop` → CI green → merge.
+5. **Release** → `develop` into `main`.
 
-Details: [CONTRIBUTING.md](CONTRIBUTING.md) and [docs/06-github-setup.md](docs/06-github-setup.md).
+---
 
-## Documentation
-
-| Document | Contents |
-|---|---|
-| [00 · Project context](docs/00-project-context.md) | Requirements, modules, BOM, interfaces, metrics, scenarios, economics, open decisions |
-| [01 · Lessons learned](docs/01-lessons-learned.md) | 21 rules from the team's previous UNO Q robot, applied by default |
-| [02 · Architecture](docs/02-architecture.md) | MCU/Linux split, protocol, states, sensor roles, safety chain |
-| [03 · Standards matrix](docs/03-standards-matrix.md) | ISO / IEC / NOM clauses and evidence |
-| [04 · Business](docs/04-business.md) | Business Model Canvas, economics, SWOT, technological impact |
-| [05 · Sustainability](docs/05-sustainability-sdg.md) | SDG mapping and environmental impact method |
-| [06 · GitHub setup](docs/06-github-setup.md) | Branch model, CI checks, protection rules |
-| [07 · Glossary](docs/07-glossary.md) | Definitions and project lingo |
-| [08 · Internal SCCAF](docs/08-sccaf.md) | Special characteristics (YC/YS → CC/SC) |
-| [Decision records](docs/adr/) | ADR-0001 to ADR-0006 |
-| [Engineering log](docs/engineering-log/) | One entry per stage |
-| [Semester-1 deliverables](docs/semester-1-deliverables/) | Proposal, conceptual design, models, scenarios, impact, presentation |
-
-## Roadmap
+## 🗺️ Roadmap
 
 | Phase | Weeks | Goal |
 |---|---|---|
-| P1 | 1–3 | Suction rig; decide collection architecture A/B |
-| P2 | 3–7 | Build modules in four teams (chassis + mobility · separation + storage · power + safety + HMI · control + navigation + vision) |
-| P3 | 7–10 | Integration; map, save and replay a route |
-| P4 | 10–13 | Validation of M1–M3 and safety tests on an oily floor |
-| P5 | 13–16 | Plant pilot, customer interviews, final report |
+| 🌀 P1 | 1–3 | **Suction rig** → decide A/B → freeze the design |
+| 🔧 P2 | 3–7 | Build modules in 4 teams: chassis + mobility · separation + storage · power + safety + HMI · control + navigation + vision |
+| 🔗 P3 | 7–10 | Integration; map, save and replay a route |
+| 🧪 P4 | 10–13 | Validate M1–M3 and safety on an oily floor |
+| 🏭 P5 | 13–16 | Plant pilot, customer interviews, final report |
 
-## Team
+---
 
-Franco Zavala Morgan · María Ruiz Mejía · Manuel Harari López · Ian Carlo Olivares Chávez ·
-Carlos Emiliano Escamilla Garibay · Luis Roberto Sánchez Salgado · Juan Manuel Vásquez Paniagua
-
-**Advisor:** Dr. Hiram Eredín Ponce Espinosa — Universidad Panamericana
-
-## Credits and AI use
+## 🙏 Credits and AI use
 
 **Authors.** The design, requirements, component selection, calculations, simulations, semester-1 deliverables and
 every engineering decision belong to the team listed above, under the supervision of Dr. Hiram Eredín Ponce
@@ -219,6 +398,8 @@ helped write carry a `Co-Authored-By: Claude` trailer. Rules for AI output in th
 - Anthropic. (2026). *Claude Code* [AI coding assistant]. https://claude.com/claude-code
 - Anthropic. (2026). *Claude* [Large language model]. https://www.anthropic.com/claude
 
-## License
+---
+
+## 📄 License
 
 Released under the [MIT License](LICENSE).
