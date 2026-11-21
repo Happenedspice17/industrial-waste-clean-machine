@@ -32,6 +32,7 @@ Capstone project of *Proyecto Mecatrónico I/II* — Faculty of Engineering, Uni
 - [Documentation](#documentation)
 - [Roadmap](#roadmap)
 - [Team](#team)
+- [Credits and AI use](#credits-and-ai-use)
 - [License](#license)
 
 ## The problem
@@ -191,6 +192,31 @@ Franco Zavala Morgan · María Ruiz Mejía · Manuel Harari López · Ian Carlo 
 Carlos Emiliano Escamilla Garibay · Luis Roberto Sánchez Salgado · Juan Manuel Vásquez Paniagua
 
 **Advisor:** Dr. Hiram Eredín Ponce Espinosa — Universidad Panamericana
+
+## Credits and AI use
+
+**Authors.** The design, requirements, component selection, calculations, simulations, semester-1 deliverables and
+every engineering decision belong to the team listed above, under the supervision of Dr. Hiram Eredín Ponce
+Espinosa. The team is responsible for all content in this repository.
+
+**Prior work.** The lessons learned, MCU/Linux split and vision approach come from the team's previous Arduino UNO Q
+robot, a maze solver for *Microcontroladores 2* (2nd place):
+[Happenedspice17/sumo-v-ia](https://github.com/Happenedspice17/sumo-v-ia).
+
+**AI assistance.** Since November 2026 the team uses **Claude Code** (Anthropic) as an engineering assistant. Under
+the team's direction it set up this repository from the team's kit, translated the Spanish deliverables to English,
+drafted ADR-0006 (vision role) from the maze-robot history, requirements SR-015–SR-017, test protocol TP-V01, the
+glossary, the internal SCCAF and its check in `tools/fmea.py`, this README and the cybersecurity agent. Commits it
+helped write carry a `Co-Authored-By: Claude` trailer. Rules for AI output in this project:
+
+- AI output is a draft: a team member reviews every change before it is merged.
+- Numbers keep their evidence label (estimate, simulation, measured); AI never turns a simulation into a test result.
+- Safety functions, thresholds and sign-offs (SCCAF, test reports) are decided and approved by people.
+
+**References for AI tools**
+
+- Anthropic. (2026). *Claude Code* [AI coding assistant]. https://claude.com/claude-code
+- Anthropic. (2026). *Claude* [Large language model]. https://www.anthropic.com/claude
 
 ## License
 
