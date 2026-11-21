@@ -5,7 +5,7 @@
 - **Hypothesis:** Applying the maze-robot camera lessons (assist only, log first, calibrate on site) avoids repeating
   its false-wall failure on a glossy floor.
 - **Change:** Kit imported; standards table and pairwise workbook translated to English; ADR-0006 accepted (residue
-  check + container-level cross-check, validation gate); SR-015–SR-017; DFMEA F-004–F-006; protocol TP-V01;
+  check + container-level cross-check, validation gate); SR-015–SR-017; DFMEA F-007–F-009; protocol TP-V01;
   `pip install -e` fix; `claude/*` branches allowed; definition of done added to `CLAUDE.md`.
 - **Evidence:** `python tools/check_all.py` passes. Vision numbers are from the maze robot's simulation and one field
   run (sumo-v-ia); nothing measured on this robot.

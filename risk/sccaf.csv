@@ -1,0 +1,8 @@
+id,dfmea_id,class,characteristic,specification,agreed_class,control_method,design_owner,build_owner,validation_owner,advisor_signoff,site,status,req
+SC-001,F-001,YS,Chip lift rate at the nozzle (g/s),TBD from suction rig (ADR-0004),TBD,Suction rig test before build; repeat after any nozzle/hose change,Team A,Team A,Team D,pending,UP lab,open,SR-001
+SC-002,F-002,YC,Float shut-off closes vacuum port before liquid reaches it,Closes with port margin TBD (measured),TBD,Overfill test 5x after build and after any tank/float change,Team B,Team B,Team C,pending,UP lab,open,SR-008
+SC-003,F-003,YC,Main relay contact rating vs worst-case inrush,Rating > WCCA inrush with margin,TBD,WCCA + periodic e-stop cut test,Team C,Team C,Team C,pending,UP lab,open,SR-006
+SC-004,F-008,YS,Vision container-level agreement with floats,>= 95 % (SR-016),TBD,TP-V01 fill/drain cycles; log-only until pass,Team D,Team D,Team D,pending,UP lab,open,SR-016
+SC-005,F-004,YS,Stopping distance on oiled floor from 0.38 m/s,<= 0.10 m (SR-005),TBD,Braking test 10x on reference oil; speed limit in MCU,Team A,Team A,Team D,pending,UP lab,open,SR-005
+SC-006,F-005,YC,MCU stop on heartbeat loss (T_stale),All motion stops within T_stale (SR-007),TBD,Fault-injection test (kill Linux app / block RPC) after every firmware release,Team D,Team D,Team C,pending,UP lab,open,SR-007
+SC-007,F-006,YC,Compactor force limit and lid interlock,<= 100 kgf; no motion with lid open (SR-009),TBD,Load-cell log + interlock test after any compactor change,Team B,Team B,Team C,pending,UP lab,open,SR-009

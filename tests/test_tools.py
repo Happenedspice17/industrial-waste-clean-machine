@@ -91,6 +91,26 @@ def test_fmea_mandatory_action() -> None:
     assert ranked[0][0] == "F1"
 
 
+@pytest.mark.parametrize(
+    ("s", "o", "cls"),
+    [(10, 1, "YC"), (9, 1, "YC"), (8, 4, "YS"), (5, 10, "YS"), (8, 3, ""), (5, 3, ""), (4, 10, "")],
+)
+def test_special_class(s: int, o: int, cls: str) -> None:
+    assert fmea.special_class(s, o) == cls
+
+
+def test_sccaf_register() -> None:
+    rows = [
+        {"id": "F1", "severity": "9", "occurrence": "2"},
+        {"id": "F2", "severity": "6", "occurrence": "5"},
+        {"id": "F3", "severity": "3", "occurrence": "9"},
+    ]
+    errors = fmea.sccaf_errors(rows, [{"dfmea_id": "F2", "class": "YC"}])
+    assert any(e.startswith("F1:") and "needs" in e for e in errors)
+    assert any(e.startswith("F2:") and "'YS'" in e for e in errors)
+    assert not any(e.startswith("F3") for e in errors)
+
+
 def test_divider_worst_case() -> None:
     vin = {"min": 10.5, "nom": 12.8, "max": 14.7}
     r = wcca.divider_wc(vin, {"nom": 33000, "tol": 0.01}, {"nom": 8200, "tol": 0.01})

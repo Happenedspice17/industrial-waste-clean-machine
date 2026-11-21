@@ -47,7 +47,7 @@ camera; this is what it did and what happened:
 5. Reuse the integration fixes above: index ≥ 2, hot-plug thread, camera lock, background open, PD-powered hub.
 
 ## Consequences
-SR-015, SR-016, SR-017 added (draft); DFMEA rows F-004–F-006. One camera cannot see the floor and both containers
+SR-015, SR-016, SR-017 added (draft); DFMEA rows F-007–F-009. One camera cannot see the floor and both containers
 (deduced): placement (second USB camera or mirror) must go through DFMA, and the USB hub power budget through WCCA,
 before buying parts. Sensor hierarchy row for vision updated in `docs/02-architecture.md`. Check that the COM-126
 accepts manual exposure through V4L2 (`v4l2-ctl --list-ctrls`) before relying on it; if not, reuse the OV9281.

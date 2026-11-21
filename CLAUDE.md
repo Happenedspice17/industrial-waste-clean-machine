@@ -30,11 +30,13 @@ waste streams in separate containers. Capstone of *Proyecto Mecatrónico I/II*, 
 | `docs/04-business.md` | Business Model Canvas, economics, SWOT, technological impact |
 | `docs/05-sustainability-sdg.md` | SDG mapping and environmental impact method |
 | `docs/06-github-setup.md` | Branch rules, rulesets, CI checks |
+| `docs/07-glossary.md` | Definitions and project lingo (check it before naming things) |
+| `docs/08-sccaf.md` | Internal SCCAF: YC/YS → CC/SC special characteristics, register `risk/sccaf.csv` |
 | `docs/adr/` | Architecture Decision Records (one decision per file) |
 | `docs/engineering-log/` | Engineering log per stage |
 | `docs/templates/` | DFMEA, PFMEA, DFMA, WCCA, requirement, BMC, impact, SDG, test-report templates |
 | `requirements/requirements.yaml` | Single source of truth for requirements and traceability |
-| `risk/` | DFMEA, WCCA data |
+| `risk/` | DFMEA, SCCAF register, WCCA data |
 | `tools/` | Python checkers and calculators (traceability, branch, commit msg, FMEA, WCCA, DFMA, economics) |
 | `cad/` | Parametric OpenSCAD parts (`lib/`, `parts/`, `params/`) |
 | `firmware/mcu/` | STM32U585 code (Zephyr / Arduino core) |
@@ -72,6 +74,7 @@ waste streams in separate containers. Capstone of *Proyecto Mecatrónico I/II*, 
     | Process step (build, assembly, operation) | PFMEA rows (`/fmea`) |
     | Wiring, power, sensor interface | WCCA (`/wcca`) |
     | Safety function | DFMEA + ISO/NOM check (`/iso`) + re-verification test |
+    | DFMEA row classed YC/YS | SCCAF register entry (`docs/08-sccaf.md`, `risk/sccaf.csv`) |
     | Decision between options | ADR (`/adr`) |
     | Every task | Engineering log entry (`/log`): change, evidence, validation result |
 
