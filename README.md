@@ -1,7 +1,7 @@
 # Autonomous Industrial Waste Cleaning and Separation Robot
 
 [![CI](https://github.com/Happenedspice17/industrial-waste-clean-machine/actions/workflows/ci.yml/badge.svg?branch=develop)](https://github.com/Happenedspice17/industrial-waste-clean-machine/actions/workflows/ci.yml)
-![Status](https://img.shields.io/badge/status-design%20phase%20complete-blue)
+![Status](https://img.shields.io/badge/status-initial%20design-orange)
 ![Controller](https://img.shields.io/badge/controller-Arduino%20UNO%20Q-00979D)
 ![Python](https://img.shields.io/badge/python-3.11%2B-3776AB)
 [![License: MIT](https://img.shields.io/badge/license-MIT-green)](LICENSE)
@@ -12,9 +12,10 @@ waste streams**: recovered lubricant and drained, compacted chips.
 
 Capstone project of *Proyecto Mecatrónico I/II* — Faculty of Engineering, Universidad Panamericana (Mexico), 2026–2027.
 
-> **Project status (Nov 2026):** design phase complete — requirements, component selection, conceptual design,
-> nine modules, priced BOM, scenario analysis, economics and simulations. **No physical prototype or test results
-> yet.** Next semester: build and validate, starting with the suction rig ([ADR-0004](docs/adr/0004-collection-architecture.md)).
+> **Project status (Nov 2026): initial design — not frozen.** Requirements, component selection, conceptual design,
+> nine modules, priced BOM, scenario analysis, economics and simulations are done. The design is waiting on the
+> **vacuum (suction rig) test** to validate the collection concept before it is frozen
+> ([ADR-0004](docs/adr/0004-collection-architecture.md)). No physical prototype or test results yet.
 
 ---
 

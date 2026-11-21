@@ -44,6 +44,11 @@ Add a term here the first time it appears in a doc, PR or chat summary.
 | Idealist / pessimist scenario | Best / worst plant conditions used to judge the design (`docs/00-project-context.md` §7) |
 | Protection terms | The 10 design safeguards (safety factor, current limit, fuses, …) in §6 of the context file |
 | n | Structural safety factor (n ≥ 2 general, n ≥ 3 at bump mounts) |
+| Threat model | Assets, data flows, trust boundaries and threats with controls (`docs/templates/threat-model.md`) |
+| STRIDE | Threat classes: Spoofing, Tampering, Repudiation, Information disclosure, Denial of service, Elevation of privilege |
+| IEC 62443 / SL | Industrial cybersecurity standard family / security level (target SL 1–2 for the prototype) |
+| CSRF | Cross-site request forgery: a page tricks the browser into a state-changing request — state changes use POST + token |
+| BadUSB | A USB device that pretends to be another class (e.g., a "camera" that types like a keyboard) |
 | SCCAF | Special Characteristics Communication and Agreement Form (Ford FAF03-111-2); internal version in `docs/08-sccaf.md` |
 | Special characteristic | A product/process characteristic whose variation affects safety, regulation or a key metric |
 | YC / YS | Potential critical (DFMEA S 9–10) / potential significant (S 5–8 and O 4–10) characteristic |
