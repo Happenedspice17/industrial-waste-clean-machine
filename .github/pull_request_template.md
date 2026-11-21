@@ -13,8 +13,10 @@
 ## Risk
 - [ ] DFMA worksheet (parts/assemblies) or N/A with reason
 - [ ] DFMEA/PFMEA updated (or not affected)
+- [ ] SCCAF register updated for YC/YS rows (or none)
 - [ ] WCCA updated (electrical changes)
 - [ ] Safety functions unchanged or re-verified (e-stop, watchdog, limits)
+- [ ] Security review / threat model updated (attack surface touched) or N/A
 
 ## Lessons-learned check
 - [ ] Thresholds from measured readings (midpoint)
@@ -24,3 +26,4 @@
 
 ## Docs
 - [ ] requirements.yaml / docs / ADR / engineering log updated
+- [ ] CHANGELOG.md entry under Unreleased

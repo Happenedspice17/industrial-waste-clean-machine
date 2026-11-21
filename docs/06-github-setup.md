@@ -15,7 +15,7 @@
 
 | Workflow | Job | Blocks merge |
 |---|---|---|
-| `branch-policy.yml` | branch name, PR title (Conventional Commit), PR body has requirement refs + test evidence | Yes |
+| `branch-policy.yml` | branch name, PR title (Conventional Commit), PR body has requirement refs + test evidence, PR changes `CHANGELOG.md` | Yes |
 | `ci.yml` | ruff, pytest, traceability check, FMEA/WCCA sanity, markdown links (light) | Yes |
 | `ci.yml` (`firmware`) | clang-format check + cppcheck when `firmware/**` has C/C++ | Yes |
 | `cad.yml` | OpenSCAD render of changed parts to STL artifact | Yes (render must succeed) |

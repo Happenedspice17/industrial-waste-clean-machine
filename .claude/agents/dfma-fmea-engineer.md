@@ -20,4 +20,5 @@ DFMEA/PFMEA:
   documentation. Keep effects at system level (operator, floor, robot, environment).
 - Compute RPN and flag any S ≥ 9 for mandatory action regardless of RPN (`python tools/fmea.py risk/dfmea.csv`).
 - Map each high-risk item to a protection term or a requirement; create the requirement if missing.
-Output CSV rows in the template format and a short summary of top risks and actions. Never commit.
+Output CSV rows in the template format and a short summary of top risks and actions. Class each row YC/YS per
+`docs/08-sccaf.md` and propose the `risk/sccaf.csv` entry. Never commit.

@@ -1,6 +1,6 @@
 # Test protocol — TP-V01 Vision validation (residue check + container level)
 
-Status: written 2026-11-21, **not run**. Refs: SR-015, SR-016, SR-017 · ADR-0006 · DFMEA F-004–F-006.
+Status: written 2026-11-21, **not run**. Refs: SR-015, SR-016, SR-017 · ADR-0006 · DFMEA F-007–F-009.
 Each run produces a test report from `docs/templates/test-report.md`; an action flag is enabled only after its part passes.
 
 ## Acceptance criteria (fixed before testing)
