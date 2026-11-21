@@ -60,6 +60,7 @@ the shift change, separates the ferrous fraction and coarse solids on board, com
 | 🛡️ [**Internal SCCAF**](docs/08-sccaf.md) | Quality | Special characteristics YC/YS → CC/SC |
 | 📖 [**Glossary**](docs/07-glossary.md) | Everyone | Definitions and project lingo |
 | 🧾 [**Decision records**](docs/adr/) · 📙 [**Engineering log**](docs/engineering-log/) | Engineering process | Why each decision was made; one entry per stage |
+| 📝 [**Changelog**](CHANGELOG.md) | Everyone | Every PR: what changed, how it was validated, IDs touched |
 | 🗂️ [**Semester-1 deliverables**](docs/semester-1-deliverables/) | Course | Proposal, conceptual design, models, scenarios, impact, standards table, final presentation |
 
 ---
@@ -354,7 +355,7 @@ python tools/econ.py                                # payback, NPV, tornado
 1. **Requirement first** → `SR-xxx` in `requirements/requirements.yaml`.
 2. **Branch** from `develop` → `<type>/<issue>-<short-desc>`.
 3. **Validate and document in the same PR** → DFMA · DFMEA/PFMEA · SCCAF · WCCA · ISO/NOM · security · ADR · test
-   report · engineering log, or "N/A" with the reason.
+   report · engineering log · changelog entry, or "N/A" with the reason.
 4. **Conventional Commit** (`feat(m3): …`, `Refs: SR-xxx`) → PR to `develop` → CI green → merge.
 5. **Release** → `develop` into `main`.
 

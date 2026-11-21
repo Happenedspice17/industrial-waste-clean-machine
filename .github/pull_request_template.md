@@ -26,3 +26,4 @@
 
 ## Docs
 - [ ] requirements.yaml / docs / ADR / engineering log updated
+- [ ] CHANGELOG.md entry under Unreleased
