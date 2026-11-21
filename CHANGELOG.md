@@ -6,6 +6,14 @@ changed, validation and the requirement/risk IDs touched. Stage narratives live 
 
 ## Unreleased
 
+## v0.1.0 · 2026-11-21 · Initial design baseline
+
+First release to `main`: initial design (not frozen), waiting on the vacuum (suction rig) test (ADR-0004).
+
+### #9 · 2026-11-21 · release · v0.1.0 to main
+- Merged `develop` into `main` through `release/v0.1.0`; Unreleased entries #1–#8 moved under this heading.
+- Validation: `python tools/check_all.py` passes. Refs: N/A (tooling).
+
 ### #8 · 2026-11-21 · chore · Changelog for every PR
 - Added this changelog with entries for PRs #1–#7.
 - CI (`branch-policy` → `policy`) fails if a PR does not change `CHANGELOG.md`; PR template and definition of done
