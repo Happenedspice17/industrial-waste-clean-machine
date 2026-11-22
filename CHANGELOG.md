@@ -6,6 +6,15 @@ changed, validation and the requirement/risk IDs touched. Stage narratives live 
 
 ## Unreleased
 
+## v0.2.0 · 2026-11-22 · AprilTag bench app and final presentation v2
+
+Still initial design (not frozen), waiting on the suction rig test (ADR-0004). No physical test results yet.
+
+### #15 · 2026-11-22 · release · v0.2.0 to main
+- Merged `develop` into `main` through `release/v0.2.0`; Unreleased entries #11–#14 moved under this heading;
+  `pyproject.toml` version 0.2.0.
+- Validation: `python tools/check_all.py` passes. Refs: N/A (tooling).
+
 ### #14 · 2026-11-22 · docs · Lighter final presentation v2 and updated READMEs
 - Presentation: GitHub link and QR code on the cover and the closing slide (`docs/img/repo_qr.png`).
 - README refreshed with current facts: 21 SR, 7 ADRs, threat model rev 1, AprilTag bench app (ADR-0007, TP-V02),
