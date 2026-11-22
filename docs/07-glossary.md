@@ -136,3 +136,8 @@ Add a term here the first time it appears in a doc, PR or chat summary.
 | Tag map | JSON with each tag's ID, centre (x, y, z) and facing direction in the cell frame | Surveyed on site; re-survey after moving any tag |
 | Fix | One pose (x, y, yaw) computed from the tags in a frame | Status accepted / pending / rejected / none |
 | IMU heading prior | Heading from the IMU used to stabilise a single-tag fix | One far tag alone cannot fix heading well |
+| Station (tag pair) | Two tags 0.60 m apart, same height and facing, at one location | Pair = second read for rule 6 (SR-019) |
+| Home pair | Tags 100–101, 0.40 m apart; dock pose 1.0 m in front | Docked only when both are seen (SR-023) |
+| Multi-tag fix | Joint fix from 2+ agreeing tags in one frame; accepted at once | Disagreeing tags are all rejected |
+| Caution | Speed request capped at 0.10 m/s near people, obstacles or with a blind camera | Advisory; MCU stops are the authority |
+| FrameScope | Context that zeroes every pixel buffer the pipeline creates | Cannot reach OpenCV/kernel buffers |

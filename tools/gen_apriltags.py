@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 """Generate printable AprilTag 36h11 sheets at true scale (SR-018).
 
-Usage: python tools/gen_apriltags.py --ids 0-19 --size-mm 160 --paper LETTER --out build/apriltags
+Usage: python tools/gen_apriltags.py --ids 0-25 --size-mm 160 --paper LETTER --out build/apriltags
+       python tools/gen_apriltags.py --ids 100-101 --label HOME --out build/apriltags
 Print at 100 % ("actual size", no fit-to-page), then MEASURE the black square and write it in the tag map (rule 8).
 """
 
@@ -29,7 +30,7 @@ def parse_ids(text: str) -> list[int]:
     return ids
 
 
-def page(tag_id: int, size_mm: float, paper: str, dpi: int) -> tuple[Image.Image, float]:
+def page(tag_id: int, size_mm: float, paper: str, dpi: int, label: str = "") -> tuple[Image.Image, float]:
     w_mm, h_mm = PAPER_MM[paper]
     cell_px = round(size_mm / CELLS / 25.4 * dpi)
     side_px = cell_px * CELLS
@@ -50,7 +51,7 @@ def page(tag_id: int, size_mm: float, paper: str, dpi: int) -> tuple[Image.Image
     small = ImageFont.load_default(size=round(dpi * 0.11))
     draw.text((pw // 2, round(MARGIN_MM / 25.4 * dpi)), "TOP", fill=0, font=small, anchor="mt")
     y = y0 + side_px + quiet_px + round(5 / 25.4 * dpi)
-    draw.text((pw // 2, y), f"ID {tag_id}", fill=0, font=font, anchor="mt")
+    draw.text((pw // 2, y), f"{label} ID {tag_id}".strip(), fill=0, font=font, anchor="mt")
     lines = [
         f"AprilTag tag36h11 - black square {real_mm:.1f} mm (nominal)",
         "Print at 100 % / actual size. Measure the black square and enter it in tag_map.json.",
@@ -69,15 +70,17 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--dpi", type=int, default=300)
     ap.add_argument("--out", type=Path, default=Path("build/apriltags"))
     ap.add_argument("--png", action="store_true", help="also write one PNG per tag")
+    ap.add_argument("--label", default="", help='text before the ID, e.g. "HOME"')
     a = ap.parse_args(argv)
     a.out.mkdir(parents=True, exist_ok=True)
     pages = []
     for tid in parse_ids(a.ids):
-        img, real = page(tid, a.size_mm, a.paper, a.dpi)
+        img, real = page(tid, a.size_mm, a.paper, a.dpi, a.label)
         pages.append(img)
         if a.png:
             img.save(a.out / f"tag36h11_{tid:03d}.png", dpi=(a.dpi, a.dpi))
-    pdf = a.out / f"apriltags_36h11_{a.size_mm:.0f}mm_{a.paper}.pdf"
+    stem = f"{a.label.lower()}_" if a.label else ""
+    pdf = a.out / f"apriltags_36h11_{stem}{a.size_mm:.0f}mm_{a.paper}.pdf"
     pages[0].save(pdf, save_all=True, append_images=pages[1:], resolution=a.dpi)
     print(f"{len(pages)} tags -> {pdf} (black square {real:.1f} mm at {a.dpi} dpi)")
     return 0

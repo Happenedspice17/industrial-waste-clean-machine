@@ -17,6 +17,8 @@ class Observation:
     id: int
     corners: Mat
     """Image corners (4 x 2 px) in OpenCV order: top-left, top-right, bottom-right, bottom-left of the tag."""
+    cam: int = 0
+    """Index of the camera that saw it (one camera now, four planned; ADR-0008)."""
 
     @property
     def side_px(self) -> float:
@@ -35,10 +37,11 @@ def tag_corners(size: float) -> Mat:
     return np.array([[-h, h, 0], [h, h, 0], [h, -h, 0], [-h, -h, 0]], dtype=np.float64)
 
 
-def detect(gray: Mat, det: cv2.aruco.ArucoDetector) -> list[Observation]:
+def detect(gray: Mat, det: cv2.aruco.ArucoDetector, cam: int = 0) -> list[Observation]:
     corners, ids, _ = det.detectMarkers(gray)
     if ids is None:
         return []
     return [
-        Observation(int(i), c.reshape(4, 2).astype(np.float64)) for c, i in zip(corners, ids.flatten(), strict=True)
+        Observation(int(i), c.reshape(4, 2).astype(np.float64), cam)
+        for c, i in zip(corners, ids.flatten(), strict=True)
     ]

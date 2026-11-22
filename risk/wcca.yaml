@@ -13,6 +13,9 @@ logic:
   - name: bumper_switch_to_mcu
     driver: {voh_min: 3.2, vol_max: 0.1}          # switch with pull-up to 3.3 V
     receiver: {vih_min: 2.31, vil_max: 0.99}      # 0.7/0.3 VDD typical CMOS - verify STM32U585 datasheet
+  - name: ultrasonic_a02yyuw_tx_to_mcu_rx        # SR-022; 2 sensors (tank, chip basket), each on its own UART
+    driver: {voh_min: 2.8, vol_max: 0.4}          # A02YYUW powered at 3.3 V (to verify datasheet; never power at 5 V
+    receiver: {vih_min: 2.31, vil_max: 0.99}      # without a level shifter: TX would then swing to 5 V)
   - name: hx711_dout_to_mcu
     driver: {voh_min: 2.9, vol_max: 0.4}          # HX711 powered at 3.3 V (verify module)
     receiver: {vih_min: 2.31, vil_max: 0.99}

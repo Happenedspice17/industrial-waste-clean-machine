@@ -23,24 +23,40 @@ from linux.vision.geometry import inv_tf, robot_in_world  # noqa: E402
 from linux.vision.localizer import Gates  # noqa: E402
 
 CFG = ROOT / "linux" / "vision" / "config"
+HOME_GAP = 0.40
+HOME_DOCK_M = 1.0
 
 
-def perimeter_layout(width: float, height: float, spacing: float, z: float, size: float) -> dict:
-    """Tags on the four walls facing inwards, one every ``spacing`` m, IDs counter-clockwise from (0, 0)."""
+def station_layout(
+    width: float, height: float, spacing: float, z: float, size: float, *, pair_gap: float = 0.60
+) -> dict:
+    """Stations of two tags ``pair_gap`` m apart on the four walls, facing inwards, one every ``spacing`` m.
+
+    IDs go counter-clockwise from the (0, 0) corner. A home station (IDs 100, 101) sits on the y = 0 wall at x = 1.5 m
+    with the dock 1.0 m in front of it, robot facing the tags: both home tags stay in a 60 deg view while docked.
+    """
     tags = []
-    walls = [
-        (width, 0.0, 90.0, "x"),
-        (height, width, 180.0, "y"),
-        (width, height, 270.0, "-x"),
-        (height, 0.0, 0.0, "-y"),
-    ]
-    for length, fixed, yaw, axis in walls:
+    walls = [(width, 90.0, "x"), (height, 180.0, "y"), (width, 270.0, "-x"), (height, 0.0, "-y")]
+    for length, yaw, axis in walls:
         n = max(1, round(length / spacing))
         for i in range(n):
-            s = (i + 0.5) * length / n
-            x, y = {"x": (s, 0.0), "y": (fixed, s), "-x": (width - s, height), "-y": (0.0, height - s)}[axis]
-            tags.append({"id": len(tags), "x": round(x, 3), "y": round(y, 3), "z": z, "yaw_deg": yaw})
-    return {"family": "tag36h11", "tag_size_m": size, "source": "example layout (simulation)", "tags": tags}
+            centre = (i + 0.5) * length / n
+            if axis == "x" and abs(centre - 1.5) < spacing / 2:
+                continue
+            for off in (-pair_gap / 2, pair_gap / 2):
+                s = centre + off
+                x, y = {"x": (s, 0.0), "y": (width, s), "-x": (width - s, height), "-y": (0.0, height - s)}[axis]
+                tags.append({"id": len(tags), "x": round(x, 3), "y": round(y, 3), "z": z, "yaw_deg": yaw})
+    for i, off in enumerate((-HOME_GAP / 2, HOME_GAP / 2)):
+        tags.append({"id": 100 + i, "x": round(1.5 + off, 3), "y": 0.0, "z": z, "yaw_deg": 90.0})
+    home = {"tags": [100, 101], "dock": {"x": 1.5, "y": HOME_DOCK_M, "yaw_deg": 270.0}, "approach_m": 1.0}
+    return {
+        "family": "tag36h11",
+        "tag_size_m": size,
+        "source": "example layout (simulation)",
+        "tags": tags,
+        "home": home,
+    }
 
 
 def visible(tag: Tag, cam: Camera, robot: np.ndarray, g: Gates) -> bool:
@@ -112,6 +128,6 @@ def main() -> int:
 
 if __name__ == "__main__":
     if len(sys.argv) > 1 and sys.argv[1] == "--layout":
-        print(json.dumps(perimeter_layout(12.0, 8.0, 2.0, 0.9, 0.16), indent=2))
+        print(json.dumps(station_layout(12.0, 8.0, 3.0, 0.9, 0.16), indent=2))
         sys.exit(0)
     sys.exit(main())

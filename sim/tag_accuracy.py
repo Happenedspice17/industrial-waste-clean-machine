@@ -45,12 +45,43 @@ def p95_error(dist: float, noise_px: float, size: float = 0.16, n: int = 200, se
     return float(pos), float(ang)
 
 
+def p95_pair_error(
+    dist: float, noise_px: float, *, spacing: float = 0.40, size: float = 0.16, n: int = 200, seed: int = 1
+) -> tuple[float, float]:
+    """Same as ``p95_error`` for a station of two tags ``spacing`` m apart; no IMU prior (odometry 1 m off)."""
+    rng = np.random.default_rng(seed)
+    yaw_t = math.radians(270)
+    tags = {
+        0: Tag(0, size, tag_in_world(6.0 - spacing / 2, 8.0, 0.9, yaw_t)),
+        1: Tag(1, size, tag_in_world(6.0 + spacing / 2, 8.0, 0.9, yaw_t)),
+    }
+    loc = Localizer(tags, CAM, Gates(max_range_m=99.0))
+    errs = []
+    for _ in range(n):
+        yaw = math.radians(90 + rng.uniform(-20, 20))
+        x, y = 6.0 + rng.uniform(-1, 1), 8.0 - dist
+        robot = robot_in_world(x, y, yaw)
+        obs = [Observation(i, corners(robot, t, CAM) + rng.normal(0.0, noise_px, (4, 2))) for i, t in tags.items()]
+        fix = loc.update(obs, (x + 1.0, y, yaw + math.radians(5)))
+        if fix.pose and fix.status == "accepted":
+            errs.append((math.hypot(fix.pose[0] - x, fix.pose[1] - y), abs(math.degrees(wrap(fix.pose[2] - yaw)))))
+    if not errs:
+        return math.inf, math.inf
+    pos, ang = np.percentile(np.array(errs), 95, axis=0)
+    return float(pos), float(ang)
+
+
 def main() -> int:
     print("range m | noise px | p95 position m | p95 heading deg   (simulation, 0.16 m tag, 640x480 60 deg HFOV)")
     for d in (1.5, 2.5, 3.5, 4.5, 5.5):
         for noise in (0.3, 0.7):
             pos, ang = p95_error(d, noise)
             print(f"{d:7.1f} | {noise:8.1f} | {pos:14.3f} | {ang:15.2f}")
+    print("\nTag pair (station), no IMU prior: range m | noise px | spacing m | p95 position m | p95 heading deg")
+    for d in (1.5, 2.5, 3.5):
+        for spacing in (0.25, 0.40, 0.60):
+            pos, ang = p95_pair_error(d, 0.5, spacing=spacing)
+            print(f"{d:7.1f} | {0.5:8.1f} | {spacing:9.2f} | {pos:14.3f} | {ang:15.2f}")
     return 0
 
 

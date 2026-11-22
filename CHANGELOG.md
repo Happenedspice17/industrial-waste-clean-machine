@@ -6,6 +6,18 @@ changed, validation and the requirement/risk IDs touched. Stage narratives live 
 
 ## Unreleased
 
+### #TBD · 2026-11-22 · feat · Tag pairs, privacy-first person caution, ultrasonic level, home docking, 20-map simulation
+- ADR-0008 (tag stations of two, 2+ agreeing tags trusted at once, home pair, multi-camera ready), ADR-0009 (person
+  detection keeps no images), ADR-0010 (ultrasonic container level). New SR-019–SR-023.
+- Linux: multi-camera joint localizer with agreement gate and caution; single-tag jumps need a different tag;
+  `people.py`, `pipeline.py`, `privacy.py` (buffers zeroed, fail-closed hardening, coarse 0600 logs);
+  `nav/caution.py`, `nav/home.py`. Firmware: `level.{h,cpp}` (A02YYUW parser + filter) with host test.
+- Tags: 26 station sheets + HOME 100–101 (US letter, 160 mm). `sim/plant_sim.py` over 20 maps
+  (`docs/sim/plant-sim-20-maps.md`). TP-V03, TP-L01, TP-N01; TP-V02 updated. DFMEA F-013–F-017, SCCAF SC-009/010,
+  WCCA ultrasonic UART, TM-V01 rev 2 + privacy review (cybersecurity agent). Traceability check flags undefined SR IDs.
+- OpenCV pinned < 5 (HOG removed in 5.x).
+- Validation: `python tools/check_all.py` passes; all results are simulation. Refs: SR-017–SR-023.
+
 ### #TBD · 2026-11-21 · feat · Single-camera AprilTag localization
 - ADR-0007 (proposed): one camera, AprilTag 36h11 re-anchors the pose; residue and container checks (SR-015, SR-016)
   deferred. New SR-018; SR-017 covers TP-V02.

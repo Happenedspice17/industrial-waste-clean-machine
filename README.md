@@ -272,10 +272,15 @@ BNO055 in IMU mode: on-chip fusion, and no compass that steel machines would foo
 
 ### 6. Vision assists, never drives — [ADR-0006](docs/adr/0006-vision-role.md)
 **Lesson from the maze robot:** a glossy floor reflected the light and the camera saw walls that did not exist.
-Vision now uses **one camera** to read **AprilTags** on the walls and re-anchor the robot pose
-([ADR-0007](docs/adr/0007-single-camera-apriltag-localization.md), [printable tags](docs/apriltags/)). It never acts
-as an obstacle or safety sensor and stays log-only until protocol
-[TP-V02](docs/test-reports/TP-V02-apriltag-localization.md) passes on the real robot.
+Vision uses **one camera** (four planned) to read **AprilTag stations of two tags** and re-anchor the robot pose;
+two agreeing tags are trusted at once, and a **home tag pair** guides docking after each round
+([ADR-0007](docs/adr/0007-single-camera-apriltag-localization.md), [ADR-0008](docs/adr/0008-tag-pairs-multi-tag-trust-home.md),
+[printable tags](docs/apriltags/)). Seeing a person only **slows the robot**, and **no image is kept**
+([ADR-0009](docs/adr/0009-privacy-first-person-detection.md)). Container level comes from **ultrasonic sensors**
+([ADR-0010](docs/adr/0010-ultrasonic-container-level.md)). It never acts as an obstacle or safety sensor and stays
+log-only until [TP-V02](docs/test-reports/TP-V02-apriltag-localization.md),
+[TP-V03](docs/test-reports/TP-V03-person-caution-privacy.md) and [TP-N01](docs/test-reports/TP-N01-home-docking.md)
+pass on the real robot. Whole-mission simulation over 20 maps: [results](docs/sim/plant-sim-20-maps.md).
 
 ---
 
@@ -302,7 +307,8 @@ as an obstacle or safety sensor and stays log-only until protocol
 | **Vacuum lifts steel chips** | ⏳ **Pending — design gate** | **Suction rig, weeks 1–3** |
 | M1 recovery / M2 purity | ⏳ Pending | Weigh tank and basket, 1 m² patch |
 | Safety (e-stop, heartbeat, floats, force) | ⏳ Pending | Tests linked to SC-002, SC-003, SC-006, SC-007 |
-| Vision (AprilTag pose) | ⏳ Log-only · simulation only | TP-V02 |
+| Vision (AprilTag pose, caution, docking) | ⏳ Log-only · simulation only (20 maps) | TP-V02, TP-V03, TP-N01 |
+| Ultrasonic level | ⏳ Host-tested filter | TP-L01 |
 
 ---
 

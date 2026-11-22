@@ -11,6 +11,7 @@ firmware/mcu/
   motion.*          segment executor: runs one order and stops by itself
   tools.*           brush / vacuum / compactor sequencing with interlocks
   sensors.*         floats, MPX5010DP, HX711, bumpers, battery — min-of-3 + 2-read confirm + capped votes
+  level.*           ultrasonic A02YYUW parser + level filter (SR-022, ADR-0010) — implemented, host-tested
   bridge.*          RPC protocol (versioned), heartbeat, T_stale
   main.*            fixed-period loop, watchdog feed only when all checks pass
 ```

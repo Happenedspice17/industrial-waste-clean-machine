@@ -173,7 +173,7 @@ system:
     module: M6
     priority: should
     text: The vision function shall classify the fill level of the liquid tank and of the chip basket as low, half or full, agreeing with the float switches in at least 95 % of logged checks.
-    rationale: Container-level cross-check (ADR-0006 option D). Deferred by ADR-0007 (one camera). Floats stay the authority; a disagreement only raises a "check floats" warning.
+    rationale: Container-level cross-check (ADR-0006 option D). Deferred by ADR-0007 (one camera); container level is measured by ultrasonic sensors instead (SR-022, ADR-0010). Floats stay the authority; a disagreement only raises a "check floats" warning.
     verification: Test
     acceptance: ">= 95 % agreement with float states over >= 100 checks per container (fill and drain cycles); 0 stops or tool commands issued by vision"
     status: draft
@@ -196,5 +196,55 @@ system:
     rationale: Absolute re-anchor with a unique ID (ADR-0007); supports encoders + IMU + LiDAR. Never an obstacle or safety sensor; log-only until TP-V02 passes (SR-017).
     verification: Test
     acceptance: ">= 95 % of accepted fixes within the band limits (0.10 m / 3 deg up to 2.5 m; 0.25 m / 5 deg up to 4.0 m) of the surveyed pose over >= 200 fixes at >= 20 surveyed poses on the real floor; 0 accepted fixes from unmapped or moved tags in the spoof/move cases"
+    status: draft
+    verified_by: []
+  - id: SR-019
+    parent: SR-018
+    module: M6
+    priority: should
+    text: When two or more mapped AprilTags seen in the same frame give poses that agree within 0.25 m and 8 deg, the localization shall accept their joint fix in that frame and otherwise reject all of them.
+    rationale: Owner request (2026-11-22) to trust the camera when it sees 2+ tags; a tag pair per station gives heading without the IMU prior (ADR-0008). Two agreeing tags are the cross-check that rule 6 asks for. Still log-only until TP-V02 passes (SR-017).
+    verification: Test
+    acceptance: "TP-V02 L1/L3: >= 95 % of multi-tag fixes within SR-018 limits; 0 accepted fixes when one tag of a pair is moved 0.5 m; simulation sim/plant_sim.py: 0 bad fixes from moved tags over 20 maps"
+    status: draft
+    verified_by: []
+  - id: SR-020
+    parent: R7
+    module: M6
+    priority: should
+    text: When a camera reports a person within 3.0 m, the LiDAR reports an obstacle within 1.5 m, or the camera gives no usable frame, the Linux application shall limit its speed request to 0.10 m/s until 2 s after the last trigger.
+    rationale: Owner request to be more careful near people and obstacles (ADR-0009). Advisory only; it never replaces the MCU stops (bumpers, LiDAR stop zone, watchdog) and the camera is not a safety sensor (ISO 3691-4, ADR-0006).
+    verification: Test
+    acceptance: "TP-V03: speed request <= 0.10 m/s within 0.5 s of every trigger in >= 95 % of >= 100 person passes; never above the requested speed"
+    status: draft
+    verified_by: []
+  - id: SR-021
+    parent: R6
+    module: M6
+    priority: must
+    text: The vision software shall keep no camera image beyond the processing of one frame, with no image files, no frame streams, every buffer it creates zeroed before the frame result is returned, and cameras opened only after core dumps are disabled.
+    rationale: Owner request to eliminate or censor processing of people and images and not keep them in memory (ADR-0009, TM-V01, privacy review 2026-11-22). Kernel and OpenCV internal buffers are outside Python's reach; the robot image must disable or encrypt swap.
+    verification: Inspection
+    acceptance: "Unit tests (test_privacy.py) pass; TP-V03 inspection on the robot image: 0 image files after a 1 h run, no listening frame server, swap off or encrypted, process non-dumpable"
+    status: draft
+    verified_by: []
+  - id: SR-022
+    parent: R9
+    module: M5
+    priority: must
+    text: The storage module shall measure the fill level of the liquid tank and of the chip basket with one ultrasonic sensor each, within 10 % of the usable height, and report low, half, full or fault to Linux at least every 200 ms.
+    rationale: Owner choice (2026-11-22) of ultrasonic level for planning when to return home (ADR-0010). Float shut-off at the vacuum port stays the hardware overfill protection (rule 1).
+    verification: Test
+    acceptance: "TP-L01: level error <= 10 % of usable height at 5 fill points per container, 3 runs each, with reference oil and chips; fault reported within 0.5 s when a sensor is unplugged"
+    status: draft
+    verified_by: []
+  - id: SR-023
+    parent: R8
+    module: M7
+    priority: should
+    text: After each suction round, or when a container level reads full, the robot shall return to the home station and stop within 0.05 m and 3 deg of the dock pose using the two home AprilTags.
+    rationale: Owner request for two home tags (ADR-0008); docking only on a fresh fix that sees both home tags.
+    verification: Test
+    acceptance: "TP-N01: >= 19 of 20 dockings on the real floor within limits from 5 start poses; a failed docking ends stopped and reported, never forced"
     status: draft
     verified_by: []

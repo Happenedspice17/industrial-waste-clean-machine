@@ -19,3 +19,4 @@ logs/
 *.log
 # generated docs
 docs/generated/
+sim/out/

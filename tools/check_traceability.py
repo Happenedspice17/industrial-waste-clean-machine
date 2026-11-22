@@ -81,10 +81,27 @@ def check(data: dict, root: Path = ROOT) -> tuple[list[str], list[str]]:
     return errors, warnings
 
 
+def undefined_citations(known: set[str], root: Path = ROOT) -> list[str]:
+    """SR IDs cited in code, docs or risk files that requirements.yaml does not define (privacy review P-01)."""
+    pattern = re.compile(r"\bSR-\d{3}\b")
+    errors = []
+    for folder in ("linux", "firmware", "sim", "tools", "tests", "docs", "risk"):
+        base = root / folder
+        if not base.exists():
+            continue
+        for f in sorted(base.rglob("*")):
+            if f.is_file() and f.suffix in {".py", ".c", ".cpp", ".h", ".md", ".csv", ".yaml"}:
+                text = f.read_text(encoding="utf-8", errors="ignore")
+                for rid in sorted(set(pattern.findall(text)) - known):
+                    errors.append(f"{rid}: cited in {f.relative_to(root)} but not defined")
+    return errors
+
+
 def main() -> int:
     path = ROOT / "requirements" / "requirements.yaml"
     data = yaml.safe_load(path.read_text(encoding="utf-8"))
     errors, warnings = check(data)
+    errors += undefined_citations({str(r.get("id")) for r in data.get("system", [])})
     for w in warnings:
         print(f"WARN  {w}")
     for e in errors:
