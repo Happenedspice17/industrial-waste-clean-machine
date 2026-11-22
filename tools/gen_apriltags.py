@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Generate printable AprilTag 36h11 sheets at true scale (SR-018).
 
-Usage: python tools/gen_apriltags.py --ids 0-19 --size-mm 220 --paper A3 --out build/apriltags
+Usage: python tools/gen_apriltags.py --ids 0-19 --size-mm 160 --paper LETTER --out build/apriltags
 Print at 100 % ("actual size", no fit-to-page), then MEASURE the black square and write it in the tag map (rule 8).
 """
 
@@ -64,8 +64,8 @@ def page(tag_id: int, size_mm: float, paper: str, dpi: int) -> tuple[Image.Image
 def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     ap.add_argument("--ids", default="0-19")
-    ap.add_argument("--size-mm", type=float, default=220.0)
-    ap.add_argument("--paper", default="A3", choices=sorted(PAPER_MM))
+    ap.add_argument("--size-mm", type=float, default=160.0)
+    ap.add_argument("--paper", default="LETTER", choices=sorted(PAPER_MM))
     ap.add_argument("--dpi", type=int, default=300)
     ap.add_argument("--out", type=Path, default=Path("build/apriltags"))
     ap.add_argument("--png", action="store_true", help="also write one PNG per tag")

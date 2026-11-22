@@ -23,7 +23,7 @@ correction steers indirectly (the route follows the corrected pose). Mitigations
 
 ## Decision
 1. One USB camera on the Linux side, facing forward, ~0.45 m high, tilted up ~15° (to measure on the real mount).
-2. AprilTag family **tag36h11**, printed at true scale by `tools/gen_apriltags.py` (default 0.22 m black square on A3),
+2. AprilTag family **tag36h11**, printed at true scale by `tools/gen_apriltags.py` (default 0.16 m black square on US letter, the largest that fits with its white border),
    placed on walls, columns and machine sides at a measured height, positions in a tag map JSON
    (`linux/vision/config/tag_map.example.json`; the real one is measured on site, rule 8).
 3. Pose solver: the robot is on the floor and the mount is known, so only (x, y, yaw) is solved from the tag corners
@@ -42,10 +42,10 @@ correction steers indirectly (the route follows the corrected pose). Mitigations
 ## Consequences
 - New SR-018 and protocol TP-V02; SR-015/SR-016 deferred; DFMEA F-010–F-012 and SCCAF SC-008; TM-V01.
 - Lower USB load than two cameras (WCCA unchanged: same single camera as the M6 BOM).
-- Example layout (12 × 8 m cell, 20 tags every 2 m on the walls, 0.9 m high) gives a usable tag in 39 % of poses and
+- Example layout (12 × 8 m cell, 20 tags every 2 m on the walls, 0.9 m high) gives a usable tag in 40 % of poses and
   a longest stretch of ≈9 m without a fix along the coverage route (simulation, no occlusion). Odometry + IMU + LiDAR
   carry the pose between fixes; add tags on interior columns/machines if TP-V02 shows the drift is too large.
-- Error grows with range: p95 position ≈ 0.07 m at 2.5 m and ≈ 0.16 m at 3.5 m with 0.3 px corner noise (simulation,
+- Error grows with range: p95 position ≈ 0.09 m at 2.5 m and ≈ 0.17 m at 3.5 m (160 mm tag) with 0.3 px corner noise (simulation,
   `sim/tag_accuracy.py`). Real corner noise is unknown until TP-V02.
 - Tags must stay clean and in place; a moved tag gives a confident wrong fix unless the gates catch it (F-010).
 

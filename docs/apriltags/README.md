@@ -1,7 +1,8 @@
 # AprilTags for localization (ADR-0007, SR-018)
 
-`apriltags_36h11_220mm_A3.pdf`: IDs 0–19, family tag36h11, black square 220 mm nominal, one per A3 page.
-Regenerate or make other sizes: `python tools/gen_apriltags.py --ids 0-19 --size-mm 220 --paper A3 --out docs/apriltags`
+`apriltags_36h11_160mm_LETTER.pdf`: IDs 0–19, family tag36h11, black square 160 mm nominal, one per letter page
+(216 × 279 mm).
+Regenerate or make other sizes: `python tools/gen_apriltags.py --ids 0-19 --size-mm 160 --paper LETTER --out docs/apriltags`
 (A4: `--size-mm 150 --paper A4`; add `--png` for one image per tag).
 
 ## Print and mount
@@ -15,5 +16,5 @@ Regenerate or make other sizes: `python tools/gen_apriltags.py --ids 0-19 --size
 6. Survey each tag (x, y, z, facing direction in degrees: 0 = faces +x, 90 = faces +y) from two cell corners; keep
    every ID unique. Re-survey after any tag is moved.
 
-Expected accuracy (simulation, `sim/tag_accuracy.py`, 0.3 px corner noise): p95 ≈ 0.02 m at 1.5 m, 0.07 m at 2.5 m,
-0.16 m at 3.5 m. Real values come from TP-V02.
+Expected accuracy (simulation, `sim/tag_accuracy.py`, 0.3 px corner noise): p95 ≈ 0.03 m at 1.5 m, 0.09 m at 2.5 m,
+0.17 m at 3.5 m (160 mm tag). Real values come from TP-V02.

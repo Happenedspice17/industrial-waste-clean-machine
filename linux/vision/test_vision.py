@@ -19,7 +19,7 @@ from tools import gen_apriltags
 
 CFG = Path(__file__).parent / "config"
 CAM = load_camera(CFG / "camera.example.json")
-SIZE = 0.22
+SIZE = 0.16
 TAGS = {7: Tag(7, SIZE, tag_in_world(6.0, 8.0, 0.9, math.radians(270)))}
 
 
@@ -97,7 +97,7 @@ def test_gate_rejects_corners_that_do_not_fit_the_floor() -> None:
 
 
 def test_pixel_noise_monte_carlo() -> None:
-    """Simulation (sim/tag_accuracy.py): one 0.22 m tag at 2.5 m, 0.3 px noise, 1.5 deg IMU prior error."""
+    """Simulation (sim/tag_accuracy.py): one 0.16 m tag at 2.5 m, 0.3 px noise, 1.5 deg IMU prior error."""
     pos, ang = tag_accuracy.p95_error(2.5, 0.3, n=100)
     assert pos < 0.10
     assert ang < 2.5
@@ -158,7 +158,7 @@ def test_tag_map_rejects_duplicates(tmp_path: Path) -> None:
 def test_example_tag_map_loads() -> None:
     tags = load_tag_map(CFG / "tag_map.example.json")
     assert len(tags) == 20
-    assert all(t.size == pytest.approx(0.22) for t in tags.values())
+    assert all(t.size == pytest.approx(0.16) for t in tags.values())
 
 
 def test_generated_sheet_is_true_scale_and_detectable() -> None:

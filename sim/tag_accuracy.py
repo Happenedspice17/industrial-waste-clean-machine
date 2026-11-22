@@ -27,7 +27,7 @@ def corners(robot: np.ndarray, tag: Tag, cam: Camera) -> np.ndarray:
     return (cam.matrix @ (pts / pts[:, 2:3]).T).T[:, :2]
 
 
-def p95_error(dist: float, noise_px: float, size: float = 0.22, n: int = 200, seed: int = 1) -> tuple[float, float]:
+def p95_error(dist: float, noise_px: float, size: float = 0.16, n: int = 200, seed: int = 1) -> tuple[float, float]:
     """95th-percentile (position m, heading deg) error for one tag ``dist`` m ahead, +/-20 deg heading, +/-1 m side."""
     rng = np.random.default_rng(seed)
     tag = Tag(0, size, tag_in_world(6.0, 8.0, 0.9, math.radians(270)))
@@ -46,7 +46,7 @@ def p95_error(dist: float, noise_px: float, size: float = 0.22, n: int = 200, se
 
 
 def main() -> int:
-    print("range m | noise px | p95 position m | p95 heading deg   (simulation, 0.22 m tag, 640x480 60 deg HFOV)")
+    print("range m | noise px | p95 position m | p95 heading deg   (simulation, 0.16 m tag, 640x480 60 deg HFOV)")
     for d in (1.5, 2.5, 3.5, 4.5, 5.5):
         for noise in (0.3, 0.7):
             pos, ang = p95_error(d, noise)

@@ -11,7 +11,7 @@ changed, validation and the requirement/risk IDs touched. Stage narratives live 
   deferred. New SR-018; SR-017 covers TP-V02.
 - `linux/vision/`: detector, 3-DOF floor-pose localizer (IMU heading prior, gates, 2-read confirmation, log-only),
   config loader, JSON-lines logger that never saves frames. `tools/gen_apriltags.py` + `docs/apriltags/` (IDs 0–19,
-  220 mm, A3). `sim/tag_visibility.py`, `sim/tag_accuracy.py`. Optional dependency group `vision` (OpenCV, NumPy).
+  160 mm, US letter). `sim/tag_visibility.py`, `sim/tag_accuracy.py`. Optional dependency group `vision` (OpenCV, NumPy).
 - TP-V02, DFMEA F-010–F-012, SCCAF SC-008, threat model TM-V01, architecture, glossary, README, engineering log.
 - Validation: `python tools/check_all.py` passes; results are simulation only. Refs: SR-015, SR-016, SR-017, SR-018.
 

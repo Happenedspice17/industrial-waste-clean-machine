@@ -13,7 +13,7 @@ is switched on only after this protocol passes and its report is committed.
 | L4 Logging | Every frame logged (ok/fail, IDs, corners, status, reasons); no image files written |
 
 ## Setup
-1. Print tags with `python tools/gen_apriltags.py --ids 0-19 --size-mm 220 --paper A3 --out build/apriltags` at
+1. Print tags with `python tools/gen_apriltags.py --ids 0-19 --size-mm 160 --paper LETTER --out build/apriltags` at
    100 % (no "fit to page"). Measure each black square with a steel rule; reject a sheet > 1 mm off; write the measured
    size in the tag map.
 2. Glue on rigid, flat, matte board; mount vertical, "TOP" up, facing the work area. Survey each tag centre (x, y, z)

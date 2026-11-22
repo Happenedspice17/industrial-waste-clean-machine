@@ -112,6 +112,6 @@ def main() -> int:
 
 if __name__ == "__main__":
     if len(sys.argv) > 1 and sys.argv[1] == "--layout":
-        print(json.dumps(perimeter_layout(12.0, 8.0, 2.0, 0.9, 0.22), indent=2))
+        print(json.dumps(perimeter_layout(12.0, 8.0, 2.0, 0.9, 0.16), indent=2))
         sys.exit(0)
     sys.exit(main())
