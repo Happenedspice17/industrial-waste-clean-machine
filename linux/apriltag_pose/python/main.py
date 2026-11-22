@@ -41,8 +41,8 @@ MAX_DIST = 4.0
 SAME_M, SAME_DEG = 0.15, 8.0
 PRIOR_TTL = 1.0
 
-CAM_X, CAM_Y, CAM_Z, CAM_YAW = 0.0, 0.0, 0.51, 0.0
-CAM_PITCH = 6.5  # deg, + = camera looks up
+CAM_X, CAM_Y, CAM_Z, CAM_YAW = 0.0, 0.0, 0.40, 0.0  # deduced from run.jsonl fit, measure it
+CAM_PITCH = 0.5  # deg, + = camera looks up (deduced, measure it)
 # per-tag camera positions further apart than this: the TAGS map is wrong
 TAGS_AGREE_M = 0.5
 # bench testing: when the strict pose fails, show a rough pose from the closest tag
