@@ -7,7 +7,7 @@ changed, validation and the requirement/risk IDs touched. Stage narratives live 
 ## Unreleased
 
 ### #14 · 2026-11-22 · docs · Lighter final presentation v2 and updated READMEs
-- Presentation: GitHub link on the cover and the closing slide.
+- Presentation: GitHub link and QR code on the cover and the closing slide (`docs/img/repo_qr.png`).
 - README refreshed with current facts: 21 SR, 7 ADRs, threat model rev 1, AprilTag bench app (ADR-0007, TP-V02),
   IEEE 7000 EVRs, links to the 10-slide presentation. Folder READMEs updated (`requirements/`, `linux/`, `sim/`,
   `firmware/mcu/`, `cad/`, `docs/test-reports/`, `docs/engineering-log/` index, `docs/semester-1-deliverables/`);
