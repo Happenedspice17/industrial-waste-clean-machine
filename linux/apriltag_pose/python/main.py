@@ -15,17 +15,22 @@ from arduino.app_utils import App, Bridge
 import logbook
 import web
 
-TARGET_FPS = 60
+TARGET_FPS = 120
 # camera modes tried at startup (w, h, fps, fourcc); the fastest measured one wins
 MODES = [
+    (320, 240, 120, "MJPG"),
+    (640, 480, 120, "MJPG"),
     (320, 240, 60, "MJPG"),
     (320, 240, 60, "YUYV"),
     (640, 480, 60, "MJPG"),
     (320, 240, 30, "YUYV"),
     (640, 480, 30, "MJPG"),
 ]
-# manual exposure in V4L2 units (100 us); must stay < 1/fps (166 at 60 fps). None = auto
-EXPOSURE = 100
+# manual exposure in V4L2 units (100 us), capped to 80 % of the frame time of each mode
+# (8.3 ms frame at 120 fps -> 66). None = auto exposure
+EXPOSURE_MAX = 100
+LOG_HZ = 30  # frame records per second in run.jsonl (reason changes are always logged)
+NOTIFY_HZ = 50  # pose messages per second to the MCU over the Bridge
 CAL_W, CAL_H = 640, 480
 K_CAL = np.array([[600.0, 0, 320.0], [0, 600.0, 240.0], [0, 0, 1]])
 K = K_CAL.copy()
@@ -97,6 +102,8 @@ last_pose = None
 last_t = 0.0
 prev_t = 0.0
 fps = 0.0
+log_t = notify_t = 0.0
+last_reason = None
 
 
 def fourcc(c):
@@ -114,9 +121,9 @@ def configure(dev, w, h, f, cc):
     c.set(cv2.CAP_PROP_FRAME_HEIGHT, h)
     c.set(cv2.CAP_PROP_FPS, f)
     c.set(cv2.CAP_PROP_BUFFERSIZE, 1)
-    if EXPOSURE is not None:
+    if EXPOSURE_MAX is not None:
         c.set(cv2.CAP_PROP_AUTO_EXPOSURE, 1)
-        c.set(cv2.CAP_PROP_EXPOSURE, EXPOSURE)
+        c.set(cv2.CAP_PROP_EXPOSURE, min(EXPOSURE_MAX, int(0.8e4 / f)))
     return c
 
 
@@ -412,7 +419,7 @@ def summary(t, perf):
 
 
 def loop():
-    global grab, seq, last_pose, last_t, prev_t, fps
+    global grab, seq, last_pose, last_t, prev_t, fps, log_t, notify_t, last_reason
     if grab is None:
         cap = open_cam()
         if cap is None:
@@ -476,10 +483,19 @@ def loop():
         "prior": prior,
         **diag,
     }
+    do_log = t - log_t >= 1 / LOG_HZ or diag["reason"] != last_reason
+    do_notify = t - notify_t >= 1 / NOTIFY_HZ
+    last_reason = diag["reason"]
+    if do_log:
+        log_t = t
+    if do_notify:
+        notify_t = t
     if est is None:
-        logbook.write("frame", ok=False, **rec)
+        if do_log:
+            logbook.write("frame", ok=False, **rec)
         web.publish(frame, {"ok": False, **info})
-        Bridge.notify("pose", 0.0, 0.0, 0.0, 0)
+        if do_notify:
+            Bridge.notify("pose", 0.0, 0.0, 0.0, 0)
         summary(t, perf)
         return
     x, y, yaw, used, err = est
@@ -491,9 +507,11 @@ def loop():
         "tags": used,
         "err": err,
     }
-    logbook.write("frame", ok=True, pose=pose, **rec)
+    if do_log:
+        logbook.write("frame", ok=True, pose=pose, **rec)
     web.publish(frame, {"ok": True, **info, **pose})
-    Bridge.notify("pose", float(x), float(y), float(yaw), len(used))
+    if do_notify:
+        Bridge.notify("pose", float(x), float(y), float(yaw), len(used))
     summary(t, perf + f" x={x:.2f} y={y:.2f} yaw={math.degrees(yaw):.0f}")
 
 
@@ -502,7 +520,9 @@ logbook.write(
     TARGET_FPS=TARGET_FPS,
     MODES=MODES,
     CAM_PITCH=CAM_PITCH,
-    EXPOSURE=EXPOSURE,
+    EXPOSURE_MAX=EXPOSURE_MAX,
+    LOG_HZ=LOG_HZ,
+    NOTIFY_HZ=NOTIFY_HZ,
     K_CAL=K_CAL,
     D=D,
     TAG_SIZE=TAG_SIZE,
