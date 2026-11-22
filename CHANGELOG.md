@@ -6,6 +6,12 @@ changed, validation and the requirement/risk IDs touched. Stage narratives live 
 
 ## Unreleased
 
+### #14 · 2026-11-22 · docs · Lighter final presentation v2
+- `Final_Presentation_Waste_Robot_v2.pptx` simplified as a reference deck: short phrases per slide; goal tree and
+  black/white boxes redrawn as simple diagrams; detail moved to speaker notes. Same 10 slides and IEEE 7000 EVRs.
+- Validation: pptx schema check passes, visual QA of every slide; `python tools/check_all.py` passes.
+  Refs: R1–R10 (presentation only).
+
 ### #13 · 2026-11-22 · docs · Final presentation v2 with IEEE 7000 EVRs
 - New `docs/semester-1-deliverables/Final_Presentation_Waste_Robot_v2.pptx`: 19 → 10 slides (≤ 10 min) following
   the proposal structure, with speaker notes; requirements slide adds EVR-01–EVR-03 (IEEE 7000-2021).
