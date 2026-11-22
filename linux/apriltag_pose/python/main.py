@@ -45,6 +45,9 @@ CAM_X, CAM_Y, CAM_Z, CAM_YAW = 0.0, 0.0, 0.51, 0.0
 CAM_PITCH = 6.5  # deg, + = camera looks up
 # per-tag camera positions further apart than this: the TAGS map is wrong
 TAGS_AGREE_M = 0.5
+# bench testing: when the strict pose fails, show a rough pose from the closest tag
+# alone (page and log only, marked "test"; never sent to the MCU)
+TEST_MODE = True
 
 # id: (x, y, z, yaw_deg) of tag center; yaw = direction the tag faces (into the room)
 TAGS = {
@@ -53,9 +56,7 @@ TAGS = {
 }
 
 _h = TAG_SIZE / 2
-OBJ = np.array(
-    [[-_h, _h, 0], [_h, _h, 0], [_h, -_h, 0], [-_h, -_h, 0]], dtype=np.float32
-)
+OBJ = np.array([[-_h, _h, 0], [_h, _h, 0], [_h, -_h, 0], [-_h, -_h, 0]], dtype=np.float32)
 
 
 def tf(R, t):
@@ -76,9 +77,7 @@ def robot_cam():
     c, s = math.cos(CAM_YAW), math.sin(CAM_YAW)
     Rz = np.array([[c, -s, 0], [s, c, 0], [0, 0, 1]])
     p = math.radians(-CAM_PITCH)
-    Ry = np.array(
-        [[math.cos(p), 0, math.sin(p)], [0, 1, 0], [-math.sin(p), 0, math.cos(p)]]
-    )
+    Ry = np.array([[math.cos(p), 0, math.sin(p)], [0, 1, 0], [-math.sin(p), 0, math.cos(p)]])
     base = np.array([[0, 0, 1], [-1, 0, 0], [0, -1, 0]], dtype=float)
     return tf(Rz @ Ry @ base, [CAM_X, CAM_Y, CAM_Z])
 
@@ -91,9 +90,7 @@ R_RC, t_RC = T_RC[:3, :3], T_RC[:3, 3]
 
 params = cv2.aruco.DetectorParameters()
 params.cornerRefinementMethod = cv2.aruco.CORNER_REFINE_SUBPIX
-det = cv2.aruco.ArucoDetector(
-    cv2.aruco.getPredefinedDictionary(cv2.aruco.DICT_APRILTAG_36h11), params
-)
+det = cv2.aruco.ArucoDetector(cv2.aruco.getPredefinedDictionary(cv2.aruco.DICT_APRILTAG_36h11), params)
 
 grab = None
 seq = 0
@@ -107,9 +104,7 @@ last_reason = None
 
 
 def fourcc(c):
-    return (
-        int(c.get(cv2.CAP_PROP_FOURCC)).to_bytes(4, "little").decode(errors="replace")
-    )
+    return int(c.get(cv2.CAP_PROP_FOURCC)).to_bytes(4, "little").decode(errors="replace")
 
 
 def configure(dev, w, h, f, cc):
@@ -165,9 +160,7 @@ def open_cam():
         if not good:
             print(f"{d}: no frames")
             continue
-        best = max(
-            good, key=lambda r: (min(r["measured_fps"], TARGET_FPS), r["got"][0])
-        )
+        best = max(good, key=lambda r: (min(r["measured_fps"], TARGET_FPS), r["got"][0]))
         c = configure(d, *best["req"])
         print(f"camera {d} -> {best}")
         logbook.write("camera", dev=d, **best)
@@ -282,9 +275,7 @@ def refine(pose, pts_w, obs, iters=10):
 
 def seeds(tag_id, corners):
     # both IPPE solutions of each tag (free 6-DOF), flattened to the floor plane as seeds
-    n, rvecs, tvecs, errs = cv2.solvePnPGeneric(
-        OBJ, corners, K, D, flags=cv2.SOLVEPNP_IPPE_SQUARE
-    )
+    n, rvecs, tvecs, errs = cv2.solvePnPGeneric(OBJ, corners, K, D, flags=cv2.SOLVEPNP_IPPE_SQUARE)
     out, raw = [], []
     for rvec, tvec, err in zip(rvecs[:n], tvecs[:n], np.ravel(errs)[:n]):
         R, _ = cv2.Rodrigues(rvec)
@@ -296,10 +287,9 @@ def seeds(tag_id, corners):
                 "dist": round(dist, 3),
                 "err": round(float(err), 3),
                 "cam_xyz": np.round(T_wc[:3, 3], 3),
-                "cam_pitch": round(
-                    math.degrees(math.asin(np.clip(T_wc[2, 2], -1, 1))), 1
-                ),
+                "cam_pitch": round(math.degrees(math.asin(np.clip(T_wc[2, 2], -1, 1))), 1),
                 "yaw": round(math.degrees(math.atan2(T[1, 0], T[0, 0])), 1),
+                "robot_xy": [round(float(T[0, 3]), 3), round(float(T[1, 3]), 3)],
             }
         )
         if dist <= MAX_DIST:
@@ -309,9 +299,7 @@ def seeds(tag_id, corners):
 
 def same(a, b):
     dyaw = abs((a[2] - b[2] + math.pi) % (2 * math.pi) - math.pi)
-    return (
-        math.hypot(a[0] - b[0], a[1] - b[1]) < SAME_M and math.degrees(dyaw) < SAME_DEG
-    )
+    return math.hypot(a[0] - b[0], a[1] - b[1]) < SAME_M and math.degrees(dyaw) < SAME_DEG
 
 
 def side_px(c):
@@ -347,9 +335,7 @@ def estimate(gray, frame=None, prior=None):
         diag["reason"] = f"too_far >{MAX_DIST}m"
         return None, diag
     # free 6-DOF camera pose from each tag alone (best IPPE branch): what the mount really is
-    fits = [
-        min(d["ippe"], key=lambda q: q["err"]) for d in diag["det"] if d.get("ippe")
-    ]
+    fits = [min(d["ippe"], key=lambda q: q["err"]) for d in diag["det"] if d.get("ippe")]
     diag["fit"] = {
         "cam_z": round(float(np.median([q["cam_xyz"][2] for q in fits])), 3),
         "cam_pitch": round(float(np.median([q["cam_pitch"] for q in fits])), 1),
@@ -357,11 +343,7 @@ def estimate(gray, frame=None, prior=None):
     # two tags agree if any pair of their IPPE branches puts the camera at the same spot
     xy = [[q["cam_xyz"][:2] for q in d["ippe"]] for d in diag["det"] if d.get("ippe")]
     spread = max(
-        (
-            min(math.dist(a, b) for a in xa for b in xb)
-            for i, xa in enumerate(xy)
-            for xb in xy[i + 1 :]
-        ),
+        (min(math.dist(a, b) for a in xa for b in xb) for i, xa in enumerate(xy) for xb in xy[i + 1 :]),
         default=0.0,
     )
     if spread > TAGS_AGREE_M:
@@ -383,8 +365,7 @@ def estimate(gray, frame=None, prior=None):
         f = diag["fit"]
         # planar model does not fit: CAM_Z / CAM_PITCH / tag z / TAG_SIZE / K
         diag["reason"] = (
-            f"reproj {best:.1f}px > {MAX_ERR_PX} "
-            f"(cam_z~{f['cam_z']} pitch~{f['cam_pitch']} vs {CAM_Z}/{CAM_PITCH})"
+            f"reproj {best:.1f}px > {MAX_ERR_PX} (cam_z~{f['cam_z']} pitch~{f['cam_pitch']} vs {CAM_Z}/{CAM_PITCH})"
         )
         return None, diag
     if len(sols) > 1:
@@ -399,10 +380,20 @@ def estimate(gray, frame=None, prior=None):
         T_cw = np.linalg.inv(T_robot(x, y, yaw) @ T_RC)
         for tag_id in used:
             T = T_cw @ T_WT[tag_id]
-            cv2.drawFrameAxes(
-                frame, K, D, cv2.Rodrigues(T[:3, :3])[0], T[:3, 3], TAG_SIZE
-            )
+            cv2.drawFrameAxes(frame, K, D, cv2.Rodrigues(T[:3, :3])[0], T[:3, 3], TAG_SIZE)
     return (x, y, yaw, used, err), diag
+
+
+def views_of(diag):
+    # per tag, the robot pose that tag alone gives (lowest-error IPPE branch)
+    out = []
+    for d in diag.get("det", []):
+        if not d.get("ippe"):
+            continue
+        q = min(d["ippe"], key=lambda q: q["err"])
+        x, y = q["robot_xy"]
+        out.append({"id": d["id"], "x": x, "y": y, "yaw": q["yaw"], "dist": q["dist"], "px": d["side_px"]})
+    return out
 
 
 stats = Counter()
@@ -425,9 +416,7 @@ def loop():
         if cap is None:
             print("no camera, retrying")
             logbook.write("no_camera", devs=glob.glob("/dev/video*"))
-            web.publish(
-                None, {"ok": False, "cam": False, "t": time.monotonic(), "map": MAP}
-            )
+            web.publish(None, {"ok": False, "cam": False, "t": time.monotonic(), "map": MAP})
             time.sleep(2)
             return
         grab = Grabber(cap)
@@ -458,22 +447,19 @@ def loop():
     ms = (time.monotonic() - t) * 1000
     perf = f"cam={grab.fps:.1f}fps proc={fps:.1f}fps {ms:.0f}ms"
     stats[diag["reason"].split(" ")[0]] += 1
-    raw = [
-        [float(v) for v in q["cam_xyz"][:2]]
-        for d in diag.get("det", [])
-        for q in d.get("ippe", [])
-    ]
+    views = views_of(diag)
     info = {
         "cam": True,
         "t": t,
         "map": MAP,
         "w": w,
         "h": h,
+        "fov": round(2 * math.degrees(math.atan(w / 2 / K[0, 0])), 1),
         "cam_fps": round(grab.fps, 1),
         "fps": round(fps, 1),
         "ms": round(ms, 1),
         "reason": diag["reason"],
-        "raw": raw,
+        "views": views,
     }
     rec = {
         "seq": seq,
@@ -491,9 +477,13 @@ def loop():
     if do_notify:
         notify_t = t
     if est is None:
+        test = None
+        if TEST_MODE and views:
+            v = max(views, key=lambda v: v["px"])
+            test = {"x": v["x"], "y": v["y"], "yaw": v["yaw"], "tags": [v["id"]]}
         if do_log:
-            logbook.write("frame", ok=False, **rec)
-        web.publish(frame, {"ok": False, **info})
+            logbook.write("frame", ok=False, test=test, **rec)
+        web.publish(frame, {"ok": False, **info, **({"test": True, **test} if test else {})})
         if do_notify:
             Bridge.notify("pose", 0.0, 0.0, 0.0, 0)
         summary(t, perf)

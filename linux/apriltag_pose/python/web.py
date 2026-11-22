@@ -103,6 +103,8 @@ header { display:flex; align-items:center; gap:12px; flex-wrap:wrap; grid-column
 .nums span, .meta { color:var(--mut); font-size:13px; }
 img, canvas { width:100%; display:block; border-radius:8px; background:#000; }
 canvas { background:transparent; aspect-ratio:1/1; }
+.legend { display:flex; flex-wrap:wrap; gap:6px 14px; margin-top:8px; color:var(--mut); font-size:12px; }
+.legend i { display:inline-block; width:12px; height:12px; margin-right:5px; vertical-align:-2px; border-radius:2px; }
 </style>
 </head>
 <body>
@@ -112,6 +114,13 @@ canvas { background:transparent; aspect-ratio:1/1; }
   <section class="card" id="camcard" hidden><img id="cam" alt="camera"></section>
   <section class="card">
     <canvas id="map"></canvas>
+    <div class="legend">
+      <span><i style="background:var(--bot)"></i>robot (validated pose)</span>
+      <span><i style="border:2px dashed var(--warn)"></i>robot (test estimate)</span>
+      <span><i style="background:var(--mut);border-radius:50%"></i>where each tag alone puts it</span>
+      <span><i style="background:var(--tag)"></i>tag (line = facing)</span>
+      <span><i style="background:var(--bot);opacity:.15"></i>camera view</span>
+    </div>
     <div class="nums">
       <div><b id="x">–</b><span>x (m)</span></div>
       <div><b id="y">–</b><span>y (m)</span></div>
@@ -130,13 +139,21 @@ function status(s) {
   if (!s) { txt = "OFFLINE"; col = css("--bad"); }
   else if (!s.cam) { txt = "NO CAMERA"; col = css("--bad"); }
   else if (s.age > 1) { txt = "STALE"; col = css("--bad"); }
-  else if (!s.ok) { txt = "NO POSE"; col = css("--warn"); }
-  else { txt = "OK"; col = css("--ok"); }
+  else if (s.ok) { txt = "OK"; col = css("--ok"); }
+  else if (s.test) { txt = "TEST ESTIMATE"; col = css("--warn"); }
+  else { txt = "NO POSE"; col = css("--warn"); }
   $("st").textContent = txt; $("st").style.background = col;
-  const perf = s && s.w ? `${s.w}×${s.h} · cam ${s.cam_fps} fps · proc ${s.fps} fps · ${s.ms} ms` : "";
-  const tags = s && s.ok ? ` · tags ${s.tags.join(", ")} · err ${s.err.toFixed(2)} px`
-    : s && s.reason ? ` · ${s.reason}` : "";
-  $("meta").textContent = perf + tags;
+  const perf = s && s.w ? `${s.w}x${s.h} · cam ${s.cam_fps} fps · proc ${s.fps} fps · ${s.ms} ms` : "";
+  let why = "";
+  if (s && s.ok) why = ` · tags ${s.tags.join(", ")} · err ${s.err.toFixed(2)} px`;
+  else if (s && s.test) why = ` · from tag #${s.tags[0]} only, not validated · ${s.reason}`;
+  else if (s && s.reason) why = ` · ${s.reason}`;
+  $("meta").textContent = perf + why;
+}
+
+function line(g, a, b, color, width, dash) {
+  g.strokeStyle = color; g.lineWidth = width; g.setLineDash(dash || []);
+  g.beginPath(); g.moveTo(a[0], a[1]); g.lineTo(b[0], b[1]); g.stroke(); g.setLineDash([]);
 }
 
 function draw(s) {
@@ -144,31 +161,43 @@ function draw(s) {
   c.width = r.width * dpr; c.height = r.width * dpr;
   const g = c.getContext("2d"); g.scale(dpr, dpr);
   const W = r.width, tags = (s && s.map) || [];
-  const raw = ((s && s.raw) || []).filter(q => Math.abs(q[0]) < 50 && Math.abs(q[1]) < 50);
-  if (s) s.raw = raw;
-  const pts = tags.map(t => [t.x, t.y]).concat(trail, raw);
-  if (!pts.length) return;
-  let x0 = Math.min(...pts.map(p => p[0])) - 0.5, x1 = Math.max(...pts.map(p => p[0])) + 0.5;
-  let y0 = Math.min(...pts.map(p => p[1])) - 0.5, y1 = Math.max(...pts.map(p => p[1])) + 0.5;
-  const k = W / Math.max(x1 - x0, y1 - y0);
+  const views = ((s && s.views) || []).filter(v => Math.abs(v.x) < 50 && Math.abs(v.y) < 50);
+  const pts = tags.map(t => [t.x, t.y]).concat(trail, views.map(v => [v.x, v.y]), [[0, 0]]);
+  if (last) pts.push([last.x, last.y]);
+  let x0 = Math.min(...pts.map(p => p[0])) - 0.6, x1 = Math.max(...pts.map(p => p[0])) + 0.6;
+  let y0 = Math.min(...pts.map(p => p[1])) - 0.6, y1 = Math.max(...pts.map(p => p[1])) + 0.6;
+  const span = Math.max(x1 - x0, y1 - y0), k = W / span;
   const P = (x, y) => [(x - x0) * k, W - (y - y0) * k];
-  g.strokeStyle = css("--line"); g.lineWidth = 1;
-  for (let v = Math.ceil(x0); v <= x1; v++) { const [a] = P(v, 0); g.beginPath(); g.moveTo(a, 0); g.lineTo(a, W); g.stroke(); }
-  for (let v = Math.ceil(y0); v <= y1; v++) { const [, b] = P(0, v); g.beginPath(); g.moveTo(0, b); g.lineTo(W, b); g.stroke(); }
+  const step = span > 8 ? 2 : span > 3 ? 1 : 0.5;
+  g.font = "11px system-ui"; g.fillStyle = css("--mut");
+  for (let v = Math.ceil(x0 / step) * step; v <= x1; v += step) {
+    const [a] = P(v, 0); line(g, [a, 0], [a, W], css("--line"), v === 0 ? 2 : 1);
+    g.fillText(`${+v.toFixed(1)}`, a + 3, W - 4);
+  }
+  for (let v = Math.ceil(y0 / step) * step; v <= y1; v += step) {
+    const [, b] = P(0, v); line(g, [0, b], [W, b], css("--line"), v === 0 ? 2 : 1);
+    g.fillText(`${+v.toFixed(1)}`, 3, b - 3);
+  }
+  g.fillText("x (m) →", W - 52, W - 16); g.fillText("↑ y (m)", 3, 12);
+  const live = s && s.age <= 1 && (s.ok || s.test);
+  if (live) {
+    const [rx, ry] = P(s.x, s.y), a = s.yaw * Math.PI / 180, f = (s.fov || 60) * Math.PI / 360, R = 1.5;
+    g.fillStyle = css("--bot"); g.globalAlpha = 0.12; g.beginPath(); g.moveTo(rx, ry);
+    for (let t = -f; t <= f + 1e-6; t += f / 8) { const [px, py] = P(s.x + R * Math.cos(a + t), s.y + R * Math.sin(a + t)); g.lineTo(px, py); }
+    g.closePath(); g.fill(); g.globalAlpha = 1;
+  }
   g.font = "12px system-ui";
   for (const t of tags) {
-    const a = t.yaw * Math.PI / 180, h = 0.15, [px, py] = P(t.x, t.y);
-    const [ax, ay] = P(t.x - Math.sin(a) * h, t.y + Math.cos(a) * h);
-    const [bx, by] = P(t.x + Math.sin(a) * h, t.y - Math.cos(a) * h);
-    const [nx, ny] = P(t.x + Math.cos(a) * 0.25, t.y + Math.sin(a) * 0.25);
-    g.strokeStyle = css("--tag"); g.lineWidth = 4;
-    g.beginPath(); g.moveTo(ax, ay); g.lineTo(bx, by); g.stroke();
-    g.lineWidth = 1.5; g.beginPath(); g.moveTo(px, py); g.lineTo(nx, ny); g.stroke();
-    g.fillStyle = css("--fg"); g.fillText(`#${t.id}`, px + 6, py - 6);
+    const a = t.yaw * Math.PI / 180, h = 0.15, p = P(t.x, t.y);
+    line(g, P(t.x - Math.sin(a) * h, t.y + Math.cos(a) * h), P(t.x + Math.sin(a) * h, t.y - Math.cos(a) * h), css("--tag"), 4);
+    line(g, p, P(t.x + Math.cos(a) * 0.3, t.y + Math.sin(a) * 0.3), css("--tag"), 1.5);
+    g.fillStyle = css("--fg"); g.fillText(`#${t.id}`, p[0] + 6, p[1] - 6);
   }
-  for (const q of (s && s.raw) || []) {
-    const [a, b] = P(q[0], q[1]);
-    g.fillStyle = css("--mut"); g.beginPath(); g.arc(a, b, 4, 0, 7); g.fill();
+  for (const v of views) {
+    const t = tags.find(t => t.id === v.id), p = P(v.x, v.y);
+    if (t) line(g, p, P(t.x, t.y), css("--mut"), 1, [4, 4]);
+    g.fillStyle = css("--mut"); g.beginPath(); g.arc(p[0], p[1], 4, 0, 7); g.fill();
+    g.fillText(`#${v.id} ${v.dist.toFixed(2)} m`, p[0] + 6, p[1] + 14);
   }
   if (trail.length > 1) {
     g.strokeStyle = css("--bot"); g.globalAlpha = 0.4; g.lineWidth = 2; g.beginPath();
@@ -176,18 +205,23 @@ function draw(s) {
     g.stroke(); g.globalAlpha = 1;
   }
   if (last) {
-    const [rx, ry] = P(last.x, last.y), a = -last.yaw * Math.PI / 180, L = 14;
-    g.save(); g.translate(rx, ry); g.rotate(a);
-    g.fillStyle = s && s.ok && s.age <= 1 ? css("--bot") : css("--mut");
-    g.beginPath(); g.moveTo(L, 0); g.lineTo(-L * 0.7, L * 0.6); g.lineTo(-L * 0.7, -L * 0.6); g.closePath(); g.fill();
+    const [rx, ry] = P(last.x, last.y), L = 14;
+    if (live) for (const id of last.tags) { const t = tags.find(t => t.id === id); if (t) line(g, [rx, ry], P(t.x, t.y), css("--bot"), 1); }
+    g.save(); g.translate(rx, ry); g.rotate(-last.yaw * Math.PI / 180);
+    g.beginPath(); g.moveTo(L, 0); g.lineTo(-L * 0.7, L * 0.6); g.lineTo(-L * 0.7, -L * 0.6); g.closePath();
+    if (!live) { g.fillStyle = css("--mut"); g.fill(); }
+    else if (last.ok) { g.fillStyle = css("--bot"); g.fill(); }
+    else { g.setLineDash([3, 3]); g.strokeStyle = css("--warn"); g.lineWidth = 2; g.stroke(); }
     g.restore();
+    g.fillStyle = css("--fg");
+    g.fillText(`(${last.x.toFixed(2)}, ${last.y.toFixed(2)}) ${last.yaw.toFixed(0)}°`, rx + 12, ry - 10);
   }
 }
 
 async function tick() {
   let s = null;
   try { s = await (await fetch("/pose", { cache: "no-store" })).json(); } catch (e) {}
-  if (s && s.ok) {
+  if (s && (s.ok || s.test)) {
     last = s;
     trail.push([s.x, s.y]); if (trail.length > 200) trail.shift();
     $("x").textContent = s.x.toFixed(2); $("y").textContent = s.y.toFixed(2); $("yaw").textContent = s.yaw.toFixed(1);
@@ -198,7 +232,7 @@ async function tick() {
 
 function frame() {
   const im = new Image();
-  im.onload = () => { $("cam").src = im.src; setTimeout(frame, 150); };
+  im.onload = () => { $("cam").src = im.src; setTimeout(frame, 66); };
   im.onerror = () => setTimeout(frame, 1000);
   im.src = "/frame.jpg?t=" + Date.now();
 }
