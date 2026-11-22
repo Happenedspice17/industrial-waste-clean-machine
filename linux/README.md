@@ -7,7 +7,7 @@ Planned packages: `nav/` (map, localization against saved map, coverage route), 
 
 ### nav/ (implemented, simulation-tested only)
 `caution.py` (speed cap near people/obstacles/blind camera, SR-020) · `home.py` (return home and dock on the home
-tag pair, SR-023).
+tag pair, SR-023) · `fusion.py` (variance-weighted pose fusion of fixes and dead reckoning).
 
 ### vision/ (implemented, simulation-tested only)
 `detector.py` (OpenCV AprilTag 36h11 corners) → `localizer.py` (3-DOF floor pose from all cameras; 2+ agreeing

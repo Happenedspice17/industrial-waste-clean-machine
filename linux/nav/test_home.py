@@ -8,6 +8,7 @@ from pathlib import Path
 import numpy as np
 import pytest
 
+from linux.nav.fusion import PoseFusion
 from linux.nav.home import DOCKED, FAILED, Docking
 from linux.vision.config import load_camera, load_home, load_tag_map
 from linux.vision.detector import Observation, tag_corners
@@ -70,3 +71,16 @@ def test_fails_safe_without_home_tags() -> None:
     state, _ = run((2.0, 1.8, math.radians(-90)), ())
     assert state in {FAILED, "timeout"}
     assert state != DOCKED
+
+
+def test_fusion_trusts_fix_more_after_long_drive() -> None:
+    f = PoseFusion((0.0, 0.0, 0.0))
+    f.predict(0.5, 0.0, 0.0, 3.0)
+    f.correct((0.6, 0.0, 0.0), 0.10, 3.0)
+    small = f.x - 0.5
+    g = PoseFusion((0.0, 0.0, 0.0))
+    for _ in range(20):
+        g.predict(0.5, 0.0, 0.0, 3.0)
+    g.correct((10.1, 0.0, 0.0), 0.10, 3.0)
+    assert 0 < small < 0.05
+    assert g.x - 10.0 > 0.06

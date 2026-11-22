@@ -10,6 +10,10 @@ tag corners by Levenberg-Marquardt. Trust rules:
   read from a **different** tag (rule 6, lesson 4): the same tag seen again is not independent, so a moved tag seen
   alone can never pull the pose (found in simulation, docs/sim/plant-sim-20-maps.md).
 * **Caution** (person or obstacle reported): multi-tag fixes also need 2 consistent reads.
+* Immediate multi-tag trust also needs good geometry: 1-sigma of the joint fix <= 0.05 m and 1.5 deg (two tags far
+  away and close together look like one tag). Weak geometry falls back to the single-tag path.
+* The jump limit grows with distance driven since the last accepted fix (odometry drift, estimate 3 %), so a robot
+  that drifted can re-anchor on one tag instead of rejecting every fix (found in simulation, docs/sim).
 
 Output is a pose correction for the Linux navigator only; it never commands motion and the MCU keeps its own stops
 (ADR-0002). ``NAV_ENABLED`` stays False until TP-V02 passes and its report is committed (SR-017).
@@ -46,6 +50,10 @@ class Gates:
     yaw_prior_deg: float = 3.0
     agree_m: float = 0.25
     agree_deg: float = 8.0
+    trust_sigma_m: float = 0.05
+    trust_sigma_deg: float = 1.5
+    drift_m_per_m: float = 0.03
+    drift_deg_per_m: float = 0.5
     jump_m: float = 0.30
     jump_deg: float = 10.0
     confirm_m: float = 0.15
@@ -59,6 +67,8 @@ class Fix:
     status: str
     pose: Pose | None = None
     source: str = ""
+    sigma_m: float = math.inf
+    sigma_deg: float = math.inf
     ids: list[int] = field(default_factory=list)
     rejected: dict[int, str] = field(default_factory=dict)
 
@@ -108,6 +118,22 @@ def solve_planar(groups: Sequence[Group], guess: Pose, *, prior_yaw: float | Non
         else:
             lam *= 10
     return float(p[0]), float(p[1]), wrap(float(p[2]))
+
+
+def fix_sigma(groups: Sequence[Group], pose: Pose, g: Gates) -> tuple[float, float]:
+    """1-sigma position (m, larger axis) and heading (deg) of a tag-only fix from the corner geometry (J^T J)^-1."""
+    p = np.array(pose, dtype=float)
+    r0 = _residual(p, groups, prior_yaw=None, g=g)
+    jac = np.empty((r0.size, 3))
+    for k, h in enumerate((1e-4, 1e-4, 1e-5)):
+        dp = p.copy()
+        dp[k] += h
+        jac[:, k] = (_residual(dp, groups, prior_yaw=None, g=g) - r0) / h
+    try:
+        cov = np.linalg.inv(jac.T @ jac)
+    except np.linalg.LinAlgError:
+        return math.inf, math.inf
+    return float(math.sqrt(max(np.linalg.eigvalsh(cov[:2, :2])))), math.degrees(math.sqrt(cov[2, 2]))
 
 
 def world_corners(tag: Tag) -> Mat:
@@ -169,11 +195,16 @@ class Localizer:
         self._pending: Pose | None = None
         self._pending_ids: set[int] = set()
         self._votes = 0
+        self._last_odom: Pose | None = None
+        self._travel = 0.0
 
     def update(self, observations: list[Observation], odom: Pose | None, *, caution: bool = False) -> Fix:
         """``odom``: dead-reckoning pose (encoders + IMU) or None before the first fix.
         ``caution``: a person or obstacle is reported (camera or LiDAR); multi-tag fixes then also need 2 reads."""
         fix = Fix("none")
+        if odom and self._last_odom:
+            self._travel += math.hypot(odom[0] - self._last_odom[0], odom[1] - self._last_odom[1])
+        self._last_odom = odom
         good = self._screen(observations, odom, fix)
         if not good:
             fix.status = "rejected" if fix.rejected else "none"
@@ -189,10 +220,14 @@ class Localizer:
         groups = [(world_corners(self.tags[o.id]), o.corners, self.cams[o.cam]) for o, _ in good]
         prior = None if multi else (odom[2] if odom else None)
         fix.pose = solve_planar(groups, good[0][1], prior_yaw=prior, g=self.g)
-        if multi and not caution:
+        fix.sigma_m, fix.sigma_deg = fix_sigma(groups, fix.pose, self.g)
+        strong = multi and fix.sigma_m <= self.g.trust_sigma_m and fix.sigma_deg <= self.g.trust_sigma_deg
+        if strong and not caution:
             return self._accept(fix)
         offset = _diff(fix.pose, odom) if odom else fix.pose
-        if odom and _small(offset, self.g.jump_m, self.g.jump_deg):
+        jump_m = self.g.jump_m + self.g.drift_m_per_m * self._travel
+        jump_deg = self.g.jump_deg + self.g.drift_deg_per_m * self._travel
+        if odom and _small(offset, jump_m, jump_deg):
             return self._accept(fix)
         ids = set(fix.ids)
         same = self._pending is not None and _small(_diff(offset, self._pending), self.g.confirm_m, self.g.confirm_deg)
@@ -225,5 +260,6 @@ class Localizer:
 
     def _accept(self, fix: Fix) -> Fix:
         self._pending, self._votes, self._pending_ids = None, 0, set()
+        self._travel = 0.0
         fix.status = "accepted"
         return fix

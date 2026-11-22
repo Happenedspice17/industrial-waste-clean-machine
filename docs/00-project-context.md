@@ -159,11 +159,12 @@ NOM-052-SEMARNAT-2005 + LGPGIR, ISO 12100, ISO 13849-1, ISO 13850, IEC 60204-1, 
    EOL, needs own fusion).
 5. LiDAR supply (Sandorobotics out of stock at check), oil hose price, printed wheel hubs.
 6. Sensor role hierarchy (write it before coding, lesson 6).
-7. Vision: one camera now (≥ 4 planned), AprilTag 36h11 stations of two tags; 2+ agreeing tags trusted at once
+7. Vision: one camera now, front + rear in the next build (SR-024); 2 cameras + low-cost ranging ring instead of the
+   360° LiDAR proposed in ADR-0011 (team to decide). AprilTag 36h11 stations of two tags; 2+ agreeing tags trusted at once
    (ADR-0007, ADR-0008; SR-018, SR-019); person detection only lowers speed and keeps no images (ADR-0009; SR-020,
    SR-021); home tag pair for docking after each round (SR-023). All log-only until TP-V02/TP-V03/TP-N01 pass.
-   Container level by ultrasonic sensors (ADR-0010, SR-022; sensor to quote and add to the M5 BOM).
-   Residue check (SR-015) deferred. Open: survey tags, camera mounts for 4 cameras (DFMA), USB budget (WCCA).
+   Container level by 2× HC-SR04 ultrasonic (ADR-0010, SR-022; ≈ MXN 40 each, to quote and add to the M5 BOM).
+   Residue check (SR-015) deferred. Open: survey tags, camera mounts (DFMA), USB hub budget (WCCA), ranging-ring SR.
 
 ## 12. Next-semester plan (priorities)
 

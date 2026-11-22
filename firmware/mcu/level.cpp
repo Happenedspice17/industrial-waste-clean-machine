@@ -13,15 +13,12 @@ uint16_t median3(uint16_t a, uint16_t b, uint16_t c) {
 }
 }  // namespace
 
-bool A02Parser::feed(uint8_t b, uint16_t* out_mm) {
-  if (n_ == 0 && b != 0xFF) return false;
-  buf_[n_++] = b;
-  if (n_ < 4) return false;
-  n_ = 0;
-  const uint8_t sum = static_cast<uint8_t>(buf_[0] + buf_[1] + buf_[2]);
-  if (sum != buf_[3]) return false;
-  *out_mm = static_cast<uint16_t>((buf_[1] << 8) | buf_[2]);
-  return true;
+uint16_t echo_to_mm(uint32_t echo_us, int16_t temp_deci_c) {
+  if (echo_us == 0 || echo_us >= kEchoTimeoutUs) return 0;
+  // speed of sound c = 331.3 + 0.606 * T  (m/s) -> in mm/us * 1e4: 3313 + 0.606 * T(0.1 degC)
+  const int32_t c_e4 = 3313 + (606 * static_cast<int32_t>(temp_deci_c)) / 1000;
+  const uint32_t mm = (echo_us * static_cast<uint32_t>(c_e4)) / 20000;  // round trip / 2
+  return mm > 0xFFFF ? 0xFFFF : static_cast<uint16_t>(mm);
 }
 
 State Filter::classify(uint8_t pct) const {

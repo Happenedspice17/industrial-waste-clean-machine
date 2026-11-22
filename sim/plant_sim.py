@@ -8,13 +8,14 @@ the real ``Localizer``, slows down in caution mode (``Caution``), stops like the
 tank (ultrasonic level filter mirror), returns home on FULL or at the end of the round, docks with ``Docking``,
 empties and resumes. Every 5th map has one wall tag moved after the survey (map not updated).
 
-Usage: python sim/plant_sim.py [--maps 20] [--seed 0] [--jobs 4] [--out sim/out/plant] [--docs]
+Usage: python sim/plant_sim.py [--maps 20] [--seed 0] [--rig front_rear] [--jobs 4] [--out DIR] [--docs]
 """
 
 from __future__ import annotations
 
 import argparse
 import csv
+import dataclasses
 import heapq
 import math
 import sys
@@ -29,16 +30,32 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
 from linux.nav.caution import Caution  # noqa: E402
+from linux.nav.fusion import PoseFusion  # noqa: E402
 from linux.nav.home import DOCKED, FAILED, Docking  # noqa: E402
-from linux.vision.config import Home, Tag, load_camera  # noqa: E402
+from linux.vision.config import Camera, Home, Tag, load_camera  # noqa: E402
 from linux.vision.detector import Observation, tag_corners  # noqa: E402
-from linux.vision.geometry import inv_tf, robot_in_world, tag_in_world, wrap  # noqa: E402
+from linux.vision.geometry import cam_in_robot, inv_tf, robot_in_world, tag_in_world, wrap  # noqa: E402
 from linux.vision.localizer import Fix, Gates, Localizer  # noqa: E402
 from linux.vision.people import Person  # noqa: E402
 from sim import level_model  # noqa: E402
 from sim.tag_visibility import HOME_DOCK_M, HOME_GAP, visible  # noqa: E402
 
 CAM = load_camera(ROOT / "linux" / "vision" / "config" / "camera.example.json")
+
+
+def _turned(yaw_deg: float, x: float, y: float) -> Camera:
+    m = cam_in_robot(x, y, 0.45, math.radians(yaw_deg), math.radians(15))
+    return dataclasses.replace(CAM, mount=m)
+
+
+# Sensor rigs compared in ADR-0011. "lidar" adds an idealised LiDAR scan-match fix (see LIDAR_* below).
+RIGS: dict[str, tuple[list[Camera], bool]] = {
+    "front": ([CAM], False),
+    "front_rear": ([CAM, _turned(180, -0.30, 0.0)], False),
+    "quad": ([CAM, _turned(180, -0.30, 0.0), _turned(90, 0.0, 0.22), _turned(-90, 0.0, -0.22)], False),
+    "lidar_front": ([CAM], True),
+}
+LIDAR_SIGMA_M, LIDAR_SIGMA_DEG, LIDAR_FAIL = 0.03, 0.5, 0.10
 RES = 0.1
 ROBOT_R = 0.30
 CLEARANCE = 0.10
@@ -257,12 +274,23 @@ def _seg_hits_rect(p: np.ndarray, q: np.ndarray, r: Rect) -> bool:
     return True
 
 
-def observe(world: World, pose: np.ndarray, people: np.ndarray, rng: np.random.Generator) -> list[Observation]:
+def observe(
+    world: World, pose: np.ndarray, people: np.ndarray, rng: np.random.Generator, cams: list[Camera]
+) -> list[Observation]:
+    out = []
+    for k, cam in enumerate(cams):
+        out += _observe_one(world, pose, people, rng, cam, k=k)
+    return out
+
+
+def _observe_one(
+    world: World, pose: np.ndarray, people: np.ndarray, rng: np.random.Generator, cam: Camera, *, k: int
+) -> list[Observation]:
     robot = robot_in_world(*pose)
-    cam_xy = (robot @ CAM.mount)[:2, 3]
+    cam_xy = (robot @ cam.mount)[:2, 3]
     out = []
     for tid, tag in world.true_tags.items():
-        if not visible(tag, CAM, robot, Gates(max_range_m=6.0, max_view_deg=75.0, min_side_px=12.0)):
+        if not visible(tag, cam, robot, Gates(max_range_m=6.0, max_view_deg=75.0, min_side_px=12.0)):
             continue
         txy = tag.pose[:2, 3] + tag.pose[:2, 2] * 0.03
         if any(_seg_hits_rect(cam_xy, txy, m) for m in world.machines):
@@ -271,12 +299,12 @@ def observe(world: World, pose: np.ndarray, people: np.ndarray, rng: np.random.G
             continue
         if rng.random() > 0.97:
             continue
-        tf = inv_tf(robot @ CAM.mount) @ tag.pose
+        tf = inv_tf(robot @ cam.mount) @ tag.pose
         pts = (tf[:3, :3] @ tag_corners(tag.size).T).T + tf[:3, 3]
-        uv = (CAM.matrix @ (pts / pts[:, 2:3]).T).T[:, :2] + rng.normal(0, 0.4, (4, 2))
+        uv = (cam.matrix @ (pts / pts[:, 2:3]).T).T[:, :2] + rng.normal(0, 0.4, (4, 2))
         if rng.random() < 0.01:
             uv[int(rng.integers(4))] += rng.normal(0, 3.0, 2)
-        out.append(Observation(tid, uv))
+        out.append(Observation(tid, uv, k))
     return out
 
 
@@ -292,13 +320,17 @@ def _point_seg_dist(p: np.ndarray, a: np.ndarray, b: np.ndarray) -> float:
     return float(np.linalg.norm(p - (a + t * d)))
 
 
-def see_people(world: World, pose: np.ndarray, people: np.ndarray, rng: np.random.Generator) -> list[Person]:
+def see_people(
+    world: World, pose: np.ndarray, people: np.ndarray, rng: np.random.Generator, cams: list[Camera]
+) -> list[Person]:
     out = []
+    yaws = [math.atan2(c.mount[1, 2], c.mount[0, 2]) for c in cams]
     for pp in people:
         rel = pp - pose[:2]
         dist = float(np.linalg.norm(rel))
         bearing = wrap(math.atan2(rel[1], rel[0]) - pose[2])
-        if dist > 6.0 or abs(bearing) > HFOV or any(_seg_hits_rect(pose[:2], pp, m) for m in world.machines):
+        in_view = any(abs(wrap(bearing - y)) <= HFOV for y in yaws)
+        if dist > 6.0 or not in_view or any(_seg_hits_rect(pose[:2], pp, m) for m in world.machines):
             continue
         if rng.random() < 0.85:
             out.append(Person(math.degrees(bearing), dist * float(rng.uniform(0.8, 1.2))))
@@ -361,7 +393,8 @@ def follow(est: np.ndarray, target: tuple[float, float], v_max: float) -> tuple[
 class Mission:
     """One mission on one map. Mission modes: transit_clean -> clean -> ... -> go_home -> dock -> empty -> resume."""
 
-    def __init__(self, map_id: int, seed: int) -> None:
+    def __init__(self, map_id: int, seed: int, rig: str = "front") -> None:
+        self.cams, self.lidar = RIGS[rig]
         self.world = world = make_world(seed * 1000 + map_id)
         self.rng = rng = np.random.default_rng(seed * 7919 + map_id)
         self.occ, self.free = grids(world)
@@ -374,7 +407,11 @@ class Mission:
             world.people,
             -1 if world.moved_tag is None else world.moved_tag,
         )
-        self.loc, self.caution, self.walkers = Localizer(world.tags, CAM), Caution(), Walkers(world, self.free, rng)
+        self.loc, self.caution, self.walkers = (
+            Localizer(world.tags, self.cams),
+            Caution(),
+            Walkers(world, self.free, rng),
+        )
         self.level = level_model.Filter()
         area = float(self.free.sum()) * RES * RES
         self.fill_per_m2 = 1.0 / (area * world.spill_full_frac)
@@ -384,19 +421,20 @@ class Mission:
         self.true = np.array(self.dock)
         self.est, self.odo = self.true.copy(), self.true.copy()
         self.yaw_off = 0.0
+        self.fusion = PoseFusion(tuple(self.dock))
         self.cleaned = np.zeros_like(self.free)
         nx, ny = self.free.shape
         self.gx, self.gy = np.meshgrid((np.arange(nx) + 0.5) * RES, (np.arange(ny) + 0.5) * RES, indexing="ij")
         self.target = self._target_cells()
         self.errs: list[float] = []
-        self.frames = self.multi = self.fixes = self.cautious = self.steps = 0
+        self.frames = self.multi = self.fixes = self.cautious = self.steps = self.lidar_fixes = 0
         self.since_fix, self.longest = 0.0, 0.0
         self.mode, self.seg_i, self.resume_i = "transit_clean", 0, 0
         self.path: list[tuple[float, float]] = [(self.dock[0], self.dock[1] + 1.2)]
         self.docking: Docking | None = None
         self.empty_t, self.t, self.careful = 0.0, 0.0, False
         self.progress_t, self.progress_xy = 0.0, self.true[:2].copy()
-        self.recover, self.blocked = 0, 0.0
+        self.recover, self.blocked, self.seg_recoveries = 0, 0.0, 0
 
     def _target_cells(self) -> np.ndarray:
         """Floor the nozzle can reach: within half a nozzle width of a cell the robot centre may occupy."""
@@ -432,10 +470,10 @@ class Mission:
         self.t += DT
 
     def _camera(self, imu_yaw: float) -> Fix:
-        persons = see_people(self.world, self.true, self.walkers.pos, self.rng)
+        persons = see_people(self.world, self.true, self.walkers.pos, self.rng, self.cams)
         lidar = min((float(np.linalg.norm(p - self.true[:2])) for p in self.walkers.pos), default=None)
         self.careful = self.caution.update(self.t, persons, lidar)
-        obs = observe(self.world, self.true, self.walkers.pos, self.rng)
+        obs = observe(self.world, self.true, self.walkers.pos, self.rng, self.cams)
         fix = self.loc.update(obs, (float(self.est[0]), float(self.est[1]), float(self.est[2])), caution=self.careful)
         self.frames += 1
         if fix.status == "accepted" and fix.pose is not None:
@@ -444,15 +482,39 @@ class Mission:
             moved = self.world.moved_tag
             if moved in fix.ids and math.hypot(fix.pose[0] - self.true[0], fix.pose[1] - self.true[1]) > 0.3:
                 self.res.moved_tag_bad_fixes += 1
-            self.est[:] = fix.pose
-            self.yaw_off = fix.pose[2] - imu_yaw
+            self._correct(fix.pose, fix.sigma_m, fix.sigma_deg, imu_yaw)
             self.longest, self.since_fix = max(self.longest, self.since_fix), 0.0
+        elif self.lidar and self.rng.random() > LIDAR_FAIL:
+            self._lidar_fix(imu_yaw)
         return fix
+
+    def _correct(self, pose: tuple[float, float, float], sigma_m: float, sigma_deg: float, imu_yaw: float) -> None:
+        """Fuse a fix with ``linux.nav.fusion.PoseFusion`` (the real navigator code) and keep the IMU offset."""
+        self.fusion.x, self.fusion.y, self.fusion.yaw = (float(v) for v in self.est)
+        self.fusion.correct(pose, sigma_m, sigma_deg)
+        self.est[:] = self.fusion.pose
+        self.yaw_off = self.est[2] - imu_yaw
+
+    def _lidar_fix(self, imu_yaw: float) -> None:
+        """Idealised scan match against the saved map: Gaussian error, 10 % failures (optimistic: no symmetric-cell
+        aliasing, no reflective-metal dropouts beyond that rate)."""
+        noisy = (
+            float(self.true[0] + self.rng.normal(0, LIDAR_SIGMA_M)),
+            float(self.true[1] + self.rng.normal(0, LIDAR_SIGMA_M)),
+            wrap(float(self.true[2]) + math.radians(self.rng.normal(0, LIDAR_SIGMA_DEG))),
+        )
+        self._correct(noisy, LIDAR_SIGMA_M, LIDAR_SIGMA_DEG, imu_yaw)
+        self.lidar_fixes += 1
+        self.longest, self.since_fix = max(self.longest, self.since_fix), 0.0
 
     def _recover(self) -> tuple[float, float]:
         """Blocked by the LiDAR stop for 3 s: back up 0.3 m, then replan from the current estimate."""
         self.recover -= 1
         if self.recover == 0:
+            self.seg_recoveries += 1
+            if self.mode == "transit_clean" and self.seg_recoveries >= 3:
+                self.seg_i += 1
+                self.res.skipped_segments += 1
             if self.mode == "go_home":
                 self._go_home()
             elif self.mode == "clean":
@@ -491,6 +553,7 @@ class Mission:
             seg = self.segs[self.seg_i]
             if math.hypot(seg[1][0] - self.est[0], seg[1][1] - self.est[1]) < 0.15 or _passed(self.est, seg):
                 self.seg_i += 1
+                self.seg_recoveries = 0
                 self.mode, self.path = "transit_clean", []
                 return 0.0, 0.0
             if self.level.state == level_model.FULL:
@@ -557,6 +620,9 @@ class Mission:
         self.est[2] = wrap(true[2] + self.bias + self.yaw_off)
         self.odo[2] = wrap(true[2] + self.bias)
         self.since_fix += abs(v) * DT
+        self.fusion.predict(0.0, 0.0, 0.0, DT)
+        ds = abs(v) * DT
+        self.fusion.pos_var += (self.fusion.n.pos_per_m * ds) ** 2 + 0.002 * ds
         if v > 0 and any(np.linalg.norm(p - true[:2]) < ROBOT_R + PERSON_R - 0.05 for p in self.walkers.pos):
             self.res.contacts += 1
         if any(_rect_dist(true[:2], m) < ROBOT_R - 0.05 for m in self.world.machines):
@@ -608,8 +674,8 @@ class Mission:
         return res
 
 
-def run_map(map_id: int, seed: int = 0, max_minutes: float = 240.0) -> Result:
-    return Mission(map_id, seed).run(max_minutes)
+def run_map(map_id: int, seed: int = 0, max_minutes: float = 240.0, rig: str = "front") -> Result:
+    return Mission(map_id, seed, rig).run(max_minutes)
 
 
 def docking_approach(world: World) -> tuple[float, float]:
@@ -710,9 +776,9 @@ def markdown(rows: list[dict[str, str]]) -> str:
     return totals + "\n" + head + body
 
 
-def _job(args: tuple[int, int]) -> tuple[Result, Image.Image]:
-    map_id, seed = args
-    res = run_map(map_id, seed)
+def _job(args: tuple[int, int, str]) -> tuple[Result, Image.Image]:
+    map_id, seed, rig = args
+    res = run_map(map_id, seed, rig=rig)
     return res, draw(make_world(seed * 1000 + map_id), res)
 
 
@@ -720,6 +786,7 @@ def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     ap.add_argument("--maps", type=int, default=20)
     ap.add_argument("--seed", type=int, default=0)
+    ap.add_argument("--rig", default="front_rear", choices=sorted(RIGS))
     ap.add_argument("--jobs", type=int, default=4)
     ap.add_argument("--out", type=Path, default=ROOT / "sim" / "out" / "plant")
     ap.add_argument("--docs", action="store_true", help="also write docs/sim/ summary and montage")
@@ -731,7 +798,7 @@ def main(argv: list[str] | None = None) -> int:
         return 0
     a.out.mkdir(parents=True, exist_ok=True)
     with ProcessPoolExecutor(a.jobs) as ex:
-        done = list(ex.map(_job, [(i, a.seed) for i in range(a.maps)]))
+        done = list(ex.map(_job, [(i, a.seed, a.rig) for i in range(a.maps)]))
     rows = [{k: v for k, v in asdict(r).items() if k != "trace"} for r, _ in done]
     with (a.out / "summary.csv").open("w", newline="") as f:
         wr = csv.DictWriter(f, fieldnames=list(rows[0]))
@@ -746,8 +813,8 @@ def main(argv: list[str] | None = None) -> int:
     if a.docs:
         docs = ROOT / "docs" / "sim"
         docs.mkdir(parents=True, exist_ok=True)
-        mont.save(docs / "plant-sim-montage.png")
-        (docs / "plant-sim-summary.csv").write_text((a.out / "summary.csv").read_text())
+        mont.save(docs / f"plant-sim-montage-{a.rig}.png")
+        (docs / f"plant-sim-summary-{a.rig}.csv").write_text((a.out / "summary.csv").read_text())
     return 0
 
 

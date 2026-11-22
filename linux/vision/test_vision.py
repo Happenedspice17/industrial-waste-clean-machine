@@ -180,7 +180,22 @@ def test_example_tag_map_loads_with_home_pair() -> None:
     assert home is not None
     assert home.tags == (100, 101)
     assert load_cameras(CFG / "camera.example.json")[0].width == 640
+
     assert all(t.size == pytest.approx(0.16) for t in tags.values())
+
+
+def test_front_and_rear_cameras_both_localize() -> None:
+    """SR-024: the rear camera sees a tag behind the robot and gives the same pose (joint solve with camera index)."""
+    front, rear = load_cameras(CFG / "cameras.example.json")
+    robot = robot_in_world(6.0, 6.5, math.radians(-90))
+    tf = inv_tf(robot @ rear.mount) @ TAGS[7].pose
+    pts = (tf[:3, :3] @ tag_corners(SIZE).T).T + tf[:3, 3]
+    assert np.all(pts[:, 2] > 0)
+    uv = (rear.matrix @ (pts / pts[:, 2:3]).T).T[:, :2]
+    fix = loc.Localizer(TAGS, [front, rear]).update([Observation(7, uv, cam=1)], (6.0, 6.5, math.radians(-90)))
+    assert fix.status == "accepted"
+    assert fix.pose is not None
+    assert math.hypot(fix.pose[0] - 6.0, fix.pose[1] - 6.5) < 0.02
 
 
 def test_generated_sheet_is_true_scale_and_detectable() -> None:

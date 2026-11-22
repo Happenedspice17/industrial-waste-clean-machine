@@ -140,4 +140,6 @@ Add a term here the first time it appears in a doc, PR or chat summary.
 | Home pair | Tags 100–101, 0.40 m apart; dock pose 1.0 m in front | Docked only when both are seen (SR-023) |
 | Multi-tag fix | Joint fix from 2+ agreeing tags in one frame; accepted at once | Disagreeing tags are all rejected |
 | Caution | Speed request capped at 0.10 m/s near people, obstacles or with a blind camera | Advisory; MCU stops are the authority |
+| Pose fusion | Blend of each accepted fix with dead reckoning, weighted by their variances | Never overwrite the pose with a raw fix |
+| Rig | Set of perception sensors compared in ADR-0011 (`front`, `front_rear`, `quad`, `lidar_front`) | Simulator option `--rig` |
 | FrameScope | Context that zeroes every pixel buffer the pipeline creates | Cannot reach OpenCV/kernel buffers |

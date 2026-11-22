@@ -31,8 +31,12 @@ each suction round, and to plan for **at least four cameras** while building wit
    → docked only on a fresh fix that sees both home tags; lost tags → back off and retry (3×) → failed (stopped,
    reported). Triggered after each round or when the ultrasonic level reads full (SR-022, ADR-0010).
 5. **Multi-camera:** observations carry a camera index; `Localizer` takes a list of cameras, each with its own
-   calibration and measured mount, and solves all corners jointly. One camera now; four planned (to be placed by
-   DFMA, USB budget by WCCA before buying).
+   calibration and measured mount, and solves all corners jointly. One camera now; **at least two (front + rear) in
+   the next build** (SR-024, owner 2026-11-22); rig vs LiDAR in ADR-0011.
+6. **Trust needs geometry (added 2026-11-22 after simulation):** immediate multi-tag trust only when the joint fix
+   has 1-sigma ≤ 0.05 m and 1.5°; two far, close-together tags fall back to the single-tag path. The jump limit grows
+   3 % of distance driven since the last accepted fix, so a drifted robot can re-anchor on one tag. The navigator
+   blends fixes with dead reckoning by variance (`linux/nav/fusion.py`) instead of overwriting the pose.
 
 ## Consequences
 - Twice the tags per station (26 + 2 home sheets for the example 12 × 8 m cell).

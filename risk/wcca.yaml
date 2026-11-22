@@ -2,6 +2,7 @@
 supply:
   battery_v: {min: 10.5, nom: 12.8, max: 14.7}   # SLA discharged .. charging (verify charger profile)
   mcu_vdd: {min: 3.2, nom: 3.3, max: 3.4}         # to verify against UNO Q docs
+  hcsr04_echo_v: {min: 4.5, nom: 5.0, max: 5.25}  # HC-SR04 echo high level = its 5 V supply (to measure)
 dividers:
   - name: battery_sense
     req: Vout at Vbat_max <= 0.95*ADC_ref_min and resolution < 50 mV/bit equivalent
@@ -9,13 +10,22 @@ dividers:
     r_bot: {nom: 8200, tol: 0.01}
     vin_key: battery_v
     vout_limit: 3.10
+  - name: hcsr04_echo                              # SR-022; 5 V echo -> MCU pin (two sensors, same divider)
+    req: Vout at Vecho_max <= 3.3 V (pin may not be 5 V tolerant on the UNO Q, to verify) and Vout min >= VIH 2.31 V
+    r_top: {nom: 15000, tol: 0.01}
+    r_bot: {nom: 22000, tol: 0.01}
+    vin_key: hcsr04_echo_v
+    vout_limit: 3.30
 logic:
   - name: bumper_switch_to_mcu
     driver: {voh_min: 3.2, vol_max: 0.1}          # switch with pull-up to 3.3 V
     receiver: {vih_min: 2.31, vil_max: 0.99}      # 0.7/0.3 VDD typical CMOS - verify STM32U585 datasheet
-  - name: ultrasonic_a02yyuw_tx_to_mcu_rx        # SR-022; 2 sensors (tank, chip basket), each on its own UART
-    driver: {voh_min: 2.8, vol_max: 0.4}          # A02YYUW powered at 3.3 V (to verify datasheet; never power at 5 V
-    receiver: {vih_min: 2.31, vil_max: 0.99}      # without a level shifter: TX would then swing to 5 V)
+  - name: hcsr04_echo_via_divider_to_mcu        # SR-022; HC-SR04 at 5 V, echo through hcsr04_echo divider
+    driver: {voh_min: 2.65, vol_max: 0.12}        # 4.5 V min echo high through 15k/22k 1 % (min ratio 0.588); 0.2 V low
+    receiver: {vih_min: 2.31, vil_max: 0.99}      # STM32U585 CMOS 0.7/0.3 VDD (verify datasheet / UNO Q pin)
+  - name: mcu_trig_to_hcsr04                       # 3.3 V GPIO into the HC-SR04 TRIG (5 V part)
+    driver: {voh_min: 2.9, vol_max: 0.4}
+    receiver: {vih_min: 2.0, vil_max: 0.8}        # assumed TTL-like input on the module (to verify on the bought part)
   - name: hx711_dout_to_mcu
     driver: {voh_min: 2.9, vol_max: 0.4}          # HX711 powered at 3.3 V (verify module)
     receiver: {vih_min: 2.31, vil_max: 0.99}

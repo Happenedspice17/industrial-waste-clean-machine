@@ -23,7 +23,9 @@ def test_firmware_level_filter_host_build(tmp_path: Path) -> None:
 
 
 def test_python_mirror_same_vectors() -> None:
-    assert lm.frame(300) == bytes([0xFF, 0x01, 0x2C, (0xFF + 0x01 + 0x2C) & 0xFF])
+    assert lm.echo_to_mm(1749, 200) == 300
+    assert lm.echo_to_mm(1749, 400) == 310
+    assert lm.echo_to_mm(0, 200) == lm.echo_to_mm(30000, 200) == 0
     f = lm.Filter()
     f.tick(0)
     assert f.state == lm.FAULT

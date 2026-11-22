@@ -6,6 +6,16 @@ changed, validation and the requirement/risk IDs touched. Stage narratives live 
 
 ## Unreleased
 
+### #TBD · 2026-11-22 · feat · HC-SR04 level, front + rear cameras, pose fusion, cameras vs LiDAR study
+- ADR-0010 revised: HC-SR04 (cheapest) instead of A02YYUW; firmware echo-to-mm with temperature compensation, host
+  test and Python mirror; WCCA echo divider 15 k/22 k (margin 4.6 %, WARN) and TRIG level; DFMEA F-016 occurrence 6.
+- SR-024: at least two cameras (front + rear); rear camera example config and camera list; joint multi-camera test.
+- Localizer: immediate multi-tag trust only with good geometry (1-sigma ≤ 0.05 m / 1.5°); jump limit grows with
+  drift. New `linux/nav/fusion.py` (variance-weighted fusion), used by the simulator.
+- `sim/plant_sim.py --rig {front,front_rear,quad,lidar_front}`: 4 rigs × 20 maps; ADR-0011 proposes 2 cameras +
+  low-cost ranging ring instead of the 360° LiDAR (team to decide).
+- Validation: `python tools/check_all.py` passes; results are simulation only. Refs: SR-018, SR-019, SR-022, SR-024.
+
 ### #TBD · 2026-11-22 · feat · Tag pairs, privacy-first person caution, ultrasonic level, home docking, 20-map simulation
 - ADR-0008 (tag stations of two, 2+ agreeing tags trusted at once, home pair, multi-camera ready), ADR-0009 (person
   detection keeps no images), ADR-0010 (ultrasonic container level). New SR-019–SR-023.

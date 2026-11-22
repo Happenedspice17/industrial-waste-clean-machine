@@ -272,15 +272,16 @@ BNO055 in IMU mode: on-chip fusion, and no compass that steel machines would foo
 
 ### 6. Vision assists, never drives — [ADR-0006](docs/adr/0006-vision-role.md)
 **Lesson from the maze robot:** a glossy floor reflected the light and the camera saw walls that did not exist.
-Vision uses **one camera** (four planned) to read **AprilTag stations of two tags** and re-anchor the robot pose;
+Vision uses **one camera** (front + rear next) to read **AprilTag stations of two tags** and re-anchor the robot pose;
 two agreeing tags are trusted at once, and a **home tag pair** guides docking after each round
 ([ADR-0007](docs/adr/0007-single-camera-apriltag-localization.md), [ADR-0008](docs/adr/0008-tag-pairs-multi-tag-trust-home.md),
 [printable tags](docs/apriltags/)). Seeing a person only **slows the robot**, and **no image is kept**
-([ADR-0009](docs/adr/0009-privacy-first-person-detection.md)). Container level comes from **ultrasonic sensors**
-([ADR-0010](docs/adr/0010-ultrasonic-container-level.md)). It never acts as an obstacle or safety sensor and stays
+([ADR-0009](docs/adr/0009-privacy-first-person-detection.md)). Container level comes from **HC-SR04 ultrasonic sensors**
+([ADR-0010](docs/adr/0010-ultrasonic-container-level.md)). Cameras vs 360° LiDAR:
+[ADR-0011](docs/adr/0011-perception-rig-cameras-vs-lidar.md). It never acts as an obstacle or safety sensor and stays
 log-only until [TP-V02](docs/test-reports/TP-V02-apriltag-localization.md),
 [TP-V03](docs/test-reports/TP-V03-person-caution-privacy.md) and [TP-N01](docs/test-reports/TP-N01-home-docking.md)
-pass on the real robot. Whole-mission simulation over 20 maps: [results](docs/sim/plant-sim-20-maps.md).
+pass on the real robot. Whole-mission simulation over 20 maps and 4 sensor rigs: [results](docs/sim/plant-sim-20-maps.md).
 
 ---
 

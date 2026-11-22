@@ -1,0 +1,6 @@
+{
+  "cameras": [
+    "camera.example.json",
+    "camera_rear.example.json"
+  ]
+}

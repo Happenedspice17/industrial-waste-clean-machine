@@ -20,9 +20,15 @@ class Config:
     max_valid_mm: int = 600
 
 
-def frame(mm: int) -> bytes:
-    h, lo = mm >> 8, mm & 0xFF
-    return bytes([0xFF, h, lo, (0xFF + h + lo) & 0xFF])
+ECHO_TIMEOUT_US = 30000
+
+
+def echo_to_mm(echo_us: int, temp_deci_c: int) -> int:
+    """HC-SR04 round-trip echo (us) -> mm, integer maths identical to firmware ``level::echo_to_mm``."""
+    if echo_us <= 0 or echo_us >= ECHO_TIMEOUT_US:
+        return 0
+    c_e4 = 3313 + int(606 * temp_deci_c / 1000)
+    return min(0xFFFF, echo_us * c_e4 // 20000)
 
 
 class Filter:

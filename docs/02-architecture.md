@@ -29,9 +29,9 @@ Paused (obstacle/bumper, auto-resume when clear). Fault/E-stop (any state) → d
 |---|---|---|---|
 | Collision / contact | Bumpers (hard stop on MCU) | LiDAR stop zone | Bumper never overridden |
 | Obstacles ahead | LiDAR | — | Reflective metal: validate with field logs |
-| Pose | Encoders + IMU (MCU) | LiDAR scan match and AprilTag fixes re-anchor: 2+ agreeing tags accepted at once (SR-019), one tag needs IMU prior + 2 reads (SR-018); log-only until TP-V02 | Lesson 2–3; tags never act as obstacle or safety sensor (ADR-0007, ADR-0008) |
+| Pose | Encoders + IMU (MCU) | LiDAR scan match (if kept, ADR-0011) and AprilTag fixes from front + rear cameras (SR-024), blended by variance (`linux/nav/fusion.py`): 2+ agreeing tags with good geometry accepted at once (SR-019), one tag needs IMU prior + a second tag (SR-018); log-only until TP-V02 | Lesson 2–3; tags never act as obstacle or safety sensor (ADR-0007, ADR-0008) |
 | Heading | IMU (BNO055 IMU mode, no magnetometer) | Encoders | Magnetometer unreliable near steel |
-| Tank / basket level | Float switches (shut-off, hardware) | Ultrasonic A02YYUW per container (SR-022, ADR-0010): low/half/full/fault for planning | Float shut-off is hardware; ultrasonic never bypasses it |
+| Tank / basket level | Float switches (shut-off, hardware) | Ultrasonic HC-SR04 per container (SR-022, ADR-0010): low/half/full/fault for planning | Float shut-off is hardware; ultrasonic never bypasses it |
 | People nearby | LiDAR stop zone + bumpers (MCU) | Camera person detection → caution speed cap 0.10 m/s (SR-020); no images kept (SR-021, ADR-0009) | Camera is not a safety sensor |
 | Suction / blockage | MPX5010DP | Vacuum current (ACS712, optional) | Thresholds from measured readings |
 | Compactor force | Load cell + HX711 | Actuator current | ≤ 100 kgf |

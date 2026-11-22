@@ -233,7 +233,7 @@ system:
     module: M5
     priority: must
     text: The storage module shall measure the fill level of the liquid tank and of the chip basket with one ultrasonic sensor each, within 10 % of the usable height, and report low, half, full or fault to Linux at least every 200 ms.
-    rationale: Owner choice (2026-11-22) of ultrasonic level for planning when to return home (ADR-0010). Float shut-off at the vacuum port stays the hardware overfill protection (rule 1).
+    rationale: Owner choice (2026-11-22) of the low-cost HC-SR04 ultrasonic sensor for planning when to return home (ADR-0010). Float shut-off at the vacuum port stays the hardware overfill protection (rule 1).
     verification: Test
     acceptance: "TP-L01: level error <= 10 % of usable height at 5 fill points per container, 3 runs each, with reference oil and chips; fault reported within 0.5 s when a sensor is unplugged"
     status: draft
@@ -246,5 +246,15 @@ system:
     rationale: Owner request for two home tags (ADR-0008); docking only on a fresh fix that sees both home tags.
     verification: Test
     acceptance: "TP-N01: >= 19 of 20 dockings on the real floor within limits from 5 start poses; a failed docking ends stopped and reported, never forced"
+    status: draft
+    verified_by: []
+  - id: SR-024
+    parent: R6
+    module: M6
+    priority: should
+    text: The perception module shall carry at least two cameras, one facing forward and one facing backward, each with its own calibration and measured mount.
+    rationale: Owner decision (2026-11-22) for the next build; one camera now. Rear view keeps tag fixes while reversing and on the return lane (ADR-0011). Rig choice vs LiDAR in ADR-0011.
+    verification: Inspection
+    acceptance: "Two calibration files and two measured mounts in the camera list; both cameras give accepted fixes in TP-V02"
     status: draft
     verified_by: []

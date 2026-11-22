@@ -6,16 +6,10 @@ static int fails = 0;
 #define CHECK(c) do { if (!(c)) { std::printf("FAIL line %d: %s\n", __LINE__, #c); ++fails; } } while (0)
 
 int main() {
-  level::A02Parser p;
-  uint16_t mm = 0;
-  const uint8_t good[] = {0x12, 0xFF, 0x01, 0x2C, static_cast<uint8_t>(0xFF + 0x01 + 0x2C)};
-  bool got = false;
-  for (uint8_t b : good) got = p.feed(b, &mm) || got;
-  CHECK(got && mm == 300);
-  const uint8_t bad[] = {0xFF, 0x01, 0x2C, 0x00};
-  got = false;
-  for (uint8_t b : bad) got = p.feed(b, &mm) || got;
-  CHECK(!got);
+  CHECK(level::echo_to_mm(1749, 200) == 300);   // 300 mm at 20 degC (c = 343.4 m/s)
+  CHECK(level::echo_to_mm(1749, 400) == 310);   // warmer air -> faster sound -> longer reading for same echo
+  CHECK(level::echo_to_mm(0, 200) == 0);
+  CHECK(level::echo_to_mm(30000, 200) == 0);    // timeout
 
   const level::Config cfg{400, 100, 40, 80, 70, 500, 30, 600};
   level::Filter f(cfg);
