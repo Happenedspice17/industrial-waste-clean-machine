@@ -15,3 +15,4 @@
   yet in `requirements/requirements.yaml` — add them with `/req` once the team approves.
 - **Commits:** branch `claude/elegant-bardeen-eyqw0a`.
 - **Update (same day):** slides simplified to reference style (short phrases, redrawn goal tree and black/white boxes); detail moved to speaker notes.
+- **Update (same day):** GitHub link added to cover and closing slide; root and folder READMEs refreshed with current status (21 SR, ADR-0007, TP-V02, threat model, EVRs); new risk/ and tools/ READMEs. Numbers re-checked against `tools/fmea.py`, `tools/wcca.py` outputs and `requirements.yaml`.

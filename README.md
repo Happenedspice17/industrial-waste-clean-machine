@@ -13,6 +13,10 @@
 [![CI](https://github.com/Happenedspice17/industrial-waste-clean-machine/actions/workflows/ci.yml/badge.svg?branch=develop)](https://github.com/Happenedspice17/industrial-waste-clean-machine/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/license-MIT-lightgrey)](LICENSE)
 
+**[📊 Final presentation (10 slides)](docs/semester-1-deliverables/Final_Presentation_Waste_Robot_v2.pptx)** ·
+**[📄 Improved proposal](docs/semester-1-deliverables/Improved_Proposal_Waste_Robot.pdf)** ·
+**[🧭 Project context](docs/00-project-context.md)** · **[📝 Changelog](CHANGELOG.md)**
+
 <img src="docs/img/robot_side_view.jpg" alt="Side view of the robot concept: brush, nozzle, separation chamber, tank, battery and UNO Q" width="760">
 
 *A ≈ 700 × 500 × 450 mm differential-drive robot that cleans oil and metal chips from a machining-plant floor during
@@ -30,7 +34,8 @@ the shift change, separates the ferrous fraction and coarse solids on board, com
 | **Phase** | 🟠 **Initial design — not frozen** |
 | **Next gate** | 🌀 **Vacuum (suction rig) test** to validate the collection concept, option A vs B ([ADR-0004](docs/adr/0004-collection-architecture.md)) |
 | **Physical tests** | None yet — every number below is a calculation, estimate or simulation |
-| **Done so far** | Requirements, component selection, conceptual design, 9 modules, priced BOM, scenarios, economics, simulations |
+| **Done so far** | Requirements, component selection, conceptual design, 9 modules, priced BOM, scenarios, economics, simulations, final presentation v2 with ethical value requirements (IEEE 7000) |
+| **Bench software** | AprilTag camera localization app on the UNO Q ([ADR-0007](docs/adr/0007-apriltag-bench-localization.md), [TP-V02](docs/test-reports/TP-V02-apriltag-localization.md)): simulation + unit tests only, physical accuracy test pending |
 | **Checks** | Traceability, DFMEA + SCCAF, WCCA, lint and unit tests run on every PR (`python tools/check_all.py`) |
 
 ---
@@ -58,10 +63,12 @@ the shift change, separates the ferrous fraction and coarse solids on board, com
 | ⚖️ [**Standards matrix**](docs/03-standards-matrix.md) | Safety / compliance | ISO 3691-4, NOM-001-STPS-2008 and more, with clauses and evidence |
 | 💼 [**Business**](docs/04-business.md) · 🌱 [**Sustainability**](docs/05-sustainability-sdg.md) | Evaluation | Canvas, economics, SWOT, impact, SDGs |
 | 🛡️ [**Internal SCCAF**](docs/08-sccaf.md) | Quality | Special characteristics YC/YS → CC/SC |
+| 🔐 [**Threat model**](docs/security/threat-model.md) | Security | STRIDE per data flow for the camera app, web page, log and Bridge |
+| 🧪 [**Test protocols and reports**](docs/test-reports/) | Validation | TP-V01 vision, TP-V02 AprilTag localization: pass criteria fixed before testing |
 | 📖 [**Glossary**](docs/07-glossary.md) | Everyone | Definitions and project lingo |
 | 🧾 [**Decision records**](docs/adr/) · 📙 [**Engineering log**](docs/engineering-log/) | Engineering process | Why each decision was made; one entry per stage |
 | 📝 [**Changelog**](CHANGELOG.md) | Everyone | Every PR: what changed, how it was validated, IDs touched |
-| 🗂️ [**Semester-1 deliverables**](docs/semester-1-deliverables/) | Course | Proposal, conceptual design, models, scenarios, impact, standards table, final presentation |
+| 🗂️ [**Semester-1 deliverables**](docs/semester-1-deliverables/) | Course | Proposal, conceptual design, models, scenarios, impact, standards table, final presentation (v1 full, v2 10-slide) |
 
 ---
 
@@ -168,14 +175,15 @@ Every task leaves its evidence in the same PR ([definition of done](CLAUDE.md)),
 
 | Method | What it answers | Where | Today |
 |---|---|---|---|
-| 📋 **Requirements + traceability** | Does every feature trace R → SR → test? | [`requirements.yaml`](requirements/requirements.yaml) | 10 stakeholder R · **17 SR** · checked in CI |
+| 📋 **Requirements + traceability** | Does every feature trace R → SR → test? | [`requirements.yaml`](requirements/requirements.yaml) | 10 stakeholder R · **21 SR** · checked in CI |
 | ⚠️ **DFMEA / PFMEA** | How can it fail, how bad, how likely, how detected? | [`risk/dfmea.csv`](risk/dfmea.csv) | **9 failure modes**, 5 with S ≥ 9 → mandatory actions |
 | 🛡️ **SCCAF** | Which characteristics are critical, and is the control agreed? | [`risk/sccaf.csv`](risk/sccaf.csv) | **7 special characteristics**: 4 YC · 3 YS |
 | ⚡ **WCCA** | Does every circuit work at the worst tolerance? | [`risk/wcca.yaml`](risk/wcca.yaml) | 8 checks: 7 ✅ · 1 ⚠️ |
 | 🔩 **DFMA** | Can we build it with fewer parts and less time? | [`risk/dfma/`](risk/dfma/) | M4 first pass: DE 11.3 % → simplify |
 | 💰 **Economic evaluation** | Is it worth it for a plant? | [`tools/econ.py`](tools/econ.py) | Payback 6.6 months (base) |
-| 🔐 **Threat model** | Can someone misuse camera, web UI, RPC or RFID? | [`/security`](.claude/agents/cybersecurity-engineer.md) | Agent ready; first model pending |
-| 🧾 **ADR + engineering log** | Why did we decide this, with what evidence? | [`docs/adr/`](docs/adr/) · [`log`](docs/engineering-log/) | 6 ADRs |
+| 🔐 **Threat model** | Can someone misuse camera, web UI, RPC or RFID? | [`threat-model.md`](docs/security/threat-model.md) | Rev 1 (AprilTag app): **6 threats**, camera stream off by default |
+| ⚖️ **Ethical design (IEEE 7000)** | Which values must the design protect, measurably? | [Final presentation v2](docs/semester-1-deliverables/Final_Presentation_Waste_Robot_v2.pptx) | EVR-01 safety · EVR-02 environment · EVR-03 privacy (draft, not yet in `requirements.yaml`) |
+| 🧾 **ADR + engineering log** | Why did we decide this, with what evidence? | [`docs/adr/`](docs/adr/) · [`log`](docs/engineering-log/) | 7 ADRs |
 
 ### ⚠️ DFMEA — top risks (RPN = S × O × D)
 
@@ -275,6 +283,11 @@ BNO055 in IMU mode: on-chip fusion, and no compass that steel machines would foo
 Here vision only **flags residue for a second pass** and **cross-checks container levels against the floats**, and
 stays in log-only mode until protocol [TP-V01](docs/test-reports/TP-V01-vision-validation.md) passes on the real robot.
 
+### 7. AprilTags as a bench tool — [ADR-0007](docs/adr/0007-apriltag-bench-localization.md)
+**Need:** test pose estimation now, with one USB camera and printed tags, before the LiDAR stack exists.
+**Decision:** `cv2.aruco` detector + planar (x, y, yaw) solver with the mount height and pitch fixed; ambiguous views
+publish **no pose**; camera stream off by default. It is a bench tool only — navigation stays on LiDAR + encoders + IMU.
+
 ---
 
 ## 📊 Simulations and calculations
@@ -301,6 +314,7 @@ stays in log-only mode until protocol [TP-V01](docs/test-reports/TP-V01-vision-v
 | M1 recovery / M2 purity | ⏳ Pending | Weigh tank and basket, 1 m² patch |
 | Safety (e-stop, heartbeat, floats, force) | ⏳ Pending | Tests linked to SC-002, SC-003, SC-006, SC-007 |
 | Vision | ⏳ Log-only | TP-V01 |
+| AprilTag bench localization | ⚠️ Simulation p90 0.09–0.11 m vs 0.10 m target | Calibrate camera, run TP-V02 on the bench |
 
 ---
 
@@ -324,9 +338,10 @@ gave us [21 lessons](docs/01-lessons-learned.md) that we apply by default:
 | [`docs/`](docs/) | Context, architecture, standards, business, glossary, SCCAF, ADRs, engineering log, test protocols, deliverables |
 | [`requirements/`](requirements/) | `requirements.yaml` — single source of truth (R1–R10 → SR-xxx) |
 | [`risk/`](risk/) | DFMEA, SCCAF register, WCCA inputs, DFMA worksheets |
+| [`tests/`](tests/) | Unit tests for the tools (app tests live next to their code) |
 | [`tools/`](tools/) | Checkers and calculators: traceability, FMEA + SCCAF, WCCA, DFMA, economics, git policy |
 | [`cad/`](cad/) | Parametric OpenSCAD parts (`lib/`, `parts/`, `params/`) |
-| [`firmware/mcu/`](firmware/mcu/) · [`linux/`](linux/) | STM32U585 firmware · QRB2210 Python app (code starts after the suction gate) |
+| [`firmware/mcu/`](firmware/mcu/) · [`linux/`](linux/) | STM32U585 firmware (starts after the suction gate) · QRB2210 Python: AprilTag bench app today, navigation later |
 | [`sim/`](sim/) | Coverage, noisy-sensor and log-replay simulators |
 | [`.claude/`](.claude/) | Claude Code agents (DFMEA, WCCA, safety, cybersecurity, …), commands and safety hooks |
 
@@ -387,7 +402,8 @@ robot, a maze solver for *Microcontroladores 2* (2nd place):
 phase. In November 2026 the team started using **Claude Code** (Anthropic) on this repository. Under the team's
 direction it set up this repository from the team's kit, translated the Spanish deliverables to English,
 drafted ADR-0006 (vision role) from the maze-robot history, requirements SR-015–SR-017, test protocol TP-V01, the
-glossary, the internal SCCAF and its check in `tools/fmea.py`, this README and the cybersecurity agent. Commits it
+glossary, the internal SCCAF and its check in `tools/fmea.py`, this README and the cybersecurity agent, the
+AprilTag bench app (ADR-0007, TP-V02, threat model) and the 10-slide final presentation with the IEEE 7000 EVRs. Commits it
 helped write carry a `Co-Authored-By: Claude` trailer. Rules for AI output in this project:
 
 - AI output is a draft: a team member reviews every change before it is merged.

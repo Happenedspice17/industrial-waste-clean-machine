@@ -1,5 +1,8 @@
 # CAD — parametric OpenSCAD
 
+**Status (Nov 2026):** one draft part; most CAD waits for the suction-rig decision (ADR-0004) and for measured
+parts (rule 8: measure before modeling).
+
 Why OpenSCAD: text-based (diff-able in Git), fully parametric, light on CPU/RAM, renders headless in CI.
 
 ```

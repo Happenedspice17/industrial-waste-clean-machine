@@ -15,7 +15,8 @@ laws and standards stay in Spanish.
 | Scenario_Analysis_Waste_Robot.pdf | Idealist/pessimist scenarios, 10 protection terms, metrics, evaluation |
 | Activity06_Technological_Impact.pdf | Economic, social, cultural, safety-health, ethical, impact |
 | Standards_Table_Waste_Robot.pdf | ISO 3691-4 and NOM-001-STPS-2008 in course table format |
-| Final_Presentation_Waste_Robot.pptx/.pdf | Final presentation incl. Business Model Canvas and simulations |
+| Final_Presentation_Waste_Robot.pptx/.pdf | Final presentation v1 (19 slides) incl. Business Model Canvas and simulations |
+| **Final_Presentation_Waste_Robot_v2.pptx** | **Current deck:** 10 slides (≤ 10 min), proposal structure, IEEE 7000 ethical value requirements, speaker notes, repo link |
 | Prototype_Timeline_Dec2026.xlsx | Gantt, teams, costs and tooling |
 | Pairwise_Comparison_Corrected.xlsx | Quality matrix + corrected pairwise comparison |
 | Project_Brief_Waste_Robot.md | Team brief draft 6 (Oct 2026) |

@@ -6,7 +6,12 @@ changed, validation and the requirement/risk IDs touched. Stage narratives live 
 
 ## Unreleased
 
-### #14 · 2026-11-22 · docs · Lighter final presentation v2
+### #14 · 2026-11-22 · docs · Lighter final presentation v2 and updated READMEs
+- Presentation: GitHub link on the cover and the closing slide.
+- README refreshed with current facts: 21 SR, 7 ADRs, threat model rev 1, AprilTag bench app (ADR-0007, TP-V02),
+  IEEE 7000 EVRs, links to the 10-slide presentation. Folder READMEs updated (`requirements/`, `linux/`, `sim/`,
+  `firmware/mcu/`, `cad/`, `docs/test-reports/`, `docs/engineering-log/` index, `docs/semester-1-deliverables/`);
+  new `risk/README.md` and `tools/README.md`.
 - `Final_Presentation_Waste_Robot_v2.pptx` simplified as a reference deck: short phrases per slide; goal tree and
   black/white boxes redrawn as simple diagrams; detail moved to speaker notes. Same 10 slides and IEEE 7000 EVRs.
 - Validation: pptx schema check passes, visual QA of every slide; `python tools/check_all.py` passes.
