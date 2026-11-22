@@ -4,7 +4,6 @@ import time
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 
 import cv2
-
 import logbook
 
 PORT = 7000
@@ -36,9 +35,7 @@ class Handler(BaseHTTPRequestHandler):
                 s = dict(_state)
             s["age"] = round(time.monotonic() - s.pop("t"), 3)
             s["stream"] = STREAM
-            self._send(
-                200, "application/json", json.dumps(s, default=logbook._conv).encode()
-            )
+            self._send(200, "application/json", json.dumps(s, default=logbook._conv).encode())
         elif path == "/log":
             with logbook._lock:
                 body = "\n".join(logbook.tail) + "\n"

@@ -9,11 +9,10 @@ from collections import Counter
 os.environ["OPENCV_LOG_LEVEL"] = "ERROR"
 
 import cv2
-import numpy as np
-from arduino.app_utils import App, Bridge
-
 import logbook
+import numpy as np
 import web
+from arduino.app_utils import App, Bridge
 
 TARGET_FPS = 120
 # mode choice: "resolution" = largest image that still gives MIN_FPS (longer range,
@@ -115,7 +114,7 @@ def fourcc(c):
     return int(c.get(cv2.CAP_PROP_FOURCC)).to_bytes(4, "little").decode(errors="replace")
 
 
-def configure(dev, w, h, f, cc, exp_fps=None):
+def configure(dev, w, h, f, cc, *, exp_fps=None):
     c = cv2.VideoCapture(dev, cv2.CAP_V4L2)
     if not c.isOpened():
         return None
@@ -298,7 +297,7 @@ def seeds(tag_id, corners):
     # both IPPE solutions of each tag (free 6-DOF), flattened to the floor plane as seeds
     n, rvecs, tvecs, errs = cv2.solvePnPGeneric(OBJ, corners, K, D, flags=cv2.SOLVEPNP_IPPE_SQUARE)
     out, raw = [], []
-    for rvec, tvec, err in zip(rvecs[:n], tvecs[:n], np.ravel(errs)[:n]):
+    for rvec, tvec, err in zip(rvecs[:n], tvecs[:n], np.ravel(errs)[:n], strict=True):
         R, _ = cv2.Rodrigues(rvec)
         T_wc = T_WT[tag_id] @ np.linalg.inv(tf(R, tvec))
         T = T_wc @ T_CR
@@ -336,9 +335,9 @@ def estimate(gray, frame=None, prior=None):
     if frame is not None:
         cv2.aruco.drawDetectedMarkers(frame, corners, ids)
     pts_w, uv, cand, used = [], [], [], []
-    for c, tag_id in zip(corners, ids.ravel()):
-        tag_id = int(tag_id)
-        c = c.reshape(4, 2)
+    for c_raw, id_raw in zip(corners, ids.ravel(), strict=True):
+        tag_id = int(id_raw)
+        c = c_raw.reshape(4, 2)
         d = {"id": tag_id, "side_px": round(side_px(c), 1), "known": tag_id in T_WT}
         diag["det"].append(d)
         if not d["known"]:
@@ -537,7 +536,7 @@ def loop():
     prior = last_pose if t - last_t < PRIOR_TTL else None
     try:
         est, diag = estimate(gray, frame, prior)
-    except Exception:  # noqa: BLE001  log any pose bug instead of killing the app
+    except Exception:
         logbook.write("error", tb=traceback.format_exc())
         print(traceback.format_exc())
         est, diag = None, {"reason": "exception"}

@@ -4,7 +4,7 @@ import threading
 import time
 from collections import deque
 
-DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "logs")
+DIR = os.environ.get("APRILTAG_LOG_DIR") or os.path.join(os.path.dirname(os.path.abspath(__file__)), "logs")
 PATH = os.path.join(DIR, "run.jsonl")
 MAX_BYTES = 20_000_000
 

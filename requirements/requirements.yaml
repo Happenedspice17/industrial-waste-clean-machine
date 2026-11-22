@@ -188,3 +188,43 @@ system:
     acceptance: "Action flags default to off in code; each enabled flag cites a committed TP-V01 report"
     status: draft
     verified_by: []
+  - id: SR-018
+    parent: R8
+    module: M6
+    priority: should
+    text: The AprilTag bench localization app shall estimate the robot planar pose (x, y, yaw) from one USB camera and tag36h11 markers at measured positions with a 90th-percentile error of at most 0.10 m and 5 deg at 0.8-3.5 m from 0.20 m tags, and report no pose instead of an ambiguous or inconsistent one.
+    rationale: Test tool for the localization of R8 (ADR-0007). LiDAR + encoders + IMU stay the localization authority; this app only measures and logs.
+    verification: Test
+    acceptance: "Physical run per TP-V02: p90 position error <= 0.10 m and p90 yaw error <= 5 deg against tape-measured robot poses, >= 30 poses; 0 poses published when the reason is ambiguous, tags_disagree or reproj"
+    status: draft
+    verified_by: [TP-V02]
+  - id: SR-019
+    parent: R6
+    module: M6
+    priority: must
+    text: The AprilTag bench localization app shall log every camera connect, disconnect and outage and at least 20 frame records per second with the decision reason, sending to the MCU only validated poses.
+    rationale: Lessons 7 and 10 (log raw, replay failures); SR-017 log-only gate. Test-mode estimates are for the page and log only.
+    verification: Test
+    acceptance: "run.jsonl holds camera_connected / camera_disconnected / camera_missing for each plug event and >= 20 frame records/s while the camera runs; Bridge pose messages with tag count > 0 occur only for frames with reason ok (TP-V02 step 6)"
+    status: draft
+    verified_by: [TP-V02]
+  - id: SR-020
+    parent: R6
+    module: M6
+    priority: must
+    text: The AprilTag bench localization app shall keep camera images on the robot by default, writing no image to disk and serving no image over the network unless the STREAM flag is set in code.
+    rationale: Privacy of plant staff in view of the camera (threat model T-01).
+    verification: Inspection
+    acceptance: "STREAM = False in the committed web.py; GET /frame.jpg returns 404; no image files under python/logs after a run"
+    status: draft
+    verified_by: [TP-V02]
+  - id: SR-021
+    parent: R6
+    module: M6
+    priority: should
+    text: The mount calibration of the AprilTag bench localization app shall measure camera height and pitch from at least 20 single-tag views within 2 s and apply them only to the running session.
+    rationale: CAM_Z/CAM_PITCH guesses broke every pose in the field log of 2026-11-22; values must come from measurement (rule 5). Session-only so a web request cannot change the committed configuration (threat model T-03).
+    verification: Test
+    acceptance: "TP-V02 step 3: calibrated CAM_Z within 0.02 m and CAM_PITCH within 1 deg of the tape/inclinometer measurement; values revert on app restart"
+    status: draft
+    verified_by: [TP-V02]
