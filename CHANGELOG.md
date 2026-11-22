@@ -6,6 +6,13 @@ changed, validation and the requirement/risk IDs touched. Stage narratives live 
 
 ## Unreleased
 
+### #13 · 2026-11-22 · docs · Final presentation v2 with IEEE 7000 EVRs
+- New `docs/semester-1-deliverables/Final_Presentation_Waste_Robot_v2.pptx`: 19 → 10 slides (≤ 10 min) following
+  the proposal structure, with speaker notes; requirements slide adds EVR-01–EVR-03 (IEEE 7000-2021).
+- Engineering log `docs/engineering-log/2026-11-22-final-presentation-v2.md`.
+- Validation: pptx schema check passes, visual QA of every slide; `python tools/check_all.py` passes.
+  Refs: R1–R10 (presentation only; EVRs not yet in requirements.yaml).
+
 ### #12 · 2026-11-22 · fix · CI workflow rejected at parse time
 - `ci.yml`: `hashFiles()` in the `firmware` job-level `if:` is not allowed there, so GitHub rejected the whole
   workflow with zero jobs on every run (e.g. `develop` at f07284c). The job now runs always; a first step detects
