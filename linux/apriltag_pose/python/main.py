@@ -16,6 +16,11 @@ import logbook
 import web
 
 TARGET_FPS = 120
+# mode choice: "resolution" = largest image that still gives MIN_FPS (longer range,
+# better precision); "fps" = fastest mode
+PREFER = "resolution"
+MIN_FPS = 40
+CALIB_S = 2.0  # mount calibration window
 # camera modes tried at startup (w, h, fps, fourcc); the fastest measured one wins
 MODES = [
     (320, 240, 120, "MJPG"),
@@ -93,6 +98,9 @@ params.cornerRefinementMethod = cv2.aruco.CORNER_REFINE_SUBPIX
 det = cv2.aruco.ArucoDetector(cv2.aruco.getPredefinedDictionary(cv2.aruco.DICT_APRILTAG_36h11), params)
 
 grab = None
+cam_info = {}  # device and mode of the open camera
+cam_since = 0.0
+cam_missing = False  # "camera_missing" already logged for this outage
 seq = 0
 res = None
 last_pose = None
@@ -107,7 +115,7 @@ def fourcc(c):
     return int(c.get(cv2.CAP_PROP_FOURCC)).to_bytes(4, "little").decode(errors="replace")
 
 
-def configure(dev, w, h, f, cc):
+def configure(dev, w, h, f, cc, exp_fps=None):
     c = cv2.VideoCapture(dev, cv2.CAP_V4L2)
     if not c.isOpened():
         return None
@@ -118,7 +126,7 @@ def configure(dev, w, h, f, cc):
     c.set(cv2.CAP_PROP_BUFFERSIZE, 1)
     if EXPOSURE_MAX is not None:
         c.set(cv2.CAP_PROP_AUTO_EXPOSURE, 1)
-        c.set(cv2.CAP_PROP_EXPOSURE, min(EXPOSURE_MAX, int(0.8e4 / f)))
+        c.set(cv2.CAP_PROP_EXPOSURE, min(EXPOSURE_MAX, int(0.8e4 / (exp_fps or f))))
     return c
 
 
@@ -132,6 +140,16 @@ def measure(c, n=30):
         if not ok:
             return 0.0, None
     return n / (time.monotonic() - t0), f.shape
+
+
+def pick_mode(good):
+    fast = max(good, key=lambda r: (min(r["measured_fps"], TARGET_FPS), r["got"][0]))
+    if PREFER != "resolution":
+        return fast
+    ok = [r for r in good if r["measured_fps"] >= MIN_FPS]
+    if not ok:
+        return fast
+    return max(ok, key=lambda r: (r["got"][0] * r["got"][1], r["measured_fps"]))
 
 
 def open_cam():
@@ -160,10 +178,13 @@ def open_cam():
         if not good:
             print(f"{d}: no frames")
             continue
-        best = max(good, key=lambda r: (min(r["measured_fps"], TARGET_FPS), r["got"][0]))
-        c = configure(d, *best["req"])
+        best = pick_mode(good)
+        # exposure from the frame rate really delivered, not the one requested
+        c = configure(d, *best["req"], exp_fps=best["measured_fps"])
         print(f"camera {d} -> {best}")
         logbook.write("camera", dev=d, **best)
+        cam_info.clear()
+        cam_info.update(dev=d, mode=best["req"], measured_fps=best["measured_fps"])
         return c
     return None
 
@@ -396,6 +417,73 @@ def views_of(diag):
     return out
 
 
+def set_mount(z, pitch):
+    global CAM_Z, CAM_PITCH, T_RC, T_CR, R_RC, t_RC
+    CAM_Z, CAM_PITCH = z, pitch
+    T_RC = robot_cam()
+    T_CR = np.linalg.inv(T_RC)
+    R_RC, t_RC = T_RC[:3, :3], T_RC[:3, 3]
+
+
+calib = {"state": "idle"}
+calib_lock = threading.Lock()
+
+
+def calib_start():
+    with calib_lock:
+        calib.clear()
+        calib.update({"state": "running", "t0": time.monotonic(), "z": [], "pitch": []})
+    logbook.write("calib_start")
+    return {"ok": True}
+
+
+def calib_apply():
+    with calib_lock:
+        if calib.get("state") != "done":
+            return {"ok": False, "error": "no result to apply"}
+        z, p = calib["cam_z"], calib["cam_pitch"]
+        calib["state"] = "applied"
+    set_mount(z, p)
+    logbook.write("calib_apply", cam_z=z, cam_pitch=p)
+    return {"ok": True}
+
+
+def calib_step(t, diag):
+    # camera height/pitch from each tag alone (lowest-error IPPE branch, independent of
+    # CAM_Z/CAM_PITCH); relative to the tag heights in TAGS
+    with calib_lock:
+        if calib.get("state") != "running":
+            return
+        for d in diag.get("det", []):
+            if d.get("ippe"):
+                q = min(d["ippe"], key=lambda q: q["err"])
+                if q["err"] < 1.0:
+                    calib["z"].append(float(q["cam_xyz"][2]))
+                    calib["pitch"].append(float(q["cam_pitch"]))
+        if t - calib["t0"] < CALIB_S:
+            return
+        n = len(calib["z"])
+        if n < 20:
+            calib.update(state="failed", error=f"only {n} good tag views; keep a tag in view")
+        else:
+            z, p = np.array(calib["z"]), np.array(calib["pitch"])
+            calib.update(
+                state="done",
+                n=n,
+                cam_z=round(float(np.median(z)), 3),
+                cam_pitch=round(float(np.median(p)), 1),
+                z_spread=round(float(np.percentile(z, 90) - np.percentile(z, 10)), 3),
+                pitch_spread=round(float(np.percentile(p, 90) - np.percentile(p, 10)), 1),
+            )
+        del calib["z"], calib["pitch"]
+        logbook.write("calib_result", **calib)
+
+
+def calib_view():
+    with calib_lock:
+        return {k: v for k, v in calib.items() if k not in ("z", "pitch", "t0")}
+
+
 stats = Counter()
 stats_t = 0.0
 
@@ -411,19 +499,28 @@ def summary(t, perf):
 
 def loop():
     global grab, seq, last_pose, last_t, prev_t, fps, log_t, notify_t, last_reason
+    global cam_since, cam_missing
     if grab is None:
         cap = open_cam()
         if cap is None:
-            print("no camera, retrying")
-            logbook.write("no_camera", devs=glob.glob("/dev/video*"))
+            if not cam_missing:  # log the outage once, not every retry
+                cam_missing = True
+                print("camera missing, retrying every 2 s")
+                logbook.write("camera_missing", devs=glob.glob("/dev/video*"))
             web.publish(None, {"ok": False, "cam": False, "t": time.monotonic(), "map": MAP})
             time.sleep(2)
             return
         grab = Grabber(cap)
+        seq = 0  # the new grabber counts from 0
+        cam_since, cam_missing = time.monotonic(), False
+        print(f"camera connected {cam_info}")
+        logbook.write("camera_connected", **cam_info)
     frame, seq = grab.next(seq)
     if frame is None:
-        print("camera stopped, reopening")
-        logbook.write("camera_stopped")
+        why = "read failed (unplugged?)" if not grab.alive else "no frame for 1 s"
+        up = round(time.monotonic() - cam_since, 1)
+        print(f"camera disconnected: {why} after {up} s, reopening")
+        logbook.write("camera_disconnected", reason=why, uptime_s=up, frames=grab.seq, **cam_info)
         grab.stop()
         grab = None
         return
@@ -447,8 +544,11 @@ def loop():
     ms = (time.monotonic() - t) * 1000
     perf = f"cam={grab.fps:.1f}fps proc={fps:.1f}fps {ms:.0f}ms"
     stats[diag["reason"].split(" ")[0]] += 1
+    calib_step(t, diag)
     views = views_of(diag)
     info = {
+        "mount": {"z": CAM_Z, "pitch": CAM_PITCH},
+        "calib": calib_view(),
         "cam": True,
         "t": t,
         "map": MAP,
@@ -508,6 +608,8 @@ def loop():
 logbook.write(
     "start",
     TARGET_FPS=TARGET_FPS,
+    PREFER=PREFER,
+    MIN_FPS=MIN_FPS,
     MODES=MODES,
     CAM_PITCH=CAM_PITCH,
     EXPOSURE_MAX=EXPOSURE_MAX,
@@ -522,5 +624,6 @@ logbook.write(
     TAGS=TAGS,
 )
 print(f"log file: {logbook.PATH}")
+web.ACTIONS.update({"/calibrate": calib_start, "/calibrate/apply": calib_apply})
 web.start()
 App.run(user_loop=loop)

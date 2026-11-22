@@ -14,6 +14,8 @@ STREAM = False
 _lock = threading.Lock()
 _frame = None
 _state = {"ok": False, "cam": False, "t": 0.0}
+# POST path -> callable returning a dict (registered by main.py)
+ACTIONS = {}
 
 
 def publish(frame, state):
@@ -59,6 +61,13 @@ class Handler(BaseHTTPRequestHandler):
         else:
             self._send(404, "text/plain", b"not found")
 
+    def do_POST(self):
+        fn = ACTIONS.get(self.path.split("?")[0])
+        if fn is None:
+            self._send(404, "text/plain", b"not found")
+            return
+        self._send(200, "application/json", json.dumps(fn(), default=logbook._conv).encode())
+
     def _send(self, code, ctype, body):
         self.send_response(code)
         self.send_header("Content-Type", ctype)
@@ -103,6 +112,8 @@ header { display:flex; align-items:center; gap:12px; flex-wrap:wrap; grid-column
 .nums span, .meta { color:var(--mut); font-size:13px; }
 img, canvas { width:100%; display:block; border-radius:8px; background:#000; }
 canvas { background:transparent; aspect-ratio:1/1; }
+button { font:inherit; padding:6px 12px; border-radius:8px; border:1px solid var(--line);
+  background:var(--card); color:var(--fg); cursor:pointer; }
 .legend { display:flex; flex-wrap:wrap; gap:6px 14px; margin-top:8px; color:var(--mut); font-size:12px; }
 .legend i { display:inline-block; width:12px; height:12px; margin-right:5px; vertical-align:-2px; border-radius:2px; }
 </style>
@@ -126,6 +137,14 @@ canvas { background:transparent; aspect-ratio:1/1; }
       <div><b id="y">–</b><span>y (m)</span></div>
       <div><b id="yaw">–</b><span>yaw (°)</span></div>
     </div>
+  </section>
+  <section class="card" style="grid-column:1/-1">
+    <h2 style="font-size:15px;margin:0 0 6px">Camera mount</h2>
+    <div class="meta" id="mount"></div>
+    <p class="meta" style="margin:6px 0">Hold the camera still, at its real height, with a tag in view, then press
+      Calibrate (takes 2 s). Values are relative to the tag heights in TAGS.</p>
+    <button id="cal">Calibrate mount</button> <button id="apply" hidden>Apply (this session only)</button>
+    <pre id="calout" class="meta" style="white-space:pre-wrap;margin:8px 0 0"></pre>
   </section>
 </main>
 <script>
@@ -218,6 +237,25 @@ function draw(s) {
   }
 }
 
+function mount(s) {
+  if (!s || !s.mount) return;
+  $("mount").textContent = `current: CAM_Z = ${s.mount.z} m · CAM_PITCH = ${s.mount.pitch}°`;
+  const c = s.calib || {};
+  let out = "";
+  if (c.state === "running") out = "measuring...";
+  else if (c.state === "failed") out = "failed: " + c.error;
+  else if (c.state === "done" || c.state === "applied")
+    out = `measured from ${c.n} tag views (spread z ${c.z_spread} m, pitch ${c.pitch_spread}°)\\n` +
+      `paste in python/main.py:\\nCAM_X, CAM_Y, CAM_Z, CAM_YAW = 0.0, 0.0, ${c.cam_z}, 0.0\\nCAM_PITCH = ${c.cam_pitch}` +
+      (c.state === "applied" ? "\\n(applied to this session)" : "");
+  $("calout").textContent = out;
+  $("apply").hidden = c.state !== "done";
+}
+
+async function post(path) {
+  try { await fetch(path, { method: "POST" }); } catch (e) {}
+}
+
 async function tick() {
   let s = null;
   try { s = await (await fetch("/pose", { cache: "no-store" })).json(); } catch (e) {}
@@ -226,7 +264,7 @@ async function tick() {
     trail.push([s.x, s.y]); if (trail.length > 200) trail.shift();
     $("x").textContent = s.x.toFixed(2); $("y").textContent = s.y.toFixed(2); $("yaw").textContent = s.yaw.toFixed(1);
   }
-  status(s); draw(s);
+  status(s); draw(s); mount(s);
   if (s && s.stream && $("camcard").hidden) { $("camcard").hidden = false; frame(); }
 }
 
@@ -237,6 +275,8 @@ function frame() {
   im.src = "/frame.jpg?t=" + Date.now();
 }
 
+$("cal").onclick = () => post("/calibrate");
+$("apply").onclick = () => post("/calibrate/apply");
 setInterval(tick, 200); tick();
 </script>
 </body>
