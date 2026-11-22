@@ -6,6 +6,14 @@ changed, validation and the requirement/risk IDs touched. Stage narratives live 
 
 ## Unreleased
 
+### #12 · 2026-11-22 · fix · CI workflow rejected at parse time
+- `ci.yml`: `hashFiles()` in the `firmware` job-level `if:` is not allowed there, so GitHub rejected the whole
+  workflow with zero jobs on every run (e.g. `develop` at f07284c). The job now runs always; a first step detects
+  firmware sources (`find … | grep -q .` → `found` output) and guards the apt install, clang-format and cppcheck steps.
+- Validation: `actionlint` reproduces the error on the old file and passes on the new one; clean venv
+  `pip install -e ".[dev]"` OK; ruff, traceability, DFMEA, WCCA and pytest (24 passed, 1 skipped: no `cv2`) pass;
+  `python tools/check_all.py` passes. Refs: N/A (tooling).
+
 ### #11 · 2026-11-22 · feat · AprilTag bench localization app (App Lab)
 - New `linux/apriltag_pose/`: one USB camera + tag36h11 tags → planar pose (x, y, yaw) on the UNO Q; refuses
   ambiguous or inconsistent views; startup camera-mode probe (largest image with ≥ 40 fps); JSONL log with decision
