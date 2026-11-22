@@ -12,7 +12,7 @@
 - **Evidence:** Simulation only for accuracy (TP-V02 tables: p90 0.09–0.11 m, 2.2–2.7° with 0.20 m tags). Bench
   observations on the board (2026-11-22, desk, untaped): camera mode rates, 5 ms/frame without tags, every planar
   solve failing with 75–81 px reprojection because the configured mount (0.51 m / 6.5°) did not match the fitted one
-  (0.39–0.41 m / 0–1.3°). Unit tests 7 passed. `python tools/check_all.py` result in the PR.
+  (0.39–0.41 m / 0–1.3°). Unit tests 7 passed. `python tools/check_all.py`: all checks passed (PR #11).
 - **Reasoning:** Applied lessons: thresholds from data (mount taken from the log fit, then a calibration button),
   log every decision, one bad reading never becomes a pose (refuse ambiguous/inconsistent views), simulate before
   tuning. Vision stays log-only (SR-017); LiDAR + encoders + IMU remain the localization authority (ADR-0006/0007).
@@ -22,4 +22,4 @@
   640×480, not yet run on the board in that mode. Pose not yet validated
   on the board: intrinsics are a placeholder, tag map and mount must be measured, then TP-V02 run.
 - **Commits:** 33c693a, cbd67a0, 5af5410, 6d7114e, 1bf64c5, 1ce109c and the documentation commit on branch
-  `claude/funny-hopper-ikvbpt`.
+  `claude/funny-hopper-ikvbpt`, PR #11 to `develop`.

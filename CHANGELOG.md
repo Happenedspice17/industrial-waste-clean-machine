@@ -6,7 +6,7 @@ changed, validation and the requirement/risk IDs touched. Stage narratives live 
 
 ## Unreleased
 
-### #10 · 2026-11-22 · feat · AprilTag bench localization app (App Lab)
+### #11 · 2026-11-22 · feat · AprilTag bench localization app (App Lab)
 - New `linux/apriltag_pose/`: one USB camera + tag36h11 tags → planar pose (x, y, yaw) on the UNO Q; refuses
   ambiguous or inconsistent views; startup camera-mode probe (largest image with ≥ 40 fps); JSONL log with decision
   reasons and camera connect/disconnect events; web page on port 7000 (map, test estimate, mount calibration, camera
