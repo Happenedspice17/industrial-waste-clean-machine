@@ -6,6 +6,16 @@ changed, validation and the requirement/risk IDs touched. Stage narratives live 
 
 ## Unreleased
 
+### #11 · 2026-11-22 · feat · AprilTag bench localization app (App Lab)
+- New `linux/apriltag_pose/`: one USB camera + tag36h11 tags → planar pose (x, y, yaw) on the UNO Q; refuses
+  ambiguous or inconsistent views; startup camera-mode probe (largest image with ≥ 40 fps); JSONL log with decision
+  reasons and camera connect/disconnect events; web page on port 7000 (map, test estimate, mount calibration, camera
+  stream off by default); MCU sketch prints validated poses only.
+- SR-018–SR-021 (draft), ADR-0007, threat model rev 1 (`docs/security/threat-model.md`), protocol/report TP-V02,
+  engineering log, unit tests; ruff per-file ignores for the App Lab script.
+- Validation: simulation and unit tests (7 passed); bench observations on the board 2026-11-22 (camera mode rates,
+  mount mismatch found in the log). Physical accuracy test not run. Refs: SR-017–SR-021, ADR-0007.
+
 ## v0.1.0 · 2026-11-21 · Initial design baseline
 
 First release to `main`: initial design (not frozen), waiting on the vacuum (suction rig) test (ADR-0004).

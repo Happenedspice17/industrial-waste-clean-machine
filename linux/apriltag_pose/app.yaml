@@ -1,0 +1,5 @@
+name: AprilTag Pose
+description: One USB camera reads AprilTags (tag36h11) and estimates robot x, y, yaw
+icon: 📷
+bricks:
+  - arduino:web_ui: {}
