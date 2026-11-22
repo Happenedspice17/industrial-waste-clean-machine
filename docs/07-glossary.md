@@ -127,3 +127,12 @@ Add a term here the first time it appears in a doc, PR or chat summary.
 | matriz de calidad | quality (weighted) matrix |
 | escenario idealista / pesimista | idealist / pessimist scenario |
 | ODS | SDG |
+
+## Localization (ADR-0007)
+
+| Term | Meaning | Watch out |
+|---|---|---|
+| AprilTag (tag36h11) | Printed black-and-white square fiducial with a unique ID (0–586) | Size = black outer square, measured on the printed sheet |
+| Tag map | JSON with each tag's ID, centre (x, y, z) and facing direction in the cell frame | Surveyed on site; re-survey after moving any tag |
+| Fix | One pose (x, y, yaw) computed from the tags in a frame | Status accepted / pending / rejected / none |
+| IMU heading prior | Heading from the IMU used to stabilise a single-tag fix | One far tag alone cannot fix heading well |

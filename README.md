@@ -272,8 +272,10 @@ BNO055 in IMU mode: on-chip fusion, and no compass that steel machines would foo
 
 ### 6. Vision assists, never drives — [ADR-0006](docs/adr/0006-vision-role.md)
 **Lesson from the maze robot:** a glossy floor reflected the light and the camera saw walls that did not exist.
-Here vision only **flags residue for a second pass** and **cross-checks container levels against the floats**, and
-stays in log-only mode until protocol [TP-V01](docs/test-reports/TP-V01-vision-validation.md) passes on the real robot.
+Vision now uses **one camera** to read **AprilTags** on the walls and re-anchor the robot pose
+([ADR-0007](docs/adr/0007-single-camera-apriltag-localization.md), [printable tags](docs/apriltags/)). It never acts
+as an obstacle or safety sensor and stays log-only until protocol
+[TP-V02](docs/test-reports/TP-V02-apriltag-localization.md) passes on the real robot.
 
 ---
 
@@ -300,7 +302,7 @@ stays in log-only mode until protocol [TP-V01](docs/test-reports/TP-V01-vision-v
 | **Vacuum lifts steel chips** | ⏳ **Pending — design gate** | **Suction rig, weeks 1–3** |
 | M1 recovery / M2 purity | ⏳ Pending | Weigh tank and basket, 1 m² patch |
 | Safety (e-stop, heartbeat, floats, force) | ⏳ Pending | Tests linked to SC-002, SC-003, SC-006, SC-007 |
-| Vision | ⏳ Log-only | TP-V01 |
+| Vision (AprilTag pose) | ⏳ Log-only · simulation only | TP-V02 |
 
 ---
 

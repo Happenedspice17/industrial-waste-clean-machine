@@ -28,13 +28,13 @@ Paused (obstacle/bumper, auto-resume when clear). Fault/E-stop (any state) → d
 |---|---|---|---|
 | Collision / contact | Bumpers (hard stop on MCU) | LiDAR stop zone | Bumper never overridden |
 | Obstacles ahead | LiDAR | — | Reflective metal: validate with field logs |
-| Pose | Encoders + IMU (MCU) | LiDAR scan match (Linux) re-anchors | Lesson 2–3 |
+| Pose | Encoders + IMU (MCU) | LiDAR scan match and AprilTag fixes (single camera, log-only until TP-V02, SR-018) re-anchor | Lesson 2–3; tags never act as obstacle or safety sensor (ADR-0007) |
 | Heading | IMU (BNO055 IMU mode, no magnetometer) | Encoders | Magnetometer unreliable near steel |
-| Tank level | Float switches (majority filter) | Camera cross-check (SR-016, warning only) | Float shut-off is hardware |
+| Tank level | Float switches (majority filter) | — (camera cross-check SR-016 deferred, ADR-0007) | Float shut-off is hardware |
 | Suction / blockage | MPX5010DP | Vacuum current (ACS712, optional) | Thresholds from measured readings |
 | Compactor force | Load cell + HX711 | Actuator current | ≤ 100 kgf |
 | Battery | Voltage divider (INA226 optional) | — | Cut-off ≈ 50 % DoD |
-| Residue on cleaned strip | Camera (log-only until SR-015 passes) | Operator inspection | Only adds a re-pass; never stops, steers or blocks (ADR-0006) |
+| Residue on cleaned strip | Operator inspection | — (camera residue check SR-015 deferred, ADR-0007) | One camera is used for AprilTags |
 
 ## Safety chain
 

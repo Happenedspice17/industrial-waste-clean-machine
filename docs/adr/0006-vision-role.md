@@ -1,6 +1,6 @@
 # ADR-0006: Vision assists only — residue check and container-level cross-check, enabled only after validation
 
-- Status: accepted (tasks confirmed by the project owner, 2026-11-21) · Requirements: R6, R9, SR-015, SR-016, SR-017
+- Status: accepted (tasks confirmed by the project owner, 2026-11-21); task list superseded by ADR-0007 (one camera, AprilTag localization) · Requirements: R6, R9, SR-015, SR-016, SR-017
 
 ## Context
 R6 (vision, importance 6) has no defined task yet. M6 lists a USB webcam (COM-126) and an LED light; the pessimist

@@ -1,0 +1,11 @@
+{
+  "source": "PLACEHOLDER: 640x480, 60 deg HFOV assumed. Replace with checkerboard calibration and measured mount (rule 8)",
+  "width": 640,
+  "height": 480,
+  "fx": 554.3,
+  "fy": 554.3,
+  "cx": 320.0,
+  "cy": 240.0,
+  "dist": [0.0, 0.0, 0.0, 0.0, 0.0],
+  "mount": {"x": 0.20, "y": 0.0, "z": 0.45, "yaw_deg": 0.0, "pitch_deg": 15.0}
+}

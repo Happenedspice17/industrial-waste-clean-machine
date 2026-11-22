@@ -6,3 +6,4 @@ SC-004,F-008,YS,Vision container-level agreement with floats,>= 95 % (SR-016),TB
 SC-005,F-004,YS,Stopping distance on oiled floor from 0.38 m/s,<= 0.10 m (SR-005),TBD,Braking test 10x on reference oil; speed limit in MCU,Team A,Team A,Team D,pending,UP lab,open,SR-005
 SC-006,F-005,YC,MCU stop on heartbeat loss (T_stale),All motion stops within T_stale (SR-007),TBD,Fault-injection test (kill Linux app / block RPC) after every firmware release,Team D,Team D,Team C,pending,UP lab,open,SR-007
 SC-007,F-006,YC,Compactor force limit and lid interlock,<= 100 kgf; no motion with lid open (SR-009),TBD,Load-cell log + interlock test after any compactor change,Team B,Team B,Team C,pending,UP lab,open,SR-009
+SC-008,F-010,YS,AprilTag fix agrees with surveyed pose,<= 0.10 m / 3 deg up to 2.5 m; <= 0.25 m / 5 deg up to 4.0 m (SR-018),TBD,TP-V02 L1-L3; re-survey tag map after any tag or camera-mount change,Team D,Team D,Team D,pending,UP lab,open,SR-018

@@ -163,7 +163,7 @@ system:
     module: M6
     priority: should
     text: The vision function shall flag residue patches of at least 50 x 50 mm (oil film or chips) left on the cleaned strip, agreeing with operator inspection in at least 90 % of logged frames.
-    rationale: R6 task proposed in ADR-0006 (option A, team to confirm). Output is only a re-pass request; vision never stops, steers or blocks the robot.
+    rationale: R6 task proposed in ADR-0006 (option A). Deferred by ADR-0007 (one camera, used for AprilTag localization). Output is only a re-pass request; vision never stops, steers or blocks the robot.
     verification: Test
     acceptance: ">= 90 % agreement with operator labels over >= 200 frames on the real floor under the robot LED; 0 motion or stop commands issued by vision"
     status: draft
@@ -173,7 +173,7 @@ system:
     module: M6
     priority: should
     text: The vision function shall classify the fill level of the liquid tank and of the chip basket as low, half or full, agreeing with the float switches in at least 95 % of logged checks.
-    rationale: Container-level cross-check (ADR-0006 option D). Floats stay the authority; a disagreement only raises a "check floats" warning.
+    rationale: Container-level cross-check (ADR-0006 option D). Deferred by ADR-0007 (one camera). Floats stay the authority; a disagreement only raises a "check floats" warning.
     verification: Test
     acceptance: ">= 95 % agreement with float states over >= 100 checks per container (fill and drain cycles); 0 stops or tool commands issued by vision"
     status: draft
@@ -182,9 +182,19 @@ system:
     parent: R6
     module: M6
     priority: must
-    text: Each vision output shall remain in log-only mode until its validation protocol TP-V01 passes on the real robot and the test report is committed.
+    text: Each vision output shall remain in log-only mode until its validation protocol (TP-V01 or TP-V02) passes on the real robot and the test report is committed.
     rationale: Validation gate (ADR-0006); camera was untrustworthy on a glossy floor in the maze robot.
     verification: Inspection
-    acceptance: "Action flags default to off in code; each enabled flag cites a committed TP-V01 report"
+    acceptance: "Action flags default to off in code; each enabled flag cites a committed TP-V01 or TP-V02 report"
+    status: draft
+    verified_by: []
+  - id: SR-018
+    parent: R6
+    module: M6
+    priority: should
+    text: With one camera, the vision function shall estimate the robot floor pose from a mapped AprilTag 36h11 within 0.10 m and 3 deg (95th percentile) for tags 0.5 to 2.5 m away and within 0.25 m and 5 deg for tags up to 4.0 m away.
+    rationale: Absolute re-anchor with a unique ID (ADR-0007); supports encoders + IMU + LiDAR. Never an obstacle or safety sensor; log-only until TP-V02 passes (SR-017).
+    verification: Test
+    acceptance: ">= 95 % of accepted fixes within the band limits (0.10 m / 3 deg up to 2.5 m; 0.25 m / 5 deg up to 4.0 m) of the surveyed pose over >= 200 fixes at >= 20 surveyed poses on the real floor; 0 accepted fixes from unmapped or moved tags in the spoof/move cases"
     status: draft
     verified_by: []

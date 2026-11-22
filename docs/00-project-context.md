@@ -159,8 +159,9 @@ NOM-052-SEMARNAT-2005 + LGPGIR, ISO 12100, ISO 13849-1, ISO 13850, IEC 60204-1, 
    EOL, needs own fusion).
 5. LiDAR supply (Sandorobotics out of stock at check), oil hose price, printed wheel hubs.
 6. Sensor role hierarchy (write it before coding, lesson 6).
-7. Vision (ADR-0006, accepted): residue check (SR-015) + container-level cross-check (SR-016), log-only until TP-V01
-   passes (SR-017). Open: camera placement (DFMA) and USB hub power (WCCA).
+7. Vision: one camera only, used for AprilTag 36h11 localization (ADR-0007, proposed; SR-018, TP-V02), log-only
+   until TP-V02 passes (SR-017). Residue check (SR-015) and container cross-check (SR-016) from ADR-0006 deferred.
+   Open: survey the real tag layout and camera mount; occlusion by machines and people.
 
 ## 12. Next-semester plan (priorities)
 

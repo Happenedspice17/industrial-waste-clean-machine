@@ -6,10 +6,11 @@ requires-python = ">=3.11"
 dependencies = ["pyyaml>=6.0"]
 
 [project.optional-dependencies]
-dev = ["pytest>=8", "ruff>=0.6", "mypy>=1.10", "types-PyYAML", "pre-commit>=3.7"]
+vision = ["numpy>=1.26", "opencv-python-headless>=4.8", "pillow>=10.1"]
+dev = ["pytest>=8", "ruff>=0.6", "mypy>=1.10", "types-PyYAML", "pre-commit>=3.7", "waste-robot[vision]"]
 
 [tool.setuptools]
-packages = ["tools"]
+packages = ["tools", "linux", "linux.vision", "sim"]
 
 [tool.ruff]
 line-length = 120

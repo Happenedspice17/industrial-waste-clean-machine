@@ -6,6 +6,15 @@ changed, validation and the requirement/risk IDs touched. Stage narratives live 
 
 ## Unreleased
 
+### #TBD · 2026-11-21 · feat · Single-camera AprilTag localization
+- ADR-0007 (proposed): one camera, AprilTag 36h11 re-anchors the pose; residue and container checks (SR-015, SR-016)
+  deferred. New SR-018; SR-017 covers TP-V02.
+- `linux/vision/`: detector, 3-DOF floor-pose localizer (IMU heading prior, gates, 2-read confirmation, log-only),
+  config loader, JSON-lines logger that never saves frames. `tools/gen_apriltags.py` + `docs/apriltags/` (IDs 0–19,
+  220 mm, A3). `sim/tag_visibility.py`, `sim/tag_accuracy.py`. Optional dependency group `vision` (OpenCV, NumPy).
+- TP-V02, DFMEA F-010–F-012, SCCAF SC-008, threat model TM-V01, architecture, glossary, README, engineering log.
+- Validation: `python tools/check_all.py` passes; results are simulation only. Refs: SR-015, SR-016, SR-017, SR-018.
+
 ## v0.1.0 · 2026-11-21 · Initial design baseline
 
 First release to `main`: initial design (not frozen), waiting on the vacuum (suction rig) test (ADR-0004).
