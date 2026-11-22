@@ -9,6 +9,8 @@ import logbook
 
 PORT = 7000
 JPEG_Q = 60
+# camera image on the page; off = no frame leaves the robot (faces, people)
+STREAM = False
 _lock = threading.Lock()
 _frame = None
 _state = {"ok": False, "cam": False, "t": 0.0}
@@ -17,7 +19,7 @@ _state = {"ok": False, "cam": False, "t": 0.0}
 def publish(frame, state):
     global _frame
     with _lock:
-        _frame = frame
+        _frame = frame if STREAM else None
         _state.clear()
         _state.update(state)
 
@@ -31,6 +33,7 @@ class Handler(BaseHTTPRequestHandler):
             with _lock:
                 s = dict(_state)
             s["age"] = round(time.monotonic() - s.pop("t"), 3)
+            s["stream"] = STREAM
             self._send(
                 200, "application/json", json.dumps(s, default=logbook._conv).encode()
             )
@@ -43,6 +46,9 @@ class Handler(BaseHTTPRequestHandler):
                 body = f.read()
             self._send(200, "application/x-ndjson", body)
         elif path == "/frame.jpg":
+            if not STREAM:
+                self._send(404, "text/plain", b"stream disabled")
+                return
             with _lock:
                 f = _frame
             if f is None:
@@ -103,7 +109,7 @@ canvas { background:transparent; aspect-ratio:1/1; }
 <main>
   <header><h1>AprilTag Pose</h1><span id="st" class="pill">…</span><span id="meta" class="meta"></span>
     <a class="meta" href="/log" target="_blank">log</a><a class="meta" href="/log.jsonl" download="run.jsonl">download</a></header>
-  <section class="card"><img id="cam" alt="camera"></section>
+  <section class="card" id="camcard" hidden><img id="cam" alt="camera"></section>
   <section class="card">
     <canvas id="map"></canvas>
     <div class="nums">
@@ -187,6 +193,7 @@ async function tick() {
     $("x").textContent = s.x.toFixed(2); $("y").textContent = s.y.toFixed(2); $("yaw").textContent = s.yaw.toFixed(1);
   }
   status(s); draw(s);
+  if (s && s.stream && $("camcard").hidden) { $("camcard").hidden = false; frame(); }
 }
 
 function frame() {
@@ -196,7 +203,7 @@ function frame() {
   im.src = "/frame.jpg?t=" + Date.now();
 }
 
-setInterval(tick, 200); tick(); frame();
+setInterval(tick, 200); tick();
 </script>
 </body>
 </html>

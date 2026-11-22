@@ -438,8 +438,9 @@ def loop():
     h, w = frame.shape[:2]
     if res != (w, h):
         set_res(w, h)
-    frame = frame.copy()
     gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+    # annotate a copy only when the image is streamed; otherwise no frame is kept
+    frame = frame.copy() if web.STREAM else None
     prior = last_pose if t - last_t < PRIOR_TTL else None
     try:
         est, diag = estimate(gray, frame, prior)
