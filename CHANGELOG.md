@@ -6,6 +6,51 @@ changed, validation and the requirement/risk IDs touched. Stage narratives live 
 
 ## Unreleased
 
+## v0.2.0 · 2026-11-22 · AprilTag bench app and final presentation v2
+
+Still initial design (not frozen), waiting on the suction rig test (ADR-0004). No physical test results yet.
+
+### #15 · 2026-11-22 · release · v0.2.0 to main
+- Merged `develop` into `main` through `release/v0.2.0`; Unreleased entries #11–#14 moved under this heading;
+  `pyproject.toml` version 0.2.0.
+- Validation: `python tools/check_all.py` passes. Refs: N/A (tooling).
+
+### #14 · 2026-11-22 · docs · Lighter final presentation v2 and updated READMEs
+- Presentation: GitHub link and QR code on the cover and the closing slide (`docs/img/repo_qr.png`).
+- README refreshed with current facts: 21 SR, 7 ADRs, threat model rev 1, AprilTag bench app (ADR-0007, TP-V02),
+  IEEE 7000 EVRs, links to the 10-slide presentation. Folder READMEs updated (`requirements/`, `linux/`, `sim/`,
+  `firmware/mcu/`, `cad/`, `docs/test-reports/`, `docs/engineering-log/` index, `docs/semester-1-deliverables/`);
+  new `risk/README.md` and `tools/README.md`.
+- `Final_Presentation_Waste_Robot_v2.pptx` simplified as a reference deck: short phrases per slide; goal tree and
+  black/white boxes redrawn as simple diagrams; detail moved to speaker notes. Same 10 slides and IEEE 7000 EVRs.
+- Validation: pptx schema check passes, visual QA of every slide; `python tools/check_all.py` passes.
+  Refs: R1–R10 (presentation only).
+
+### #13 · 2026-11-22 · docs · Final presentation v2 with IEEE 7000 EVRs
+- New `docs/semester-1-deliverables/Final_Presentation_Waste_Robot_v2.pptx`: 19 → 10 slides (≤ 10 min) following
+  the proposal structure, with speaker notes; requirements slide adds EVR-01–EVR-03 (IEEE 7000-2021).
+- Engineering log `docs/engineering-log/2026-11-22-final-presentation-v2.md`.
+- Validation: pptx schema check passes, visual QA of every slide; `python tools/check_all.py` passes.
+  Refs: R1–R10 (presentation only; EVRs not yet in requirements.yaml).
+
+### #12 · 2026-11-22 · fix · CI workflow rejected at parse time
+- `ci.yml`: `hashFiles()` in the `firmware` job-level `if:` is not allowed there, so GitHub rejected the whole
+  workflow with zero jobs on every run (e.g. `develop` at f07284c). The job now runs always; a first step detects
+  firmware sources (`find … | grep -q .` → `found` output) and guards the apt install, clang-format and cppcheck steps.
+- Validation: `actionlint` reproduces the error on the old file and passes on the new one; clean venv
+  `pip install -e ".[dev]"` OK; ruff, traceability, DFMEA, WCCA and pytest (24 passed, 1 skipped: no `cv2`) pass;
+  `python tools/check_all.py` passes. Refs: N/A (tooling).
+
+### #11 · 2026-11-22 · feat · AprilTag bench localization app (App Lab)
+- New `linux/apriltag_pose/`: one USB camera + tag36h11 tags → planar pose (x, y, yaw) on the UNO Q; refuses
+  ambiguous or inconsistent views; startup camera-mode probe (largest image with ≥ 40 fps); JSONL log with decision
+  reasons and camera connect/disconnect events; web page on port 7000 (map, test estimate, mount calibration, camera
+  stream off by default); MCU sketch prints validated poses only.
+- SR-018–SR-021 (draft), ADR-0007, threat model rev 1 (`docs/security/threat-model.md`), protocol/report TP-V02,
+  engineering log, unit tests; ruff per-file ignores for the App Lab script.
+- Validation: simulation and unit tests (7 passed); bench observations on the board 2026-11-22 (camera mode rates,
+  mount mismatch found in the log). Physical accuracy test not run. Refs: SR-017–SR-021, ADR-0007.
+
 ## v0.1.0 · 2026-11-21 · Initial design baseline
 
 First release to `main`: initial design (not frozen), waiting on the vacuum (suction rig) test (ADR-0004).

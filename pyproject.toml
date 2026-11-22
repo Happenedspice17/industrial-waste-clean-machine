@@ -1,6 +1,6 @@
 [project]
 name = "waste-robot"
-version = "0.1.0"
+version = "0.2.0"
 description = "Autonomous industrial waste cleaning and separation robot (Arduino UNO Q)"
 requires-python = ">=3.11"
 dependencies = ["pyyaml>=6.0"]
@@ -22,6 +22,9 @@ ignore = ["S603", "S607", "PLR2004", "PLR0913", "S101"]
 
 [tool.ruff.lint.per-file-ignores]
 "tests/**" = ["S101", "PLR2004"]
+# App Lab bench app: one script with module state driven by App.run's loop callback (globals by design),
+# HTML/JS page kept inline in web.py, server must listen on all interfaces inside the App Lab container.
+"linux/apriltag_pose/**" = ["PLW0603", "PLR0911", "PLR0912", "PLR0915", "S104", "E501", "RUF001"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests", "linux"]

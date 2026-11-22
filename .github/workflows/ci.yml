@@ -23,11 +23,22 @@ jobs:
       - run: pytest -q
   firmware:
     runs-on: ubuntu-latest
-    if: ${{ hashFiles('firmware/**/*.c', 'firmware/**/*.cpp', 'firmware/**/*.h', 'firmware/**/*.ino') != '' }}
     steps:
       - uses: actions/checkout@v4
-      - run: sudo apt-get update && sudo apt-get install -y clang-format cppcheck
+      - name: detect firmware sources
+        id: src
+        run: |
+          if find firmware -regex '.*\.\(c\|cpp\|h\|ino\)' | grep -q .; then
+            echo "found=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "found=false" >> "$GITHUB_OUTPUT"
+            echo "No firmware sources; skipping firmware checks."
+          fi
+      - if: steps.src.outputs.found == 'true'
+        run: sudo apt-get update && sudo apt-get install -y clang-format cppcheck
       - name: clang-format
+        if: steps.src.outputs.found == 'true'
         run: find firmware -regex '.*\.\(c\|cpp\|h\|ino\)' -print0 | xargs -0 clang-format --dry-run --Werror
       - name: cppcheck
+        if: steps.src.outputs.found == 'true'
         run: cppcheck --enable=warning,style,performance,portability --error-exitcode=1 --inline-suppr -q firmware
