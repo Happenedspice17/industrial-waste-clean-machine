@@ -6,7 +6,7 @@ changed, validation and the requirement/risk IDs touched. Stage narratives live 
 
 ## Unreleased
 
-### #TBD · 2026-11-24 · docs · Final presentation v3 with Business Model Canvas diagram
+### #17 · 2026-11-24 · docs · Final presentation v3 with Business Model Canvas diagram
 - New `docs/semester-1-deliverables/Final_Presentation_Waste_Robot_v3.pptx` + `.pdf`: v2 plus slide 10
   "Business Model Canvas" in the 9-block diagram layout (content from `docs/04-business.md`, costs from
   `tools/econ.py`, labelled as estimates); notes trimmed to ≈ 10 min total; cover says "Final capstone presentation".
