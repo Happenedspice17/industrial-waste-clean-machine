@@ -6,6 +6,21 @@ changed, validation and the requirement/risk IDs touched. Stage narratives live 
 
 ## Unreleased
 
+## v0.2.1 · 2026-11-24 · Final presentation v3 with Business Model Canvas
+
+Still initial design (not frozen), waiting on the suction rig test (ADR-0004). No physical test results yet.
+
+### #18 · 2026-11-24 · release · v0.2.1 to main
+- Merged `develop` into `main` through `release/v0.2.1`; Unreleased entry #17 moved under this heading;
+  `pyproject.toml` version 0.2.1.
+- Validation: `python tools/check_all.py` passes. Refs: N/A (tooling).
+
+### #17 · 2026-11-24 · docs · Final presentation v3 with Business Model Canvas diagram
+- New `docs/semester-1-deliverables/Final_Presentation_Waste_Robot_v3.pptx` + `.pdf`: v2 plus slide 10
+  "Business Model Canvas" in the 9-block diagram layout (content from `docs/04-business.md`, costs from
+  `tools/econ.py`, labelled as estimates); notes trimmed to ≈ 10 min total; cover says "Final capstone presentation".
+- Validation: pptx schema validator passes; rendered to PDF and checked visually. Refs: N/A (documentation).
+
 ## v0.2.0 · 2026-11-22 · AprilTag bench app and final presentation v2
 
 Still initial design (not frozen), waiting on the suction rig test (ADR-0004). No physical test results yet.
