@@ -1,6 +1,6 @@
 [project]
 name = "waste-robot"
-version = "0.2.0"
+version = "0.2.1"
 description = "Autonomous industrial waste cleaning and separation robot (Arduino UNO Q)"
 requires-python = ">=3.11"
 dependencies = ["pyyaml>=6.0"]
