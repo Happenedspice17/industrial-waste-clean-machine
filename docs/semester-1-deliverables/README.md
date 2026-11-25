@@ -18,6 +18,7 @@ laws and standards stay in Spanish.
 | Final_Presentation_Waste_Robot.pptx/.pdf | Final presentation v1 (19 slides) incl. Business Model Canvas and simulations |
 | Final_Presentation_Waste_Robot_v2.pptx | Deck v2: 10 slides, proposal structure, IEEE 7000 ethical value requirements, speaker notes, repo link + QR |
 | **Final_Presentation_Waste_Robot_v3.pptx/.pdf** | **Current deck:** v2 + Business Model Canvas diagram (9 blocks), 11 slides, speaker notes ≈ 10 min |
+| Talking_Points_Final_Presentation_v3.pdf | Talking points for deck v3: running order, one page per speaker (points, numbers, hand-off, likely Q&A), hard questions |
 | Prototype_Timeline_Dec2026.xlsx | Gantt, teams, costs and tooling |
 | Pairwise_Comparison_Corrected.xlsx | Quality matrix + corrected pairwise comparison |
 | Project_Brief_Waste_Robot.md | Team brief draft 6 (Oct 2026) |
