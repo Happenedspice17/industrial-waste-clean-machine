@@ -18,10 +18,11 @@ official STPS text.
 | NOM-004-STPS-1999 | — | Guards and safety devices on machinery | Covered brush/compactor; lid interlock; e-stop | Interlock test |
 | NOM-026-STPS-2008 | — | Safety colors: red stop, yellow caution, green safe, blue mandatory | Tower green/amber/red; red mushroom e-stop | Photo, HMI spec |
 | NOM-029-STPS-2011 | — | Safe electrical maintenance | Fuses, lockable e-stop, battery disconnect | Maintenance procedure |
-| NOM-010 / 011 / 017 / 035-STPS | — | Chemical agents / noise / PPE / psychosocial | Less fluid contact; noise test; gloves + glasses; change management | Test reports, training record |
-| NOM-052-SEMARNAT-2005 + LGPGIR | — | Hazardous waste handling, management plans for used oil | Two labeled streams to authorized handlers | Delivery records |
+| NOM-010 / 011 / 017 / 035-STPS | — | Chemical agents / noise / PPE / psychosocial | Less fluid contact; water-based non-flammable degreaser (SR-025); noise test; gloves + glasses at refill (P-001); change management | Test reports, SDS, training record |
+| NOM-018-STPS-2015 | — | Hazard communication for chemicals (GHS: SDS, labels) | Degreaser SDS and labels at the refill station; labeled solution and recovery tanks (P-002) | SDS on file, label photos |
+| NOM-052-SEMARNAT-2005 + LGPGIR | — | Hazardous waste handling, management plans for used oil | Two labeled streams to authorized handlers; decanted oil + oily water from the degreaser (ADR-0008), never to drain (P-003) | Delivery records |
 | ISO 12100:2010 | — | Risk assessment and reduction | DFMEA + 10 protection terms | `risk/dfmea.csv` |
 | ISO 13849-1:2023 | — | Performance level of safety functions | Safety in hardware; certified version would need safety relay | PL estimate (future) |
 | ISO 13850:2015 / IEC 60204-1 | — | E-stop design; electrical equipment | Category 0 stop via relay | Diagram |
-| IEC 60529 | — | IP code | IP54 target electronics bay | Enclosure spec/test |
+| IEC 60529 | — | IP code | IP54 electronics bay; IPX4 below the deck (conductive solution, F-013) | Enclosure spec, spray test |
 | ISO 45001:2018 | — | OH&S management | Robot logs feed plant OH&S indicators | — |

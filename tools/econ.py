@@ -1,5 +1,8 @@
 #!/usr/bin/env python3
-"""Economic evaluation of one robot in the reference plant (reproduces Activity 06 numbers)."""
+"""Economic evaluation of one robot in the reference plant.
+
+`Params()` reproduces Activity 06 (dry concept). `DEGREASER` is the current concept (ADR-0008): low-dose cleaning
+solution, extra hardware and oily-water disposal. All cleaning-agent figures are estimates until TP-S02."""
 
 from __future__ import annotations
 
@@ -36,6 +39,10 @@ class Params:
     commissioning_h: float = 16.0
     eng_rate: float = 150.0
     nre_share: float = 0.0
+    area_m2_cycle: float = 71.5  # 96 % of 74.5 m2 free floor (coverage simulation)
+    solution_l_m2: float = 0.0  # ADR-0008: 0.020 estimate, set by TP-S02
+    concentrate_frac: float = 0.03  # estimate
+    concentrate_mxn_l: float = 65.0  # estimate, not quoted
     rate: float = 0.12
     years: int = 3
 
@@ -47,17 +54,20 @@ def evaluate(p: Params) -> dict[str, float]:
     chips = p.chips_kg_cycle * cycles
     oil = p.oil_l_cycle * cycles * p.oil_density
     absorbent = p.absorbent_kg_cycle * cycles
+    solution_l = p.solution_l_m2 * p.area_m2_cycle * cycles  # spent solution ends in the liquid stream (~1 kg/L)
     waste_today = (chips + oil + absorbent) * p.disposal_mxn_kg + absorbent * p.absorbent_mxn_kg
     waste_robot = (
         oil * p.oil_collection_mxn_kg
         + p.fines_fraction * chips * p.disposal_mxn_kg
         - (1 - p.fines_fraction) * chips * p.scrap_mxn_kg
+        + solution_l * p.disposal_mxn_kg
     )
     waste_benefit = waste_today - waste_robot
     opex = (
         p.kwh_cycle * cycles * p.tariff_mxn_kwh
         + p.batteries_year * p.battery_mxn
         + p.consumables_year
+        + solution_l * p.concentrate_frac * p.concentrate_mxn_l
         + p.maint_hours_year * p.tech_rate
     )
     invest = p.hardware + (p.assembly_h + p.commissioning_h) * p.eng_rate + p.nre_share
@@ -75,15 +85,19 @@ def evaluate(p: Params) -> dict[str, float]:
     }
 
 
+# ADR-0008: + dosing hardware MXN 1,000 (estimate) on BOM + tooling, 15 % contingency; pump +2 Wh/cycle
+DEGREASER = Params(solution_l_m2=0.020, hardware=(17530.50 + 1000.0) * 1.15, kwh_cycle=0.155)
+
 SCENARIOS = {
-    "base": Params(),
-    "optimistic": Params(hours_saved_day=2.5),
-    "pessimistic": Params(hours_saved_day=1.0),
+    "activity06": Params(),
+    "base": DEGREASER,
+    "optimistic": replace(DEGREASER, hours_saved_day=2.5),
+    "pessimistic": replace(DEGREASER, hours_saved_day=1.0),
 }
 
 
-def pessimistic() -> dict[str, float]:
-    p = Params(hours_saved_day=1.0)
+def pessimistic(base: Params = DEGREASER) -> dict[str, float]:
+    p = replace(base, hours_saved_day=1.0)
     r = evaluate(p)
     # waste -50 %, opex +30 %, investment +50 % (as in Activity 06)
     net = r["labor_saved"] + 0.5 * r["waste_benefit"] - 1.3 * r["opex"]
@@ -99,6 +113,7 @@ def tornado(base: Params) -> list[tuple[str, float, float]]:
         ("disposal_mxn_kg", 2.0, 10.0),
         ("scrap_mxn_kg", 1.0, 4.0),
         ("hardware", base.hardware * 1.5, base.hardware * 0.7),
+        ("solution_l_m2", 0.040, 0.010),
     ]
     out = []
     for field, lo, hi in cases:
@@ -123,7 +138,7 @@ def main() -> int:
         f"payback {pe['payback_years'] * 12:>5.1f} mo  NPV {pe['npv']:>10,.0f}"
     )
     print("tornado (NPV delta low/high):")
-    for f, lo, hi in tornado(Params()):
+    for f, lo, hi in tornado(DEGREASER):
         print(f"  {f:<18} {lo:>10,.0f} {hi:>10,.0f}")
     return 0
 

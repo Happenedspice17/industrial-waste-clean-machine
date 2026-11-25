@@ -41,7 +41,11 @@ def sccaf_errors(rows: list[dict[str, str]], register: list[dict[str, str]]) -> 
 
 def load(path: Path) -> list[dict[str, str]]:
     with path.open(encoding="utf-8", newline="") as fh:
-        return list(csv.DictReader(fh))
+        rows = list(csv.DictReader(fh))
+    for r in rows:  # PFMEA rows name a process step instead of an item
+        if not (r.get("item") or "").strip() and r.get("process_step"):
+            r["item"] = r["process_step"]
+    return rows
 
 
 def analyze(rows: list[dict[str, str]]) -> tuple[list[tuple[str, int, int, str]], list[str]]:

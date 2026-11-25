@@ -6,6 +6,20 @@ changed, validation and the requirement/risk IDs touched. Stage narratives live 
 
 ## Unreleased
 
+### #TBD · 2026-11-25 · feat · Low-dose degreaser adopted (ADR-0008) and suction rig protocol with wet trap (TP-S02)
+- ADR-0008 accepted: low-foam, quick-break degreaser sprayed ahead of the brush (≈ 20 mL/m², estimate); still two
+  waste streams. New SR-022–SR-025; DFMEA F-010–F-014 (F-004 updated); new PFMEA `risk/pfmea.csv` (P-001–P-003),
+  checked by `tools/fmea.py` (process_step accepted as item) and `check_all.py`; SCCAF SC-008–SC-011; WCCA dosing
+  pump branch, runtime 52 min at 165 W.
+- `tools/econ.py`: `DEGREASER` scenario is the base (net 46,731/yr, payback 8.4 months, NPV 79,529; pessimistic NPV
+  −10,926); `activity06` keeps the old numbers; tests added.
+- TP-S02 protocol: wet trap between nozzle and vacuum, brush + dose sweep, foam, slip and A/B criteria fixed before
+  testing. TP-S01 and ADR-0004 point to it.
+- Context, architecture, standards (NOM-018-STPS-2015), business/BMC, SDG, glossary, README, CLAUDE.md key numbers
+  and `Final_Presentation_Waste_Robot_v4` (slides 5, 7, 8, 10, 11, 12 + notes) updated.
+- Validation: `python tools/check_all.py` passes; pptx validator passes, changed slides rendered and checked.
+  Refs: SR-001, SR-005, SR-022–SR-025, ADR-0004, ADR-0008, F-004, F-010–F-014, P-001–P-003, SC-008–SC-011.
+
 ### #TBD · 2026-11-25 · test · Handheld suction pre-test evidence (TP-S01) and presentation v4
 - New `docs/test-reports/TP-S01-handheld-suction-pretest.md` + `docs/test-reports/evidence/TP-S01/` (operator log
   PDF with photos re-encoded under 5 MB, original SHA-256 recorded; extracted before/after photos; vacuum listing).

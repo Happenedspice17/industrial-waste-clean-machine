@@ -60,21 +60,22 @@ T1 is weak evidence.
   of real chips. Coins are flat discs (worst case for the oil seal); real chips are curled, have edges and usually
   weigh less per piece (deduced). Kitchen oil + paraffin is not a machining lubricant.
 
-## Design observations (to decide, not adopted)
+## Design observations → decided in [ADR-0008](../adr/0008-cleaning-agent-dosing.md) (2026-11-25)
 1. **Degreaser conflicts with a core principle.** The concept recovers lubricant *without water or chemicals* so
    the liquid stream stays oil (presentation slides 2 and 5; water/steam outlets were discarded as a third waste
    stream, `docs/00-project-context.md`). A water + detergent solution
    would emulsify the oil, add a third stream or dilute the liquid stream (M2 purity ≥ 95 %), add a clean-water tank
    and dosing (mass, power, BOM) and may change the hazardous-waste class (NOM-052-SEMARNAT-2005). Needs an ADR
-   with rig data before any change.
+   with rig data before any change. → **Team decision 2026-11-25: use a low-dose, low-foam, quick-break degreaser
+   (ADR-0008); still two waste streams; dose and product from TP-S02.**
 2. **Foam.** If any detergent is used, foam can trip the float shut-off early or reach the vacuum motor (F-002).
-   Only low-foam agents or an antifoam in the tank; add a DFMEA row if dosing is adopted.
+   Only low-foam agents or an antifoam in the tank → SR-023, DFMEA F-010, SCCAF SC-008.
 3. **Do not vacuum liquids with the X200.** It is a dry handheld vacuum; T4 pulled soapy liquid through it
-   (risk of motor damage, deduced). For the rig, use a wet/dry vacuum.
+   (risk of motor damage, deduced). For the rig, a wet trap goes between nozzle and vacuum (TP-S02).
 4. **Integrating the X200 in the robot is not recommended** (deduced): dry-only, internal battery, small bin, rating
    unverified. It can still serve on the rig as a dry-chip reference if its air flow is measured.
 
-## Follow-ups (suction rig, ADR-0004)
+## Follow-ups → protocol [TP-S02](TP-S02-suction-rig-wet-trap.md)
 - Use the BOM wet/dry vacuum (or the candidate), with and without the brush, and the squeegee.
 - Fix acceptance criteria before testing; weigh oil before/after (SR-001) and chips lifted (g/s, SC-001).
 - Real steel chips from a machining shop (mass, length, shape recorded) plus coins as a repeatable reference.

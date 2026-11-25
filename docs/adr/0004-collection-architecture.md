@@ -16,5 +16,5 @@ Pickup velocity grows with density (steel ≈ 7,850 kg/m³); 80 W automotive vac
   coins lifted. With water + dish soap + baking soda: film mostly removed (visual estimate 85–90 %), 2 of 5 coins
   (30 % by mass, only the two lightest). Suction alone fails the option-A criterion with this vacuum; the brush +
   squeegee concept and the BOM vacuum are still untested, so the decision stays open.
-- New open question raised by TP-S01: a degreaser helps but conflicts with "no water or chemicals" (third stream,
-  emulsified oil, foam). Decide in a separate ADR with rig data; not adopted.
+- Degreaser adopted by the team on 2026-11-25 ([ADR-0008](0008-cleaning-agent-dosing.md)). The A/B decision is
+  taken on the rig with brush + degreaser + wet trap ([TP-S02](../test-reports/TP-S02-suction-rig-wet-trap.md)).

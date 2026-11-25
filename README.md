@@ -13,7 +13,7 @@
 [![CI](https://github.com/Happenedspice17/industrial-waste-clean-machine/actions/workflows/ci.yml/badge.svg?branch=develop)](https://github.com/Happenedspice17/industrial-waste-clean-machine/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/license-MIT-lightgrey)](LICENSE)
 
-**[📊 Final presentation (10 slides)](docs/semester-1-deliverables/Final_Presentation_Waste_Robot_v2.pptx)** ·
+**[📊 Final presentation (12 slides)](docs/semester-1-deliverables/Final_Presentation_Waste_Robot_v4.pptx)** ·
 **[📄 Improved proposal](docs/semester-1-deliverables/Improved_Proposal_Waste_Robot.pdf)** ·
 **[🧭 Project context](docs/00-project-context.md)** · **[📝 Changelog](CHANGELOG.md)**
 
@@ -32,9 +32,9 @@ the shift change, separates the ferrous fraction and coarse solids on board, com
 | | |
 |---|---|
 | **Phase** | 🟠 **Initial design — not frozen** |
-| **Next gate** | 🌀 **Vacuum (suction rig) test** to validate the collection concept, option A vs B ([ADR-0004](docs/adr/0004-collection-architecture.md)) |
-| **Physical tests** | One exploratory suction pre-test ([TP-S01](docs/test-reports/TP-S01-handheld-suction-pretest.md), 2026-11-24): handheld vacuum without brush — suction alone fails; the brush concept is not tested yet. Other numbers are calculations, estimates or simulations |
-| **Done so far** | Requirements, component selection, conceptual design, 9 modules, priced BOM, scenarios, economics, simulations, final presentation v2 with ethical value requirements (IEEE 7000) |
+| **Next gate** | 🌀 **Suction rig** ([TP-S02](docs/test-reports/TP-S02-suction-rig-wet-trap.md)): brush + degreaser dose + wet trap, option A vs B ([ADR-0004](docs/adr/0004-collection-architecture.md)) |
+| **Physical tests** | One exploratory suction pre-test ([TP-S01](docs/test-reports/TP-S01-handheld-suction-pretest.md), 2026-11-24): handheld vacuum without brush — suction alone fails, a degreaser helps → low-dose degreaser adopted ([ADR-0008](docs/adr/0008-cleaning-agent-dosing.md)). The brush concept is not tested yet. Other numbers are calculations, estimates or simulations |
+| **Done so far** | Requirements, component selection, conceptual design, 9 modules, priced BOM, scenarios, economics, simulations, final presentation v4 (IEEE 7000 values, Business Model Canvas, first suction test), cleaning-agent decision (ADR-0008) |
 | **Bench software** | AprilTag camera localization app on the UNO Q ([ADR-0007](docs/adr/0007-apriltag-bench-localization.md), [TP-V02](docs/test-reports/TP-V02-apriltag-localization.md)): simulation + unit tests only, physical accuracy test pending |
 | **Checks** | Traceability, DFMEA + SCCAF, WCCA, lint and unit tests run on every PR (`python tools/check_all.py`) |
 
@@ -68,7 +68,7 @@ the shift change, separates the ferrous fraction and coarse solids on board, com
 | 📖 [**Glossary**](docs/07-glossary.md) | Everyone | Definitions and project lingo |
 | 🧾 [**Decision records**](docs/adr/) · 📙 [**Engineering log**](docs/engineering-log/) | Engineering process | Why each decision was made; one entry per stage |
 | 📝 [**Changelog**](CHANGELOG.md) | Everyone | Every PR: what changed, how it was validated, IDs touched |
-| 🗂️ [**Semester-1 deliverables**](docs/semester-1-deliverables/) | Course | Proposal, conceptual design, models, scenarios, impact, standards table, final presentation (v1 full, v2 10-slide) |
+| 🗂️ [**Semester-1 deliverables**](docs/semester-1-deliverables/) | Course | Proposal, conceptual design, models, scenarios, impact, standards table, final presentation (v1 full, v2 10-slide, v3 + BMC, **v4 current** + suction test and degreaser) |
 
 ---
 
@@ -93,14 +93,16 @@ them on board and never mixing the two streams**, safely, with people and forkli
 
 ```mermaid
 flowchart LR
-    F["🛢️ Floor<br/>oil + chips"] --> B["🧹 Brush + squeegee"]
+    D[("5 L degreaser<br/>supply tank")] -- "pump, ≈ 20 mL/m²" --> SP["💧 Spray bar"]
+    F["🛢️ Floor<br/>oil + chips"] --> SP
+    SP --> B["🧹 Brush + squeegee"]
     B --> N["Nozzle + hose"]
     N --> C["Sealed separation chamber"]
     C --> S1["Mesh basket<br/>coarse solids"]
     C --> S2["🧲 Magnets<br/>ferrous chips"]
     S2 --> K["Compactor<br/>≤ 100 kgf"]
     K --> BK[("Removable<br/>chip basket")]
-    C -- "liquid by gravity" --> T[("20 L tank<br/>+ drain valve")]
+    C -- "liquid by gravity" --> T[("20 L tank<br/>oil + spent solution<br/>decant oil · drain water phase")]
     K -- "drained oil" --> T
     V["12 V wet/dry vacuum"] -.-|"pulls air from chamber + tank<br/>float shut-off protects it"| T
 ```
@@ -158,14 +160,14 @@ flowchart LR
 |---|---|---|---:|
 | M1 Chassis | Carries modules | 2040 aluminum profile, panels, bumper bar, leak tray | 1,276.00 |
 | M2 Mobility | Differential drive | 2× JGB37-3530 + encoders, Talon 124 mm wheels, 2× BTS7960 | 3,011.00 |
-| M3 Collection | Loosen + pick up | Nylon brush (775 motor), squeegee, PETG nozzle, oil hose, 80 W vacuum, MPX5010DP | 1,472.00 |
+| M3 Collection | Wet + loosen + pick up | Degreaser spray (5 L tank, 12 V pump), nylon brush (775 motor), squeegee, PETG nozzle, oil hose, 80 W vacuum, MPX5010DP | 1,472.00 + ≈ 1,000 dosing (estimate) |
 | M4 Separation | Retain + compact | Stainless basket, 10× neodymium magnets, 150 kgf actuator, load cell + HX711 | 1,087.00 |
 | M5 Storage | Hold liquid | 20 L tank, ½" ball valve, floats, float shut-off | 369.00 |
 | M6 Perception | Localize + detect | RPLIDAR A1M8, BNO055, USB camera + LED, 4 bumpers | 4,232.00 |
 | M7 Control | Compute | Arduino UNO Q 2 GB, MOSFET / level-shift boards | 1,122.00 |
 | M8 Power + safety | Energy + hard stop | 12 V 24 Ah SLA, 2× XL4015, fuses, 2× 40 A relay, LAY37 e-stop | 2,619.00 |
 | M9 Operator interface | Authorize + inform | RC522 RFID, lit button, 20×4 LCD, signal tower, web UI | 661.50 |
-| **Total (32 items)** | | *≈ 20,160 with tooling and 15 % contingency* | **15,849.50** |
+| **Total (32 items)** | | *≈ 21,310 with dosing, tooling and 15 % contingency* | **15,849.50** listed + ≈ 1,000 |
 
 ---
 
@@ -175,22 +177,24 @@ Every task leaves its evidence in the same PR ([definition of done](CLAUDE.md)),
 
 | Method | What it answers | Where | Today |
 |---|---|---|---|
-| 📋 **Requirements + traceability** | Does every feature trace R → SR → test? | [`requirements.yaml`](requirements/requirements.yaml) | 10 stakeholder R · **21 SR** · checked in CI |
-| ⚠️ **DFMEA / PFMEA** | How can it fail, how bad, how likely, how detected? | [`risk/dfmea.csv`](risk/dfmea.csv) | **9 failure modes**, 5 with S ≥ 9 → mandatory actions |
-| 🛡️ **SCCAF** | Which characteristics are critical, and is the control agreed? | [`risk/sccaf.csv`](risk/sccaf.csv) | **7 special characteristics**: 4 YC · 3 YS |
-| ⚡ **WCCA** | Does every circuit work at the worst tolerance? | [`risk/wcca.yaml`](risk/wcca.yaml) | 8 checks: 7 ✅ · 1 ⚠️ |
+| 📋 **Requirements + traceability** | Does every feature trace R → SR → test? | [`requirements.yaml`](requirements/requirements.yaml) | 10 stakeholder R · **25 SR** · checked in CI |
+| ⚠️ **DFMEA / PFMEA** | How can it fail, how bad, how likely, how detected? | [`risk/dfmea.csv`](risk/dfmea.csv) · [`pfmea.csv`](risk/pfmea.csv) | **14 design + 3 process failure modes**, 5 with S ≥ 9 → mandatory actions |
+| 🛡️ **SCCAF** | Which characteristics are critical, and is the control agreed? | [`risk/sccaf.csv`](risk/sccaf.csv) | **11 special characteristics**: 5 YC · 6 YS |
+| ⚡ **WCCA** | Does every circuit work at the worst tolerance? | [`risk/wcca.yaml`](risk/wcca.yaml) | 9 checks: 8 ✅ · 1 ⚠️ |
 | 🔩 **DFMA** | Can we build it with fewer parts and less time? | [`risk/dfma/`](risk/dfma/) | M4 first pass: DE 11.3 % → simplify |
-| 💰 **Economic evaluation** | Is it worth it for a plant? | [`tools/econ.py`](tools/econ.py) | Payback 6.6 months (base) |
+| 💰 **Economic evaluation** | Is it worth it for a plant? | [`tools/econ.py`](tools/econ.py) | Payback 8.4 months (base, with degreaser) |
 | 🔐 **Threat model** | Can someone misuse camera, web UI, RPC or RFID? | [`threat-model.md`](docs/security/threat-model.md) | Rev 1 (AprilTag app): **6 threats**, camera stream off by default |
 | ⚖️ **Ethical design (IEEE 7000)** | Which values must the design protect, measurably? | [Final presentation v2](docs/semester-1-deliverables/Final_Presentation_Waste_Robot_v2.pptx) | EVR-01 safety · EVR-02 environment · EVR-03 privacy (draft, not yet in `requirements.yaml`) |
-| 🧾 **ADR + engineering log** | Why did we decide this, with what evidence? | [`docs/adr/`](docs/adr/) · [`log`](docs/engineering-log/) | 7 ADRs |
+| 🧾 **ADR + engineering log** | Why did we decide this, with what evidence? | [`docs/adr/`](docs/adr/) · [`log`](docs/engineering-log/) | 8 ADRs |
 
 ### ⚠️ DFMEA — top risks (RPN = S × O × D)
 
 | ID | Item | Failure mode | S | O | D | RPN | Class |
 |---|---|---|:-:|:-:|:-:|:-:|:-:|
 | F-001 | M3 vacuum unit | Cannot lift steel chips | 7 | 6 | 4 | **168** | YS |
-| F-004 | M2 drive | Wheel slip on oil | 8 | 5 | 4 | **160** | YS |
+| F-004 | M2 drive | Wheel slip on oil or soapy film | 8 | 5 | 4 | **160** | YS |
+| F-010 | M4 chamber | Degreaser foam reaches the vacuum port | 8 | 5 | 4 | **160** | YS |
+| F-011 | M3 squeegee + dosing | Wet soapy film left (slip) | 8 | 5 | 4 | **160** | YS |
 | F-005 | M7 MCU/Linux link | Robot moves on a stale command | **9** | 4 | 3 | 108 | YC |
 | F-008 | M6 vision | Wrong container level read | 5 | 5 | 4 | 100 | YS |
 | F-002 | M5 tank | Liquid reaches the vacuum port | **9** | 3 | 3 | 81 | YC |
@@ -232,7 +236,8 @@ DFMEA, so it cannot drift; CI fails if a YC/YS row has no agreed control.
 | Collection branch | 25 A peak · 20 A fuse · 12 AWG (20 A) | ✅ |
 | Separation branch | 8 A peak · 10 A fuse · 16 AWG (10 A) | ✅ |
 | Logic branch | 3 A peak · 5 A fuse · 18 AWG (7 A) | ✅ |
-| Runtime | 54 min at 160 W | ✅ |
+| Dosing pump branch | 2 A peak · 3 A fuse · 18 AWG (7 A) | ✅ |
+| Runtime | 52 min at 165 W (with dosing pump) | ✅ |
 
 *Analysis with datasheet tolerances; UNO Q supply limits are still to verify, then re-run with measured parts.*
 
@@ -246,11 +251,13 @@ DFMEA, so it cannot drift; CI fails if a YC/YS row has no agreed control.
 
 | Economics (1 robot, 3 shifts, 900 cycles/yr) | Net benefit / yr | Payback | NPV (3 yr, 12 %) |
 |---|---:|---:|---:|
-| Optimistic | MXN 66,479 | 5.7 months | MXN 128,111 |
-| **Base** | **MXN 56,968** | **6.6 months** | **MXN 105,269** |
-| Pessimistic | MXN 23,011 | 24.7 months | MXN 7,928 |
+| Optimistic | MXN 56,241 | 7.0 months | MXN 102,371 |
+| **Base** | **MXN 46,731** | **8.4 months** | **MXN 79,529** |
+| Pessimistic | MXN 15,879 | 37.1 months | **MXN −10,926** |
 
-*Estimates. Biggest sensitivities: hours saved per day and disposal price.*
+*Estimates, with the low-dose degreaser (ADR-0008): concentrate ≈ 2,510/yr and oily-water disposal ≈ 7,720/yr. Dry
+concept (Activity 06) was 56,968/yr, 6.6 months, NPV 105,269. Biggest sensitivities: hours saved per day and the
+dose — measure it in TP-S02.*
 
 ---
 
@@ -274,6 +281,15 @@ the RFID card **and** the start button.
 ### 4. Suction first — [ADR-0004](docs/adr/0004-collection-architecture.md) · *open*
 **A:** brush + vacuum carry oil and chips. **B:** brush throws chips into a front hopper; the vacuum takes only
 liquid. Criteria are fixed before testing: choose A only if chip pickup ≥ 85 % with no clogging in 10 runs.
+First evidence ([TP-S01](docs/test-reports/TP-S01-handheld-suction-pretest.md)): suction alone, no brush, lifted 0 of
+5 coins dry and 2 of 5 with degreaser.
+
+### 8. A little degreaser, still two streams — [ADR-0008](docs/adr/0008-cleaning-agent-dosing.md)
+**Evidence:** TP-S01 — dry suction left the oil film untouched; a soap solution removed most of it. **Decision:** spray
+≈ 20 mL/m² (estimate) of a low-foam, quick-break, non-flammable degreaser ahead of the brush. The solution tank is a
+supply, so there are still two waste streams; the oil is decanted, the water phase goes to an authorized handler.
+**New risks handled:** foam (SR-023), wet floor (SR-024), conductive liquid near electronics (IPX4), worker exposure
+(SDS, PPE).
 
 ### 5. IMU without magnetometer — [ADR-0005](docs/adr/0005-imu-selection.md)
 BNO055 in IMU mode: on-chip fusion, and no compass that steel machines would fool.
@@ -301,7 +317,7 @@ publish **no pose**; camera stream off by default. It is a bench tool only — n
 | Coverage of a 12 × 8 m cell with 3 machines | **96 %** of free floor in **25.6 min** → **167 m²/h**, 68 Wh/cycle | Simulation |
 | Top speed | π · 0.124 m · 59 rpm / 60 ≈ **0.38 m/s** (0.15 m/s cleaning) | Calculation |
 | Braking on oil (μ = 0.1) | ≤ **7.4 cm** from 0.38 m/s | Calculation |
-| Energy | ≈ 160 W average, 144 Wh usable → **≈ 55 min** | Estimate |
+| Energy | ≈ 165 W average (incl. dosing pump), 144 Wh usable → **≈ 52 min** | Estimate |
 
 ### ✅ Validated vs pending
 

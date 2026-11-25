@@ -105,7 +105,8 @@ ruff check . && ruff format --check .
 
 ## 7. Key numbers (do not re-derive unless inputs change)
 
-Speed ≤ 0.38 m/s (0.15 m/s cleaning) · battery 12 V 24 Ah SLA, 144 Wh usable (50 % DoD) · ≈160 W average load →
-≈55 min · listed BOM MXN 15,849.50 (17,530.50 with tooling; ≈20,160 with 15 % contingency) · metrics: M1 recovery
+Speed ≤ 0.38 m/s (0.15 m/s cleaning) · battery 12 V 24 Ah SLA, 144 Wh usable (50 % DoD) · ≈165 W average load
+(incl. dosing pump) → ≈52 min · listed BOM MXN 15,849.50 (17,530.50 with tooling; ≈20,160 with 15 % contingency)
++ ≈1,000 dosing estimate → ≈21,310 · degreaser ≈20 mL/m² (estimate, ADR-0008) · metrics: M1 recovery
 ≥85 %, M2 purity ≥95 % liquid / ≥90 % solids, M3 coverage ≥100 m²/h with 0 incidents · simulation: 96 % coverage,
 25.6 min, 167 m²/h, 68 Wh per cycle in a 12×8 m cell.
