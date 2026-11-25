@@ -12,8 +12,9 @@ waste streams in separate containers. Capstone of *Proyecto Mecatrónico I/II*, 
 - Controller: **Arduino UNO Q 2 GB (ABX00162)** — STM32U585 MCU (Zephyr + Arduino core, real time) + Qualcomm
   Dragonwing QRB2210 MPU (Debian Linux, Python), linked by the Arduino Bridge (RPC).
 - Status (Nov 2026): **initial design, not frozen** (requirements, selection, conceptual design, 9 modules, priced
-  BOM, simulations). Waiting on the vacuum (suction rig) test to validate the collection concept (ADR-0004) before
-  freezing. **No physical prototype or test results yet.**
+  BOM, simulations). Waiting on the suction rig (TP-S02: brush + degreaser + wet trap) to validate the collection
+  concept (ADR-0004) before freezing. **No physical prototype yet**; one exploratory pre-test (TP-S01, handheld
+  vacuum) led to the low-dose degreaser decision (ADR-0008).
 - Team (7): Franco Zavala Morgan · María Ruiz Mejía · Manuel Harari López · Ian Carlo Olivares Chávez ·
   Carlos Emiliano Escamilla Garibay · Luis Roberto Sánchez Salgado · Juan Manuel Vásquez Paniagua.
   Advisor: Dr. Hiram Eredín Ponce Espinosa.
