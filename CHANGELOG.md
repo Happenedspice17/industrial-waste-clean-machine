@@ -6,6 +6,16 @@ changed, validation and the requirement/risk IDs touched. Stage narratives live 
 
 ## Unreleased
 
+### #TBD · 2026-11-25 · test · Handheld suction pre-test evidence (TP-S01) and presentation v4
+- New `docs/test-reports/TP-S01-handheld-suction-pretest.md` + `docs/test-reports/evidence/TP-S01/` (operator log
+  PDF with photos re-encoded under 5 MB, original SHA-256 recorded; extracted before/after photos; vacuum listing).
+  Measured 2026-11-24 (María Ruiz Mejía, exploratory, home setup): suction only, no brush — dry 0 % visible removal and
+  0 of 5 coins; with degreaser ≈ 85–90 % film removed (visual) and 2 of 5 coins (30.3 % by mass).
+- ADR-0004 "Evidence so far" (still open); test-reports index, README status, engineering log.
+- `Final_Presentation_Waste_Robot_v4.pptx/.pdf`: v3 + slide 10 "First suction test"; slide 9 and next-steps notes.
+- Validation: pptx validator passes, slide rendered and checked; `python tools/check_all.py` passes.
+  Refs: SR-001, ADR-0004, F-001, F-002, SC-001.
+
 ## v0.2.1 · 2026-11-24 · Final presentation v3 with Business Model Canvas
 
 Still initial design (not frozen), waiting on the suction rig test (ADR-0004). No physical test results yet.

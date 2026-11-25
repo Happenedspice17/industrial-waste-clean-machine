@@ -8,5 +8,6 @@ One file per test from [`docs/templates/test-report.md`](../templates/test-repor
 |---|---|---|---|
 | [TP-V01](TP-V01-vision-validation.md) | Vision: residue check + container level vs floats | SR-015–SR-017, ADR-0006 | Protocol written, not run |
 | [TP-V02](TP-V02-apriltag-localization.md) | AprilTag bench localization: accuracy, no wrong pose, logging, privacy, mount calibration | SR-017–SR-021, ADR-0007 | Simulation + 7 unit tests; physical test pending |
+| [TP-S01](TP-S01-handheld-suction-pretest.md) | Handheld suction pre-test: suction only, dry vs. degreaser (photos in `evidence/TP-S01/`) | SR-001, ADR-0004 | Measured 2026-11-24, exploratory: suction alone fails; brush concept not tested |
 
-Next: suction rig (ADR-0004, SC-001), then M1–M3 and safety tests (SC-002, SC-003, SC-005–SC-007).
+Next: suction rig with brush + squeegee and the BOM vacuum (ADR-0004, SC-001), then M1–M3 and safety tests (SC-002, SC-003, SC-005–SC-007).

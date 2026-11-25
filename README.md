@@ -33,7 +33,7 @@ the shift change, separates the ferrous fraction and coarse solids on board, com
 |---|---|
 | **Phase** | 🟠 **Initial design — not frozen** |
 | **Next gate** | 🌀 **Vacuum (suction rig) test** to validate the collection concept, option A vs B ([ADR-0004](docs/adr/0004-collection-architecture.md)) |
-| **Physical tests** | None yet — every number below is a calculation, estimate or simulation |
+| **Physical tests** | One exploratory suction pre-test ([TP-S01](docs/test-reports/TP-S01-handheld-suction-pretest.md), 2026-11-24): handheld vacuum without brush — suction alone fails; the brush concept is not tested yet. Other numbers are calculations, estimates or simulations |
 | **Done so far** | Requirements, component selection, conceptual design, 9 modules, priced BOM, scenarios, economics, simulations, final presentation v2 with ethical value requirements (IEEE 7000) |
 | **Bench software** | AprilTag camera localization app on the UNO Q ([ADR-0007](docs/adr/0007-apriltag-bench-localization.md), [TP-V02](docs/test-reports/TP-V02-apriltag-localization.md)): simulation + unit tests only, physical accuracy test pending |
 | **Checks** | Traceability, DFMEA + SCCAF, WCCA, lint and unit tests run on every PR (`python tools/check_all.py`) |
