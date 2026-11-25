@@ -6,7 +6,7 @@ changed, validation and the requirement/risk IDs touched. Stage narratives live 
 
 ## Unreleased
 
-### #TBD · 2026-11-25 · feat · Low-dose degreaser adopted (ADR-0008) and suction rig protocol with wet trap (TP-S02)
+### #19 · 2026-11-25 · feat · Low-dose degreaser adopted (ADR-0008) and suction rig protocol with wet trap (TP-S02)
 - ADR-0008 accepted: low-foam, quick-break degreaser sprayed ahead of the brush (≈ 20 mL/m², estimate); still two
   waste streams. New SR-022–SR-025; DFMEA F-010–F-014 (F-004 updated); new PFMEA `risk/pfmea.csv` (P-001–P-003),
   checked by `tools/fmea.py` (process_step accepted as item) and `check_all.py`; SCCAF SC-008–SC-011; WCCA dosing
@@ -20,7 +20,7 @@ changed, validation and the requirement/risk IDs touched. Stage narratives live 
 - Validation: `python tools/check_all.py` passes; pptx validator passes, changed slides rendered and checked.
   Refs: SR-001, SR-005, SR-022–SR-025, ADR-0004, ADR-0008, F-004, F-010–F-014, P-001–P-003, SC-008–SC-011.
 
-### #TBD · 2026-11-25 · test · Handheld suction pre-test evidence (TP-S01) and presentation v4
+### #19 · 2026-11-25 · test · Handheld suction pre-test evidence (TP-S01) and presentation v4
 - New `docs/test-reports/TP-S01-handheld-suction-pretest.md` + `docs/test-reports/evidence/TP-S01/` (operator log
   PDF with photos re-encoded under 5 MB, original SHA-256 recorded; extracted before/after photos; vacuum listing).
   Measured 2026-11-24 (María Ruiz Mejía, exploratory, home setup): suction only, no brush — dry 0 % visible removal and
