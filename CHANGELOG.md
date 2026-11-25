@@ -7,9 +7,10 @@ changed, validation and the requirement/risk IDs touched. Stage narratives live 
 ## Unreleased
 
 ### #TBD · 2026-11-25 · docs · Talking points for final presentation v3
-- New `docs/semester-1-deliverables/Talking_Points_Final_Presentation_v3.pdf` (9 pages): running order ≈ 9:55,
-  one page per team member with opening, points, labelled numbers, hand-off and likely questions; Q&A routing; hard
-  questions and key-numbers sheet. Engineering log entry and folder README updated.
+- New `docs/semester-1-deliverables/Talking_Points_Final_Presentation_v3.pdf` (10 pages): running order ≈ 9:55
+  in 9 turns, one page per team member (two for María: problem + Business Model Canvas) with opening, points,
+  labelled numbers, hand-off and likely questions; Q&A routing (FMEA/SCCAF → Carlos, backup María); safety-not-
+  headcount framing; hard questions and key-numbers sheet. Engineering log entry and folder README updated.
 - Validation: rendered and checked visually; content traced to deck v3 notes and `docs/00-project-context.md`.
   Refs: N/A (documentation).
 
