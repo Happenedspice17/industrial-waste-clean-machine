@@ -5,6 +5,7 @@ Each entry: problem, change, evidence, result.
 
 | Date | Entry |
 |---|---|
+| 2026-11-26 | [Final technical report (PROJECT.03)](2026-11-26-final-technical-report.md) |
 | 2026-11-22 | [Final presentation v2 (10 slides, IEEE 7000 EVRs)](2026-11-22-final-presentation-v2.md) |
 | 2026-11-22 | [CI workflow parse fix](2026-11-22-ci-workflow-parse-fix.md) |
 | 2026-11-22 | [AprilTag bench localization app](2026-11-22-apriltag-bench-localization.md) |

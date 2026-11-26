@@ -6,6 +6,14 @@ changed, validation and the requirement/risk IDs touched. Stage narratives live 
 
 ## Unreleased
 
+### #19 · 2026-11-26 · docs · Final technical report (PROJECT.03)
+- New `docs/final-report/`: chapter sources (Markdown), cover, styles, build script and generated appendices; built
+  `report.pdf` (113 pages) with the repository highlighted on the cover, a "Read this first" section and a full
+  repository guide (Appendix A).
+- Engineering log `docs/engineering-log/2026-11-26-final-technical-report.md`; `.gitignore` excludes the HTML/DOCX
+  build outputs and the local submission bundle.
+- Validation: `python tools/check_all.py`; report rendered to PDF and checked visually. Refs: R1–R10 (documentation only).
+
 ## v0.2.1 · 2026-11-24 · Final presentation v3 with Business Model Canvas
 
 Still initial design (not frozen), waiting on the suction rig test (ADR-0004). No physical test results yet.
