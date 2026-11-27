@@ -19,3 +19,7 @@ logs/
 *.log
 # generated docs
 docs/generated/
+# final-report build outputs (only report.pdf is kept); local submission bundle
+docs/final-report/report.html
+docs/final-report/report.docx
+deliverable/
