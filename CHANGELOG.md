@@ -9,7 +9,8 @@ changed, validation and the requirement/risk IDs touched. Stage narratives live 
 ### #22 · 2026-11-27 · docs · Final report cites presentation v4
 - `docs/final-report/chapters/02-methodology.md` and the engineering log: the PROJECT.03 submission uses
   `Final_Presentation_Waste_Robot_v4.pdf`; `report.pdf` rebuilt. Also merges `main`
-  back into `develop` (v0.3.0 release heading and version).
+  back into `develop` (v0.3.0 release heading and version). New `docs/final-report/build_docx.py` + `render_svg.js` +
+  `reference.docx`: the Word version keeps the diagrams (SVG → PNG), title page, GitHub box and bordered tables.
 - Validation: `python tools/check_all.py` passes; report rebuilt. Refs: N/A (documentation).
 
 ## v0.3.0 · 2026-11-27 · Final technical report, first suction pre-test and degreaser decision

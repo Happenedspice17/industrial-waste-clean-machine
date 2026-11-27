@@ -14,7 +14,7 @@ Repository: https://github.com/Happenedspice17/industrial-waste-clean-machine
 | `build.sh` | Runs everything: appendices → HTML → PDF → DOCX |
 | `report.pdf` | Built report (deliverable) |
 | `report.html` | Built report as one self-contained web page |
-| `report.docx` | Editable Word version (inline SVG diagrams and the cover box are not included in Word) |
+| `report.docx` | Editable Word version built by `build_docx.py` (diagrams rendered to PNG, Word template `reference.docx`; update the table of contents in Word with right-click → Update field) |
 
 Build (from a clone of the repository): `cd docs/final-report && ./build.sh`. Needs pandoc ≥ 3, Python 3 with PyYAML,
 and Node.js with Playwright/Chromium. `gen_appendices.py` reads `requirements/requirements.yaml`,
