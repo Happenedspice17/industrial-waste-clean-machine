@@ -6,6 +6,15 @@ changed, validation and the requirement/risk IDs touched. Stage narratives live 
 
 ## Unreleased
 
+## v0.3.1 · 2026-11-27 · Final report cites presentation v4; Word version with diagrams
+
+Still initial design (not frozen), waiting on the suction rig (TP-S02, ADR-0004). No prototype yet.
+
+### #24 · 2026-11-27 · release · v0.3.1 to main
+- Merged `develop` into `main` through `release/v0.3.1`; Unreleased entries #22 and #23 moved under this heading;
+  `pyproject.toml` version 0.3.1.
+- Validation: `python tools/check_all.py` passes. Refs: N/A (tooling).
+
 ### #23 · 2026-11-27 · docs · Word version of the final report keeps diagrams and layout
 - New `docs/final-report/build_docx.py` + `render_svg.js` + `reference.docx`: the Word version keeps the diagrams
   (SVG → PNG), title page, GitHub box and bordered tables; `build.sh` uses it; `build-docx/` ignored.
