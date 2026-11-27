@@ -6,6 +6,16 @@ changed, validation and the requirement/risk IDs touched. Stage narratives live 
 
 ## Unreleased
 
+## v0.3.0 · 2026-11-27 · Final technical report, first suction pre-test and degreaser decision
+
+Still initial design (not frozen), waiting on the suction rig (TP-S02: brush + degreaser + wet trap, ADR-0004). No
+prototype yet; one exploratory pre-test (TP-S01) led to the low-dose degreaser (ADR-0008).
+
+### #21 · 2026-11-27 · release · v0.3.0 to main
+- Merged `develop` into `main` through `release/v0.3.0`; Unreleased entries #19 and #20 moved under this heading;
+  `pyproject.toml` version 0.3.0.
+- Validation: `python tools/check_all.py` passes. Refs: N/A (tooling).
+
 ### #20 · 2026-11-27 · docs · Final technical report (PROJECT.03)
 - New `docs/final-report/`: chapter sources (Markdown), cover, styles, build script and generated appendices; built
   `report.pdf` (123 pages) with the repository highlighted on the cover, a "Read this first" section and a full
