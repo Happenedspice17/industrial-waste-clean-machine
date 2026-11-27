@@ -6,6 +6,11 @@ changed, validation and the requirement/risk IDs touched. Stage narratives live 
 
 ## Unreleased
 
+### #22 · 2026-11-27 · docs · Final report cites presentation v4
+- `docs/final-report/chapters/02-methodology.md` and the engineering log: the PROJECT.03 submission uses
+  `Final_Presentation_Waste_Robot_v4.pdf`; `report.pdf` rebuilt.
+- Validation: `python tools/check_all.py` passes; report rebuilt. Refs: N/A (documentation).
+
 ### #20 · 2026-11-27 · docs · Final technical report (PROJECT.03)
 - New `docs/final-report/`: chapter sources (Markdown), cover, styles, build script and generated appendices; built
   `report.pdf` (123 pages) with the repository highlighted on the cover, a "Read this first" section and a full
