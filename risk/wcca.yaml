@@ -22,5 +22,6 @@ power:
     - {name: collection, nom_a: 10.0, peak_a: 25.0, fuse_a: 20, wire_awg: 12}
     - {name: separation, nom_a: 2.0, peak_a: 8.0, fuse_a: 10, wire_awg: 16}
     - {name: logic, nom_a: 1.5, peak_a: 3.0, fuse_a: 5, wire_awg: 18}
+    - {name: dosing_pump, nom_a: 0.7, peak_a: 2.0, fuse_a: 3, wire_awg: 18}   # ADR-0008, 12 V diaphragm pump (estimate, check datasheet)
   battery_wh_usable: 144
-  avg_load_w: 160
+  avg_load_w: 165   # 160 W + dosing pump ~5 W average (ADR-0008, estimate)

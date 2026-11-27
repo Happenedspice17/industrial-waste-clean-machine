@@ -6,3 +6,7 @@ SC-004,F-008,YS,Vision container-level agreement with floats,>= 95 % (SR-016),TB
 SC-005,F-004,YS,Stopping distance on oiled floor from 0.38 m/s,<= 0.10 m (SR-005),TBD,Braking test 10x on reference oil; speed limit in MCU,Team A,Team A,Team D,pending,UP lab,open,SR-005
 SC-006,F-005,YC,MCU stop on heartbeat loss (T_stale),All motion stops within T_stale (SR-007),TBD,Fault-injection test (kill Linux app / block RPC) after every firmware release,Team D,Team D,Team C,pending,UP lab,open,SR-007
 SC-007,F-006,YC,Compactor force limit and lid interlock,<= 100 kgf; no motion with lid open (SR-009),TBD,Load-cell log + interlock test after any compactor change,Team B,Team B,Team C,pending,UP lab,open,SR-009
+SC-008,F-010,YS,Foam height in the sealed chamber vs vacuum port,0 foam at port in 5 full fills (SR-023),TBD,TP-S02 part D; repeat after any product or dilution change,Team B,Team B,Team D,pending,UP lab,open,SR-023
+SC-009,F-011,YS,Floor friction after one pass,>= 0.9 x clean dry floor; no standing liquid (SR-024),TBD,TP-S02 part E; repeat after any dose or squeegee change,Team A,Team A,Team D,pending,UP lab,open,SR-024
+SC-010,F-013,YS,Ingress protection of electronics and connectors,IP54 bay; IPX4 below deck,TBD,Spray test after assembly; monthly connector inspection,Team C,Team C,Team C,pending,UP lab,open,SR-022
+SC-011,P-003,YC,Oily water handed to an authorized handler (never to drain),100 % of deliveries logged,TBD,Emptying instruction + delivery log; training,Team B,Team B,Team B,pending,UP lab,open,SR-003

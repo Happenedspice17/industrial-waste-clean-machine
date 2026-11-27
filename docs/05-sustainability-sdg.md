@@ -7,9 +7,10 @@
 | 3 Good health and well-being | 3.9 (deaths/illness from hazardous chemicals and pollution) | Less worker contact with metalworking fluids | Manual handling hours avoided; kg absorbent avoided |
 | 8 Decent work and economic growth | 8.8 (safe working environments) | Removes slip hazards at shift change | Slip incidents before/after (pilot) |
 | 9 Industry, innovation and infrastructure | 9.4 (resource-efficient, clean technologies) | Local, low-cost automation | Cost vs commercial alternatives |
-| 12 Responsible consumption and production | 12.4 (sound management of chemicals and wastes), 12.5 (reduce waste generation) | Segregation at source; chips to recycling; no third stream | t/yr hazardous waste avoided; t/yr chips recycled |
+| 12 Responsible consumption and production | 12.4 (sound management of chemicals and wastes), 12.5 (reduce waste generation) | Segregation at source; chips to recycling; no third stream; low-dose, non-flammable degreaser with SDS (ADR-0008) | t/yr hazardous waste avoided; t/yr chips recycled; L/yr solution used |
 
-Per robot (reference case, estimates): ≈ 2.6 t/yr mixed hazardous waste avoided; ≈ 1.3 t/yr chips to scrap recycling;
+Per robot (reference case, estimates): ≈ 2.6 t/yr mixed hazardous waste avoided, minus ≈ 1.3 t/yr oily water added
+by the degreaser (ADR-0008) → net ≈ 1.3 t/yr; ≈ 1.3 m³/yr water and ≈ 40 L/yr concentrate used; ≈ 1.3 t/yr chips to scrap recycling;
 450 kg/yr oil-soaked absorbent avoided. Each ton of recycled steel conserves ≈ 2,500 lb iron ore, 1,400 lb coal,
 120 lb limestone (AISI 2025).
 

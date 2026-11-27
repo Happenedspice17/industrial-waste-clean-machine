@@ -88,9 +88,13 @@ Add a term here the first time it appears in a doc, PR or chat summary.
 | Compaction | Pressing chips in the basket to drain oil and reduce volume (≤ 100 kgf) | |
 | Squeegee | Rubber blade that pushes the oil film to the nozzle (Spanish: *jalador*) | |
 | Leak tray | Tray under tank and chamber that contains drips | |
+| Degreaser / cleaning solution | Water-based, low-foam, quick-break agent sprayed ahead of the brush (ADR-0008, SR-025) | Supply, not a waste stream |
+| Quick-break | Degreaser that releases the oil after cleaning, so oil floats and can be decanted in the tank | Not "low-foam"; both are required |
+| Dose | Cleaning solution per floor area, mL/m² (SR-022) | Estimate 20 mL/m² until TP-S02 |
+| Wet trap | Sealed jar between nozzle and vacuum on the rig; liquid and chips drop out, the vacuum pulls only air (TP-S02) | Same principle as the sealed chamber |
 | **DoD (battery)** | Depth of discharge — 50 % for the SLA battery | Not "definition of done" — always spell that one out |
 | SLA | Sealed lead-acid battery (12 V 24 Ah) | |
-| BOM | Bill of materials (listed MXN 15,849.50) | |
+| BOM | Bill of materials (listed MXN 15,849.50 + ≈ 1,000 dosing estimate) | |
 | NPV / payback | Net present value (3 yr, 12 %) / time to recover the investment | Base vs pessimistic case |
 | BMC | Business Model Canvas (`docs/04-business.md`) | |
 | SDG | UN Sustainable Development Goals (Spanish: ODS) | |
@@ -118,6 +122,8 @@ Add a term here the first time it appears in a doc, PR or chat summary.
 | bitácora | engineering log |
 | viruta | chips |
 | jalador | squeegee |
+| desengrasante / limpiador | degreaser / cleaning solution |
+| trampa de líquidos | wet trap |
 | cambio de turno | shift change |
 | paro de emergencia | emergency stop (e-stop) |
 | tanque / canastilla | tank / basket |

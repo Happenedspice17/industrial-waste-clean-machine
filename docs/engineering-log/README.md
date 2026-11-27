@@ -5,6 +5,10 @@ Each entry: problem, change, evidence, result.
 
 | Date | Entry |
 |---|---|
+| 2026-11-26 | [Final technical report (PROJECT.03)](2026-11-26-final-technical-report.md) |
+| 2026-11-25 | [Degreaser adopted (ADR-0008) and suction rig with wet trap (TP-S02)](2026-11-25-degreaser-decision.md) |
+| 2026-11-25 | [Handheld suction pre-test (TP-S01) and presentation v4](2026-11-25-handheld-suction-pretest.md) |
+| 2026-11-24 | [Final presentation v3 (Business Model Canvas)](2026-11-24-final-presentation-v3-bmc.md) |
 | 2026-11-22 | [Final presentation v2 (10 slides, IEEE 7000 EVRs)](2026-11-22-final-presentation-v2.md) |
 | 2026-11-22 | [CI workflow parse fix](2026-11-22-ci-workflow-parse-fix.md) |
 | 2026-11-22 | [AprilTag bench localization app](2026-11-22-apriltag-bench-localization.md) |
