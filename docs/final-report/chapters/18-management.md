@@ -28,7 +28,7 @@ share of the validation of its modules; for the critical characteristics, valida
 | D · Control, navigation and vision | M6, M7 software | 2 | UNO Q setup, MCU firmware, sequencing and states, LiDAR + IMU map/save/replay, web UI + RFID, vision (stretch) | Firmware, operating states, route save and replay, web UI; vision as stretch | 4,613 |
 
 Suction phase budget (separate): MXN 1,770 (components 1,426 + tooling 344). Total listed with tooling MXN 17,530.50;
-with 15 % contingency ≈ MXN 20,160.
+with 15 % contingency ≈ MXN 20,160; with the dosing system of ADR-0008 ≈ MXN 21,310 (estimate).
 
 | Suction-phase role | People | Later team |
 |---|:-:|---|
@@ -59,9 +59,9 @@ before integration); 4 Dec (features not working are frozen out of the demo, vis
 
 ## Actual progress and replanning
 
-The design and analysis work was completed this semester, and a bench software tool runs on the UNO Q. The physical
-build did not start: the suction rig, the module builds and the tests were moved to the next semester (*Proyecto
-Mecatrónico II*). Honest status: **initial design, not frozen; no physical prototype; no physical test results.** The
+The design and analysis work was completed this semester, a bench software tool runs on the UNO Q and a first
+exploratory suction pre-test was run (TP-S01). The physical build did not start: the suction rig, the module builds and the tests were moved to the next semester (*Proyecto
+Mecatrónico II*). Honest status: **initial design, not frozen; no physical prototype; one exploratory pre-test.** The
 order of work is unchanged (suction first), because it attacks the biggest risk before spending on the rest.
 
 | Planned this semester | Status at 27 Nov 2026 |
@@ -72,14 +72,15 @@ order of work is unchanged (suction first), because it attacks the biggest risk 
 | Standards, DFMEA, SCCAF, WCCA, DFMA, threat model, ADRs, test protocols | Done (beyond the original plan) |
 | Public repository with automatic checks | Done (beyond the original plan) |
 | AprilTag bench localization app on the UNO Q | Done (simulation + bench; physical accuracy test pending) |
-| Suction rig and A/B decision | Moved to next semester (weeks 1–3) |
+| First physical evidence | Handheld suction pre-test TP-S01 measured on 24 Nov 2026 (exploratory); degreaser adopted (ADR-0008); rig protocol TP-S02 written |
+| Suction rig and A/B decision | Moved to next semester (weeks 1–3), now with brush + degreaser + wet trap (TP-S02) |
 | Module builds, integration, M1–M3 tests, demo | Moved to next semester |
 
 ## Roadmap for next semester
 
 | Phase | Weeks | Goal | Exit criterion |
 |---|---|---|---|
-| P1 | 1–3 | **Suction rig** → decide A/B → freeze the design | ADR-0004 accepted with test report; SC-001 measured |
+| P1 | 1–3 | **Suction rig TP-S02** (brush + degreaser dose + wet trap) → decide A/B and the dose → freeze the design | ADR-0004 accepted with test report; SC-001, SC-008, SC-009 measured; dose and product chosen |
 | P2 | 3–7 | Build modules in 4 teams: chassis + mobility · separation + storage · power + safety + HMI · control + navigation + vision | Each module passes its own test sheet |
 | P3 | 7–10 | Integration; map, save and replay a route | Full cycle on the bench and on the floor |
 | P4 | 10–13 | Validate M1–M3 and safety on an oily floor | Test reports for SR-001–SR-014 |
@@ -93,6 +94,7 @@ Stretch goals: vision task with the camera · full SLAM · LiFePO4 battery · co
 |:-:|---|---|
 | 1 | Collection architecture A vs B (ADR-0004) | Suction rig: chip lift rate, liquid per pass, clogging |
 | 2 | Reference lubricant (type, viscosity) and chip samples | Plant visit / supplier |
+| 2b | Cleaning-agent product, dilution and dose (ADR-0008); optional spot dosing only where residue is detected | TP-S02 parts C–F |
 | 3 | Mesh aperture, magnet layout, compactor stroke and force path, compaction ratio | Separation tests |
 | 4 | IMU: BNO055 vs MPU-6050 (ADR-0005) | I²C test on the STM32U585 |
 | 5 | LiDAR supply (out of stock at check), oil-hose price, printed wheel hubs | Purchasing; measured parts |

@@ -1,6 +1,7 @@
 # Technological impact
 
-Source: *RA1000 ACT.06 Technological impact analysis* (30 Oct 2026). Reference case for the evaluation: one robot
+Source: *RA1000 ACT.06 Technological impact analysis* (30 Oct 2026), updated in Section 14.3 for the degreaser
+decision of 25 November 2026 (ADR-0008). Reference case for the evaluation: one robot
 serving a machining cell in a Mexican plant with three shifts a day, 300 working days a year and three shift changes
 a day (900 cleaning cycles a year). Each cycle the floor collects about 1.5 kg of chips and 1 L of lubricant. Today
 the area is cleaned by hand with granular absorbent during the shift change. All values in MXN; parameters marked
@@ -10,17 +11,17 @@ assumption must be replaced with the plant's own quotes.
 
 | Dimension | Rubric criterion | Evidence in our project | Indicator / example of consequence |
 |---|---|---|---|
-| 1. Economic | a. Calculations | Separate economic evaluation (Section 14.2): investment, annual benefits, operating costs, net cash flow, payback and NPV, every formula shown. Academic prototype cost: MXN 97,260 including valued engineering hours | Base case: net benefit MXN 56,968/yr, payback 6.6 months, 3-year NPV at 12 % MXN 105,269. Pessimistic: payback 2.1 years, NPV MXN 7,928 (still ≥ 0) |
+| 1. Economic | a. Calculations | Separate economic evaluation (Section 14.2): investment, annual benefits, operating costs, net cash flow, payback and NPV, every formula shown. Academic prototype cost: MXN 97,260 including valued engineering hours | Base case: net benefit MXN 56,968/yr, payback 6.6 months, 3-year NPV at 12 % MXN 105,269. Pessimistic: payback 2.1 years, NPV MXN 7,928 (still ≥ 0). With degreaser (Section 14.3): 8.4 months, NPV 79,529; pessimistic NPV −10,926 |
 | | b. Viability | Each robot removes 2 h/day of manual cleaning (≈ 0.25 of a full-time position), worth MXN 38,041/yr, 60 % of the gross benefit. Every parameter defined with value, unit and source. No missing costs: hardware, tooling, contingency, assembly, commissioning and training, electricity, battery, consumables, maintenance, operator time, oil collection, residual hazardous waste and NRE share | Waste segregation alone (MXN 25,769/yr) already pays back the investment; break-even holds with half the waste benefit, half the labor saving, +30 % opex and +50 % investment |
 | 2. Social | Clear implications with examples | Worker safety: the robot removes oil and chips during shift changes, when nobody is in the area. Health and less tedious work: cleaners no longer scrub oil and pick up sharp chips by hand. Employees affected (cleaning staff): fewer cleaning hours, some positions shrink or change. New positions: technicians who operate, empty, program routes and maintain robots. Environment and compliance: streams delivered segregated, undiluted, ready for authorized recyclers | Fewer slips when the next shift starts. 600 h/yr of tedious manual cleaning and 450 kg/yr of oil-soaked absorbent removed per robot. Negative consequence: job loss if the plant only cuts staff → mitigation: retrain cleaners as RFID-authorized operators and reassign freed hours to 5S/inspection. ≈ 2.6 t/yr of mixed hazardous waste avoided; 1.3 t/yr of chips to recycling |
 | 3. Cultural | a. Cultural dimensions in problem solving | Adjustment of our own attitudes: we first framed the robot as a replacement for cleaning staff (efficiency view); after considering the operators' perspective we redesigned it as an assistant. Respect for the machine: workers must treat it with care (kicks, carts, forklifts); we protect it with bumpers, n ≥ 3 at bump points, a slipping belt and a watchdog, while training builds a culture of care. Integration of other cultures: the Japanese lean principle *Seiso* (5S: cleaning is inspection) led us to log where oil appears so leaking machines are detected. Bilingual team work; plant experience of a team member (Ford) and FIRST robotics experience shaped safety and modularity | Design changes traced to these perspectives: RFID authorization, human-in-the-loop emptying, protection terms against external forces, oil-location log, cleared-area operation. Next step: interviews with an operator, a maintenance technician and an EHS supervisor |
 | | b. Cultural empathy | Attitudes toward the robot: after the initial interest, workers may turn to apathy and stop using it well. Groups: shop-floor operators (Spanish-speaking, varied schooling) → icon/color HMI, Spanish interface, hands-on training; engineers and corporate management → English documentation, KPIs M1–M3, cost data; maintenance and EHS → fault messages, logs, lockable e-stop; unions and supervisors → clear message that the robot reassigns, not eliminates, work | Involve workers before deployment, name responsible operators, show visible results on the LCD and web UI (area cleaned, kg recovered). Indicator: operators can start, pause and empty the robot after a 30-min training without reading English |
 | | Broader technological culture | If the robot succeeds it could start a boom of similar machines for other dirty or hazardous floors (food processing, warehouses, workshops) | More automation of dirty and hazardous tasks; need for technicians trained to operate and maintain them in Mexico |
-| 4. Safety and health | National/international regulation; public-health strategies | Sections 14.3–14.4 and Chapter 10 | — |
-| 5. Ethical | Decisions, perspectives, codes, laws | Section 14.5 | — |
-| 6. Impact | Global, economic, environmental, social context | Section 14.6 | — |
+| 4. Safety and health | National/international regulation; public-health strategies | Sections 14.4–14.5 and Chapter 10 | — |
+| 5. Ethical | Decisions, perspectives, codes, laws | Section 14.6 | — |
+| 6. Impact | Global, economic, environmental, social context | Section 14.7 | — |
 
-## Economic evaluation — explicit calculations
+## Economic evaluation — explicit calculations (Activity 06, dry concept)
 
 ### Parameters
 
@@ -78,11 +79,10 @@ The annuity factor is $\frac{1-(1+i)^{-n}}{i} = \frac{1 - 1.12^{-3}}{0.12} = 2.4
 | Pessimistic | 1 h/day saved; waste benefit −50 %; opex +30 %; investment +50 % | 23,011 | 47,340 | 2.1 years | 7,928 |
 | Pessimistic + NRE | Pessimistic + development cost shared over 10 robots (MXN 7,560 each) | 23,011 | 54,900 | 2.4 years | 368 (break-even) |
 
-`tools/econ.py` reproduces the base and pessimistic cases exactly. Its built-in optimistic case changes only the hours
-saved (2.5 h/day, waste benefit unchanged), so it reports MXN 66,479/yr, 5.7 months and NPV MXN 128,111; the table
-above (Activity 06) also raises the waste benefit by 20 %.
+`tools/econ.py` (scenario `activity06`) reproduces the base case exactly. The tool's optimistic variant changes only
+the hours saved (2.5 h/day), while the table above also raises the waste benefit by 20 %.
 
-### Sensitivity (tornado, NPV change from base)
+### Sensitivity (tornado, NPV change from base; dry model, release v0.2.1)
 
 | Parameter | Low | High |
 |---|--:|--:|
@@ -95,6 +95,40 @@ above (Activity 06) also raises the waste benefit by 20 %.
 plant pays for hazardous-waste disposal. Injury savings are not included in any scenario; they would only improve the
 result. The main uncertainty is the disposal price, which must be quoted with the plant's authorized waste
 contractor. All figures are **estimates**.
+
+## Update after the degreaser decision (ADR-0008)
+
+The low-dose degreaser adds a consumable, extra liquid to dispose of and a little hardware. `tools/econ.py` now uses
+it as the base case (scenario `base`); the Activity 06 numbers above are kept as scenario `activity06`.
+
+| Added parameter | Value | Basis |
+|---|---|---|
+| Solution dose | 0.020 L/m² → 1,287 L/yr | Estimate (ADR-0008), set by TP-S02 |
+| Concentrate | 3 % at MXN 65/L → ≈ 2,510/yr | Estimate |
+| Spent solution disposal | Disposed as hazardous at MXN 6/kg → ≈ 7,720/yr | Conservative assumption |
+| Hardware | 21,310 (adds ≈ 1,000 dosing + contingency) | Estimate, not quoted |
+
+| Scenario (`tools/econ.py`) | Net benefit/yr | Investment | Payback | NPV 3 yr |
+|---|--:|--:|--:|--:|
+| Activity 06 (dry concept) | 56,968 | 31,560 | 6.6 months | 105,269 |
+| **Base with degreaser** | **46,731** | **32,710** | **8.4 months** | **79,529** |
+| Optimistic with degreaser (2.5 h/day) | 56,241 | 32,710 | 7.0 months | 102,371 |
+| Pessimistic with degreaser (1 h/day, waste −50 %, opex +30 %, investment +50 %) | 15,879 | 49,065 | 37.1 months | **−10,926 (not viable)** |
+
+Base case with degreaser: labor saved 38,041/yr; waste benefit 18,047/yr; opex 9,358/yr.
+
+| Sensitivity with degreaser (NPV change) | Low | High |
+|---|--:|--:|
+| Hours saved per day | −45,684 | +22,842 |
+| Solution dose (40 mL/m² → −24,575) | −24,575 | +12,287 |
+| Disposal price (MXN/kg) | −11,889 | +11,889 |
+| Hardware cost | −10,655 | +6,393 |
+| Scrap price (MXN/kg) | −4,621 | +4,621 |
+
+**Reading.** The degreaser lowers the base-case benefit by ≈ 18 % and makes the pessimistic case negative, so the robot
+is still attractive in the base case but no longer robust to every bad assumption. After the hours saved, **the dose
+is now the most sensitive parameter**, which is why TP-S02 measures it (part C) before the design is frozen. All values
+are estimates.
 
 ## Safety and health regulations applied to the design
 
@@ -154,8 +188,9 @@ contractor. All figures are **estimates**.
 ## Conclusion of the impact analysis
 
 The robot is economically viable for a plant that pays for hazardous-waste disposal and spends at least about 1 h a
-day cleaning a machining area by hand: in the base case it pays back in 6.6 months and stays at or above break-even in
-the pessimistic case. Socially, it removes slip hazards and tedious, hazardous work, but it directly affects cleaning
+day cleaning a machining area by hand: the dry concept pays back in 6.6 months and stays at break-even in the
+pessimistic case; with the degreaser (ADR-0008) the base case pays back in 8.4 months but the pessimistic case is not
+viable, so the dose must be measured. Socially, it removes slip hazards and tedious, hazardous work, but it directly affects cleaning
 staff; the responsible deployment retrains them as operators and creates technician positions. Culturally, its
 success depends on acceptance: workers must care for it, and the initial interest must not turn into apathy. The
 design follows Mexican STPS and SEMARNAT standards and international machine-safety standards, and its deployment is

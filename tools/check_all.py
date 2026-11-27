@@ -15,6 +15,7 @@ CHECKS: list[tuple[str, list[str], bool]] = [
     ("branch name", [PY, "tools/check_branch.py"], True),
     ("traceability", [PY, "tools/check_traceability.py"], True),
     ("DFMEA", [PY, "tools/fmea.py", "risk/dfmea.csv"], True),
+    ("PFMEA", [PY, "tools/fmea.py", "risk/pfmea.csv"], True),
     ("WCCA", [PY, "tools/wcca.py", "risk/wcca.yaml"], True),
     ("ruff lint", ["ruff", "check", "."], True),
     ("ruff format", ["ruff", "format", "--check", "."], True),

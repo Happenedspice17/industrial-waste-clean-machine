@@ -51,4 +51,6 @@ this project; any decision that goes against one must be flagged.
 | Suction is the critical risk | An 80 W vacuum may not lift steel | Suction-first plan; option B as backup; criteria fixed before testing |
 | The calendar was too optimistic | The October plan aimed at a functional demo on 12 December after a seven-week build | Replanned: the full design and risk record this semester, the build next semester, starting with the suction rig |
 | Guessed parameters break software | The AprilTag app failed on the bench because the mount height and a tag position were guessed | Measure first; a calibration button; refusals instead of wrong poses |
+| Test early, even crudely | A one-afternoon handheld test (TP-S01) changed the concept more than weeks of analysis | Run cheap exploratory tests early; label them exploratory and fix criteria before the real test (TP-S02) |
+| A principle can fall to evidence | "No water or chemicals" was a core principle; the pre-test showed dry suction does not move the film | Change it through an ADR with options and consequences (ADR-0008), not silently; update requirements, risks and economics in the same change |
 | Write it where a script can check it | Requirements and risks in slides drift | YAML/CSV registers checked by CI on every change |

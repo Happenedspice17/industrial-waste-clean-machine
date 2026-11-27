@@ -28,11 +28,12 @@ scenarios, three metrics measure the main function, and the expected performance
 | 3 · Overcurrent | One fuse per branch below wire ampacity; main fuse at the battery | Fuses for drive, collection, separation and logic; 14 AWG power wiring |
 | 4 · Battery | Avoid deep discharge and wrong charging | Low-voltage cut-off at ≈ 50 % depth of discharge; BR-600 SLA charger only |
 | 5 · Thermal and duty cycle | Respect datasheet duty cycles of vacuum and actuator | Timed runs with rest periods; ventilated electronics bay |
-| 6 · Ingress | IP54 target for electronics (IEC 60529) | Sealed bay above the liquid path; cable glands and sealed connectors |
+| 6 · Ingress | IP54 target for electronics (IEC 60529); IPX4 below the deck because the degreaser solution conducts | Sealed bay above the liquid path; cable glands, sealed connectors, drip loops |
 | 7 · Chemical compatibility | Every part touching oil must resist it | PETG, nitrile hose and gaskets, stainless mesh, aluminum; no PLA or natural rubber |
-| 8 · Overflow and blockage | Liquid never reaches the vacuum motor; a blocked hose must not overheat it | Float shut-off at the vacuum port, level cut-off; MPX5010DP detects blockage → vacuum off |
+| 8 · Overflow and blockage | Liquid never reaches the vacuum motor; a blocked hose must not overheat it | Float shut-off at the vacuum port, level cut-off; MPX5010DP detects blockage → vacuum off; low-foam agent and inlet baffle against foam (SR-023) |
 | 9 · Mechanical overload | Compactor force ≤ 100 kgf of 150 kgf (n = 1.5); brush jams must not break the drive | Load cell + HX711 force limit; brush belt slips as a mechanical fuse |
 | 10 · Impact, vibration, runaway | Limit speed; secure everything that can loosen; stop if control is lost | 0.38 m/s max (0.15 m/s cleaning), bumpers, nyloc nuts, thread-locker, strain relief, MCU watchdog on stale commands |
+| 11 · Dose and wet floor (added with ADR-0008) | Spray only what the cleaning needs; never leave a slippery floor | Dose limit; pump only while moving with the brush on; squeegee leaves no standing liquid (SR-022, SR-024) |
 
 ## Metrics
 

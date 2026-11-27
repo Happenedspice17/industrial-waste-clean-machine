@@ -3,8 +3,8 @@
 ## General description
 
 The robot is a low, aluminum-framed differential-drive vehicle of about 700 × 500 × 450 mm that works in a cleared
-area during shift changes. A rotary nylon brush and a rubber squeegee gather lubricant and metal chips toward a
-nozzle. A 12 V wet/dry vacuum lowers the pressure in a sealed separation chamber, so the mixture is drawn in through
+area during shift changes. A spray bar wets the strip with a low dose of low-foam, quick-break degreaser (ADR-0008),
+then a rotary nylon brush and a rubber squeegee gather lubricant and metal chips toward a nozzle. A 12 V wet/dry vacuum lowers the pressure in a sealed separation chamber, so the mixture is drawn in through
 an oil-resistant hose. Inside the chamber, a stainless mesh basket retains coarse solids, neodymium magnets capture
 the ferrous chips and a linear actuator compacts and drains them into a removable basket. The liquid flows by gravity
 into a separate 20 L tank with float level sensors, a leak tray and a ball drain valve. An Arduino UNO Q controls the
@@ -75,6 +75,7 @@ availability in Mexico within the budget, and manageable complexity for a studen
 | Drive motors | **DC gearmotor + Hall encoder** | Stepper NEMA 23 | BLDC hub motors | — |
 | Motor driver | L298N dual H-bridge | Cytron MDD10A | **BTS7960 43 A H-bridge** | — |
 | Floor agitation | Side disc brushes | **Rotary nylon brush (775 motor)** | Squeegee only | Microfiber roller |
+| Film breaking (added 25 Nov 2026) | None (dry) | **Low-dose degreaser spray** | Flood with water + detergent | Solvent degreaser |
 | Waste suction | **12 V wet/dry vacuum unit** | Diaphragm pump | Peristaltic pump | Centrifugal pump |
 | Coarse-solids filtering | Cyclone separator | Settling (decantation) tank | **Stainless mesh basket** | — |
 | Ferrous separation | **Neodymium bar magnets** | Electromagnet | Magnetic drum | — |
@@ -102,6 +103,8 @@ availability in Mexico within the budget, and manageable complexity for a studen
   both selection methods.
 - **Arduino UNO Q** rather than a Raspberry Pi + microcontroller: one board covers real-time I/O and Linux workloads,
   and the team already won second place with it (ADR-0001).
+- **Low-dose degreaser spray** (ADR-0008, after TP-S01) rather than dry cleaning, flooding or solvents: dry suction
+  did not move the film in the pre-test; flooding needs a large tank and leaves a wet floor; solvents are flammable.
 - **12 V SLA battery** for the prototype: cost, availability and a simple charger; LiFePO4 is the planned upgrade for
   lower weight and longer life.
 
@@ -125,7 +128,7 @@ a common 2040 T-slot frame.
 |---|---|---|--:|
 | M1 Chassis and structure | Carries every module; defines the envelope | 2040 aluminum profile, panels, bumper bar, leak tray | 1,276.00 |
 | M2 Mobility | Moves along stored routes with odometry | 2 × JGB37-3530 59 rpm gearmotors with encoders, Talon 124 mm wheels, caster, BTS7960 | 3,011.00 |
-| M3 Collection | Loosens and picks up lubricant and chips | 775 brush motor, nylon brush, squeegee, nozzle, hose, Mikels AA-12 vacuum, MPX5010DP | 1,472.00 |
+| M3 Collection | Wets, loosens and picks up lubricant and chips | 775 brush motor, nylon brush, squeegee, nozzle, hose, Mikels AA-12 vacuum, MPX5010DP · dosing: 5 L solution tank, 12 V diaphragm pump, spray bar | 1,472.00 + ≈ 1,000 dosing (estimate, not quoted) |
 | M4 Separation and compaction | Retains solids and ferrous chips; liquid passes | Mesh basket, 10 neodymium magnets, chip basket, 150 kgf actuator, load cell + HX711 | 1,087.00 |
 | M5 Storage | Keeps the liquid sealed, measured, easy to empty | 20 L container, ½" ball valve, float sensors, float shut-off | 369.00 |
 | M6 Perception | Knows where the robot is and what is around it | RPLIDAR A1M8, BNO055 IMU, USB webcam, LED light, 4 bumper switches | 4,232.00 |
@@ -135,6 +138,7 @@ a common 2040 T-slot frame.
 | **Listed components (32 items)** | | | **15,849.50** |
 | With tooling and consumables (filament, cable, clamps, crimper) | | | 17,530.50 |
 | With 15 % contingency for unpriced items (hose, gaskets, fasteners) | | | ≈ 20,160 |
+| With the dosing system (ADR-0008, estimate) | | | ≈ 21,310 |
 
 Prices checked 8–9 October 2026. Full line-item list with suppliers in Appendix B.
 
@@ -147,7 +151,9 @@ is clear; a **fault or e-stop** from any state requires a deliberate restart (ne
 ## Main design risk and contingency
 
 Suction of dense steel chips with an 80 W vacuum is the critical uncertainty (Section 4.7). The suction rig decides
-between two collection architectures; the rest of the architecture is the same in both cases.
+between two collection architectures; the rest of the architecture is the same in both cases. The first pre-test
+(TP-S01, 24 Nov 2026, handheld vacuum, no brush) showed that suction alone fails: 0 of 5 coins dry and 2 of 5 (30 %
+by mass) with a degreaser. The decision stays open until the rig with brush, degreaser and wet trap (TP-S02).
 
 | | **A · Baseline** | **B · Contingency** |
 |---|---|---|

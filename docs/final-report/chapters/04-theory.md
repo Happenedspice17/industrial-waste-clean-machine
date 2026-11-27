@@ -12,6 +12,7 @@ design decision it supports.
 | Collection | Pneumatic conveying, pickup velocity | Suction rig first; option B as contingency |
 | Separation | Screening, magnetic separation | Mesh basket + neodymium bar magnets close to the flow |
 | Waste recovery | Metalworking-fluid recovery, chip briquetting | Two streams; compaction drains oil back to the tank |
+| Film breaking | Wetting, surfactants, quick-break emulsions | Low-dose, low-foam degreaser ahead of the brush (ADR-0008) |
 | Actuation and power | DC-motor equations, lead-acid battery limits | Current as stall measure; 50 % DoD → 144 Wh |
 | Control | Embedded real-time vs. general-purpose computing | MCU/Linux split by timing requirement |
 | Structure | Design factor (Shigley) | n ≥ 2 general, n ≥ 3 at bump mounts |
@@ -132,6 +133,18 @@ before remelting [11]. The on-board compactor applies this principle at small sc
 entrained oil back to the tank and reduces the volume of the solid stream. NIOSH and OSHA document the health effects
 that justify minimizing manual contact with these fluids [5], [4].
 
+### Cleaning agents: wetting, film breaking and quick-break emulsions
+
+A viscous oil film is held on the floor by adhesion, and a flat piece lying in it is held down by the thin liquid
+layer underneath (capillary and viscous "suction"), which is why air flow alone could not lift the heavier coins in
+TP-S01 (deduced from the test). A surfactant-based degreaser lowers the surface tension of the water phase, wets the
+floor under the oil and lifts the film into droplets that the brush and air flow can carry; it also breaks the liquid
+layer under flat parts. Two properties matter for a vacuum collector: **low foam**, because foam fills the chamber and
+can reach the vacuum port, and **quick break** (demulsifying), meaning the oil–water emulsion is unstable at rest, so
+the oil floats in the tank and can be decanted while the water phase goes to an authorized handler. Solvent
+degreasers were rejected because of flammability and vapor exposure (NOM-010-STPS). The dose is a trade-off: too
+little leaves the film; too much leaves a soapy, slippery floor and more oily water (SR-022, SR-024, ADR-0008).
+
 ## Actuation, power and energy budget
 
 The drive, brush and compactor use brushed DC motors controlled by PWM through H-bridges (BTS7960). In steady state,
@@ -151,7 +164,9 @@ $$E_{use} \approx 0.5 \times 12\ \text{V} \times 24\ \text{Ah} = 144\ \text{Wh} 
 | Brush motor (775) at partial load | ≈ 40 W | Estimate; to be measured |
 | Two drive gearmotors | ≈ 30 W | Estimate at 0.15 m/s; to be measured |
 | UNO Q, LiDAR, camera, sensors, HMI | ≈ 12 W | Estimate from typical module ratings |
-| **Total** | **≈ 160 W → ≈ 55 min per charge** | Compactor runs are short and intermittent |
+| **Total (dry concept)** | **≈ 160 W → ≈ 55 min per charge** | Compactor runs are short and intermittent |
+| Dosing pump (ADR-0008) | ≈ 5 W average | Estimate |
+| **Total with dosing** | **≈ 165 W → ≈ 52 min per charge** | `tools/wcca.py` |
 
 ## Embedded control architecture
 

@@ -4,15 +4,15 @@
 
 | Block | Content |
 |---|---|
-| Key partners | Component suppliers in Mexico (UNIT, Sandorobotics, Steren); authorized waste handlers; scrap recyclers; university labs |
+| Key partners | Component suppliers in Mexico (UNIT, Sandorobotics, Steren); degreaser supplier; authorized waste handlers; scrap recyclers; university labs |
 | Key activities | Design, assembly, firmware; commissioning + route mapping; maintenance and support |
 | Key resources | Robot design and software; engineering team; local supply chain |
-| Value proposition | Clean floor every shift change; oil and chips in two separate streams; no worker contact with fluids; ≈ 1/30 price of an autonomous scrubber |
+| Value proposition | Clean, dry floor every shift change; oil and chips in two separate streams (low-dose degreaser, ADR-0008); no worker contact with fluids; ≈ 1/30 price of an autonomous scrubber |
 | Customer relationships | Plant pilot before purchase; operator training; service plan with visits |
 | Channels | Direct B2B sales; automation distributors; industrial trade fairs |
 | Customer segments | Machining shops; auto-parts suppliers Tier 1/2; Bajío, Estado de México, Nuevo León; buyers: EHS and maintenance managers |
-| Cost structure | Unit ≈ MXN 31.6k (parts, assembly, commissioning); service ≈ 6.7k/yr per robot; development ≈ 75.6k one-time |
-| Revenue streams | Robot ≈ MXN 60k (47 % margin); service ≈ 1.5k/month; rental option; customer payback ≈ 1.3 yr |
+| Cost structure | Unit ≈ MXN 32.7k (parts incl. dosing, assembly, commissioning); service ≈ 9.4k/yr per robot incl. degreaser; development ≈ 75.6k one-time |
+| Revenue streams | Robot ≈ MXN 60k (45 % margin); service ≈ 1.5k/month; degreaser refills; rental option; customer payback ≈ 1.7 yr |
 
 ## Economic evaluation
 

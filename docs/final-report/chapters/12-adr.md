@@ -12,6 +12,7 @@ its consequences [73]. A decision cannot be changed silently: a new ADR supersed
 | 0005 | IMU: BNO055 (IMU mode) preferred over MPU-6050 | Proposed | 15 Nov 2026 | R7, R8 |
 | 0006 | Vision assists only: residue check and container-level cross-check, enabled only after validation | Accepted | 21 Nov 2026 | R6, R9, SR-015–SR-017 |
 | 0007 | AprilTag camera localization as a bench test tool | Accepted | 22 Nov 2026 | R8, R6, SR-017–SR-021 |
+| 0008 | Low-dose, low-foam degreaser sprayed ahead of the brush | Accepted (dose and product set by TP-S02) | 25 Nov 2026 | SR-001–SR-003, SR-005, SR-008, SR-022–SR-025 |
 
 ## ADR-0001 · Arduino UNO Q 2 GB as main controller
 
@@ -45,7 +46,11 @@ chips into a front hopper with magnets; vacuum handles only liquid (chips never 
 criteria (fixed before the test):** chip lift rate (g/s) for reference chips; liquid recovered per pass; clogging with
 long chips (count per 10 runs); current and temperature of the vacuum motor. **Choose A only if chip pickup ≥ 85 % and
 no clogging in 10 runs.** **Context:** pickup velocity grows with density (steel ≈ 7,850 kg/m³); the 80 W automotive
-vacuum is the main technical risk (F-001, SC-001).
+vacuum is the main technical risk (F-001, SC-001). **Evidence so far:** TP-S01 (measured 24 Nov 2026, exploratory,
+handheld dry vacuum 16 kPa / 40 AW seller data, no brush, no squeegee): dry, 0 of 5 coins lifted and no visible change
+on the film; with water + dish soap + baking soda, film mostly removed (visual 85–90 %) and 2 of 5 coins (30 % by
+mass). Suction alone fails the option-A criterion with that vacuum; the brush + squeegee concept and the BOM vacuum are
+still untested, so the decision stays open and is taken on the TP-S02 rig.
 
 ## ADR-0005 · IMU: BNO055 in IMU mode
 
@@ -90,3 +95,29 @@ with sub-pixel corners; planar Gauss–Newton solver on all corners; publish no 
 intrinsics and mount; wrong values show up as `reproj` or `tags_disagree` instead of a wrong pose; a camera tilt
 different from the configured pitch breaks the planar model, so the mount must be rigid; at 0.38 m/s the robot moves
 ≈ 8 mm per frame at 45 fps (deduced); the web page has no authentication (lab network only).
+
+## ADR-0008 · Low-dose, low-foam degreaser ahead of the brush
+
+**Context.** TP-S01 showed that dry suction does not move the oil film nor the heavier flat pieces, while a simple
+degreasing solution removed most of the film. The semester-1 concept assumed oil only (no water or chemicals) to keep
+the liquid stream undiluted and avoid a third waste stream.
+
+| Option | For | Against |
+|---|---|---|
+| 0 Dry: brush + vacuum only | Oil stream undiluted, simplest | Brush + dry suction untested on viscous film; TP-S01 shows suction alone fails |
+| 1 Flood with water + detergent (scrubber style, ≈ 60 mL/m², deduced from commercial scrubbers) | Proven in scrubbers | Large tank and mass, lots of oily water, foam, wet slippery floor |
+| **2 Low-dose spray (≈ 20 mL/m², estimate) of a low-foam, quick-break alkaline degreaser ahead of the brush** | Breaks the film and the oil seal under chips with little water; quick-break lets oil separate in the tank | Liquid stream becomes oil + water; adds tank, pump, nozzles and a consumable |
+| 3 Solvent degreaser | No water | Flammable/VOC exposure (NOM-010-STPS), not acceptable near people |
+
+**Decision.** Option 2: a 5 L clean-solution tank, a 12 V diaphragm pump and a spray bar (2 flat-fan nozzles) wet the
+strip just ahead of the brush; brush → squeegee → nozzle → sealed chamber stay as designed. Product (SR-025):
+low-foam, quick-break, silicone-free, water-based, SDS per NOM-018-STPS-2015, no flammable solvent. The pump runs only
+while the robot moves in cleaning mode with the brush on, from the e-stop-switched bus (rule 1).
+
+**Consequences.** Still two waste streams (the solution tank is a supply); the claim "oil recovered undiluted" is
+withdrawn — the oil floats and is decanted, the water phase is oily wastewater for an authorized handler. Foam
+(F-010, SR-023), wet floor (F-011, SR-024) and unknown friction on the soapy film (F-004, SR-005) must be measured.
+The solution conducts, so IPX4 below the deck (F-013). Wet chips may rust (F-014). Refill exposure → PPE and SDS
+(P-001). Estimates: hardware ≈ MXN 1,000, +≈ 5.5 kg full, +≈ 5 W → 165 W and ≈ 52 min per charge, ≈ 1.4 L per cycle,
+concentrate ≈ MXN 2,500/yr and extra oily-water disposal ≈ MXN 7,700/yr. The rig needs a wet trap so the vacuum never
+ingests liquid (TP-S02).

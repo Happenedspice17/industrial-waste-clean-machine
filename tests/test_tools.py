@@ -134,5 +134,26 @@ def test_econ_reproduces_activity06() -> None:
     assert r["net_annual"] == pytest.approx(56968, abs=5)
     assert r["npv"] == pytest.approx(105269, abs=5)
     assert r["payback_years"] * 12 == pytest.approx(6.6, abs=0.1)
-    pe = econ.pessimistic()
+    pe = econ.pessimistic(econ.Params())
     assert pe["npv"] == pytest.approx(7928, abs=5)
+
+
+def test_fmea_reads_pfmea_process_step(tmp_path) -> None:
+    f = tmp_path / "pfmea.csv"
+    f.write_text(
+        "id,process_step,failure_mode,effect,severity,cause,occurrence,detection,action,req\n"
+        "P-1,Refill,Spill,Slip,5,Open pour,2,3,Funnel,SR-022\n",
+        encoding="utf-8",
+    )
+    rows = fmea.load(f)
+    assert rows[0]["item"] == "Refill"
+    assert fmea.analyze(rows)[1] == []
+
+
+def test_econ_degreaser_costs_more() -> None:
+    dry = econ.evaluate(econ.Params())
+    wet = econ.evaluate(econ.DEGREASER)
+    sol = 0.020 * 71.5 * 900
+    assert wet["opex"] - dry["opex"] == pytest.approx(sol * 0.03 * 65 + 0.005 * 900 * 1.347, abs=1)
+    assert dry["waste_benefit"] - wet["waste_benefit"] == pytest.approx(sol * 6, abs=1)
+    assert wet["investment"] == pytest.approx(21310.08 + 76 * 150, abs=1)

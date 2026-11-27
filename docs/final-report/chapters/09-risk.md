@@ -13,34 +13,55 @@ Source: `risk/dfmea.csv` · tool: `python tools/fmea.py risk/dfmea.csv`. Severit
 | ID | Item | Function | Failure mode | Effect | Cause |
 |---|---|---|---|---|---|
 | F-001 | M3 vacuum unit | Lift oil and chips | Cannot lift steel chips | Chips stay on floor (M1 fails) | 80 W motor below pickup velocity for steel |
-| F-004 | M2 drive | Stop within distance on oil | Wheel slip on oil | Collision | Low friction (mu ~ 0.1) |
+| F-004 | M2 drive | Stop within distance on oil | Wheel slip on oil or soapy film | Collision | Low friction (mu ~ 0.1 on oil; soapy film not measured - ADR-0008) |
+| F-010 | M4 sealed chamber | Keep foam away from vacuum port | Foam reaches vacuum port or trips float early | Vacuum motor wetted; cleaning stops | High-foam agent + turbulent inlet (ADR-0008) |
+| F-011 | M3 squeegee + dosing | Leave a safe floor | Wet soapy film left after the pass | Worker slip/fall - the hazard the robot targets | Overdose or squeegee not sealing |
+| F-013 | M7/M8 electronics | Stay dry | Conductive spray reaches electronics or connectors | Short circuit; corrosion; false sensor reads | Spray mist + splash below deck (oil was insulating; solution conducts) |
 | F-005 | M7 MCU/Linux link | Keep commands fresh | Linux late / RPC stall | Robot moves on stale command | Side load (web queries; clock jumps) |
 | F-008 | M6 vision container check | Cross-check tank and basket level | Vision reads wrong level | False 'check floats' warning or missed float fault | Oil film on tank wall; poor view angle |
 | F-007 | M6 vision residue check | Flag uncleaned patches | False residue on oil sheen or chip glare | Extra re-pass (time lost; M3 drops) | Specular reflections from LED on oily floor |
 | F-002 | M5 tank | Hold liquid without reaching vacuum | Liquid reaches vacuum port | Vacuum motor damage; electric hazard | Overfill / float stuck |
 | F-006 | M4 compactor | Press chips with limited force | Over-force / pinch | Part breakage; finger injury | Load-cell failure; lid open |
 | F-003 | M8 e-stop | Cut actuator power | Relay contacts weld | Robot keeps moving after e-stop | Inrush above contact rating |
+| F-012 | M3 dosing pump | Spray only while cleaning | Pump keeps running with robot stopped | Puddle (slip); solution tank empties | MOSFET short or firmware fault |
 | F-009 | M6 vision software | Stay advisory | Vision output enabled before validation | Wrong re-pass or warnings in plant | Flag switched on without evidence |
+| F-014 | M4 chip basket | Store chips until emptied | Wet chips rust | Lower scrap value; stains | Water-based solution on steel chips |
 
 **(b) Scores, controls and actions** (sorted by RPN)
 
 | ID | S | O | D | RPN | Class | Prevention | Detection control | Action | Owner | Req. |
 |---|:-:|:-:|:-:|:-:|:-:|---|---|---|---|---|
 | F-001 | 7 | 6 | 4 | 168 | YS | Suction rig test before build | Rig test chip lift g/s | Decide A/B (ADR-0004) | Team A | SR-001 |
-| F-004 | 8 | 5 | 4 | 160 | YS | Speed limit; rubber wheels | Braking test on oiled floor | Braking tests 10x | Team A | SR-005 |
+| F-004 | 8 | 5 | 4 | 160 | YS | Speed limit; rubber wheels | Braking test on oiled and soapy floor | Measure mu on soapy film (TP-S02 G); braking tests 10x | Team A | SR-005 |
+| F-010 | 8 | 5 | 4 | 160 | YS | Low-foam agent (SR-025); inlet baffle; silicone-free antifoam backup; float shut-off | Foam test 5 full fills (TP-S02 D) | Select product by TP-S02 D; add inspection window | Team B | SR-023 |
+| F-011 | 8 | 5 | 4 | 160 | YS | Dose limit (SR-022); squeegee behind brush; dose set by test | Slip test on cleaned strips (TP-S02 E) | Set dose from TP-S02; residual-film check (IR/vision log-only) | Team A | SR-024 |
+| F-013 | 7 | 4 | 5 | 140 | YS | IP54 bay; IPX4 parts below deck; drip loops; sealed connectors | Spray test on assembled robot | Spray test after assembly; inspect connectors monthly | Team C | SR-022 |
 | F-005 | **9** | 4 | 3 | 108 | YC | Heartbeat + T_stale on MCU | Fault injection test | Test heartbeat loss | Team D | SR-007 |
 | F-008 | 5 | 5 | 4 | 100 | YS | Floats stay authority; vision warns only | TP-V01 fill/drain cycles | Run TP-V01; decide camera placement via DFMA | Team D | SR-016 |
 | F-007 | 4 | 6 | 4 | 96 | — | Shroud + fixed exposure + reflection filter (ADR-0006) | TP-V01 labelled frames | Run TP-V01; test cross-polarized LED | Team D | SR-015 |
 | F-002 | **9** | 3 | 3 | 81 | YC | Float shut-off in hardware + level cut-off | Overfill test | Test float shut-off 5x | Team B | SR-008 |
 | F-006 | **9** | 3 | 3 | 81 | YC | Force limit + lid interlock | Load-cell log; interlock test | Interlock + limit tests | Team B | SR-009 |
 | F-003 | **10** | 2 | 4 | 80 | YC | 40 A relay; inrush calc in WCCA | Periodic e-stop test | WCCA relay inrush; consider second relay in series | Team C | SR-006 |
+| F-012 | 7 | 3 | 3 | 63 | — | Pump on e-stop-switched bus; MCU gate = motion AND brush; stale-command stop | Stop test 10x | Pump-off test 10x after build | Team C | SR-022 |
 | F-009 | 6 | 3 | 3 | 54 | — | Flags default off; PR checklist needs TP-V01 report | Code review + traceability check | Enforce SR-017 in review | Team D | SR-017 |
+| F-014 | 3 | 5 | 3 | 45 | — | Agent with corrosion inhibitor (SR-025); empty basket every shift | Visual check at emptying | Pick agent with inhibitor | Team B | SR-002 |
 
 **Reading.** The top risk by RPN is exactly why the design is not frozen: can an 80 W, 12 V vacuum lift steel chips
-(F-001, RPN 168)? The second is wheel slip on oil (F-004). Four rows have S ≥ 9 (F-002, F-003, F-005, F-006): they are
-the safety functions, and all four have hardware or MCU controls plus a re-verification test. All rows are **open**
-until their test runs. PFMEA rows (`risk/pfmea.csv`) will be written when the build and assembly process steps are
-defined.
+(F-001, RPN 168)? Three rows follow at RPN 160: wheel slip on oil (F-004) and two risks created by the degreaser —
+foam reaching the vacuum port (F-010) and a soapy film left on the floor (F-011), which is the very slip hazard the
+robot exists to remove. Four rows have S ≥ 9 (F-002, F-003, F-005, F-006): they are the safety functions, and all
+four have hardware or MCU controls plus a re-verification test. F-010–F-014 were added on 25 November 2026 with
+ADR-0008. All rows are **open** until their test runs.
+## Process FMEA (PFMEA)
+
+Source: `risk/pfmea.csv`, added with ADR-0008 for the operating steps that the degreaser creates; checked by the same
+tool. P-003 has S = 9 (environmental violation), so it is a critical characteristic (SCCAF SC-011).
+
+| ID | Process step | Failure mode | Effect | S | Cause | O | Prevention | D | RPN | Action | Req. |
+|---|---|---|---|:-:|---|:-:|---|:-:|:-:|---|---|
+| P-001 | Refill clean-solution tank | Skin or eye contact with concentrate | Irritation; dermatitis | 6 | No PPE; open pouring | 3 | Gloves + glasses at the station (NOM-017-STPS); SDS posted (NOM-018-STPS); funnel and marked jug | 4 | 72 | Write refill instruction with SDS | SR-025 |
+| P-002 | Refill clean-solution tank | Solution poured into the recovery tank or vice versa | Wrong dose; waste stream contaminated | 5 | Tanks look alike | 3 | Different colors and cap sizes; labels | 3 | 45 | Keyed caps | SR-022 |
+| P-003 | Empty liquid stream | Oily water poured into drain | Environmental violation (NOM-052-SEMARNAT) | 9 | No instruction; convenience | 2 | Labeled drums; handler contract; training | 3 | 54 | Write emptying instruction; delivery log | SR-003 |
 
 ## Internal SCCAF — special characteristics
 
@@ -67,10 +88,14 @@ different class.
 | SC-005 | F-004 | YS | Stopping distance on oiled floor from 0.38 m/s | ≤ 0.10 m (SR-005) | Braking test 10× on reference oil; speed limit in MCU | Team A / A / D | open |
 | SC-006 | F-005 | YC | MCU stop on heartbeat loss (T_stale) | All motion stops within T_stale (SR-007) | Fault-injection test (kill Linux app / block RPC) after every firmware release | Team D / D / C | open |
 | SC-007 | F-006 | YC | Compactor force limit and lid interlock | ≤ 100 kgf; no motion with lid open (SR-009) | Load-cell log + interlock test after any compactor change | Team B / B / C | open |
+| SC-008 | F-010 | YS | Foam height in the sealed chamber vs vacuum port | 0 foam at port in 5 full fills (SR-023) | TP-S02 part D; repeat after any product or dilution change | Team B / B / D | open |
+| SC-009 | F-011 | YS | Floor friction after one pass | ≥ 0.9 × clean dry floor; no standing liquid (SR-024) | TP-S02 part E; repeat after any dose or squeegee change | Team A / A / D | open |
+| SC-010 | F-013 | YS | Ingress protection of electronics and connectors | IP54 bay; IPX4 below deck | Spray test after assembly; monthly connector inspection | Team C / C / C | open |
+| SC-011 | P-003 | YC | Oily water handed to an authorized handler (never to drain) | 100 % of deliveries logged | Emptying instruction + delivery log; training | Team B / B / B | open |
 
-All seven are pending advisor sign-off (Dr. Hiram Eredín Ponce Espinosa) and are built at the UP lab. Note the
-deliberate separation of duties: for the four critical (YC) characteristics, the validation owner is a different
-team from the design owner.
+All eleven are pending advisor sign-off (Dr. Hiram Eredín Ponce Espinosa) and are built at the UP lab (SC-008–SC-011
+added with ADR-0008). Note the deliberate separation of duties: for four of the five critical (YC) characteristics
+(SC-002, SC-003, SC-006, SC-007) the validation owner is a different team from the design owner.
 
 ### SCCAF workflow and role mapping
 
@@ -95,7 +120,8 @@ printer or filament, another workshop) and when a control changes before validat
 
 ## Worst-case circuit analysis
 
-The WCCA results are in Section 7.8. Summary: 8 checks, 7 pass and 1 warning (battery-sense divider margin 4.1 %).
+The WCCA results are in Section 7.9. Summary: 9 checks, 8 pass and 1 warning (battery-sense divider margin 4.1 %);
+the dosing-pump branch was added with ADR-0008.
 Open WCCA items: relay inrush for F-003/SC-003; USB hub power budget with LiDAR + camera on the same hub (ADR-0001,
 ADR-0006); UNO Q supply limits (to verify against the official documentation).
 

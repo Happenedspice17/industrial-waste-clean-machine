@@ -228,3 +228,43 @@ system:
     acceptance: "TP-V02 step 3: calibrated CAM_Z within 0.02 m and CAM_PITCH within 1 deg of the tape/inclinometer measurement; values revert on app restart"
     status: draft
     verified_by: [TP-V02]
+  - id: SR-022
+    parent: R1
+    module: M3
+    priority: must
+    text: The dosing system shall spray cleaning solution ahead of the brush at the dose set by TP-S02 (estimate 20 mL/m2, within +/- 25 %) only while the robot moves in cleaning mode with the brush running, and stop within 1 s when either condition ends or the e-stop opens.
+    rationale: ADR-0008. TP-S01 showed suction alone does not detach the oil film; a puddle from a pump left running is a slip hazard (F-012).
+    verification: Test
+    acceptance: "Dose within +/- 25 % of target over 5 runs (solution tank weighed before/after, area from the log); pump off <= 1 s after stop, brush off or e-stop in 10 of 10 trials"
+    status: draft
+    verified_by: [TP-S02]
+  - id: SR-023
+    parent: R5
+    module: M4
+    priority: must
+    text: Foam generated in the sealed chamber shall not reach the vacuum port during a full 20 L tank fill with the selected cleaning solution and the reference lubricant.
+    rationale: ADR-0008; foam can bypass the float shut-off (SR-008) and wet the vacuum motor (F-010).
+    verification: Test
+    acceptance: "0 foam at the port (inspection window) and 0 early float trips in 5 full fills; foam height logged per run"
+    status: draft
+    verified_by: [TP-S02]
+  - id: SR-024
+    parent: R7
+    module: M3
+    priority: must
+    text: After one cleaning pass the floor shall show no standing liquid and a measured slip resistance at least equal to the clean dry floor minus 10 %.
+    rationale: NOM-001-STPS-2008 7.4 b (liquids on floors must not be a slip hazard); the degreaser leaves a wet film (TP-S01, F-011).
+    verification: Test
+    acceptance: "Inclined-plane or drag-sled friction coefficient on 5 cleaned strips >= 0.9 x clean dry value; no standing liquid by inspection 1 min after the pass"
+    status: draft
+    verified_by: [TP-S02]
+  - id: SR-025
+    parent: R5
+    module: M3
+    priority: must
+    text: The cleaning agent shall be a water-based, low-foam, quick-break, silicone-free degreaser without flammable solvents, delivered with a safety data sheet under NOM-018-STPS-2015.
+    rationale: ADR-0008; worker exposure (NOM-010-STPS), foam (SR-023), oil separation in the tank and no silicone residue in machining plants.
+    verification: Inspection
+    acceptance: "SDS and label on file; SDS shows no flammable classification; supplier states low-foam and quick-break; dilution recorded in the operating sheet"
+    status: draft
+    verified_by: [TP-S02]

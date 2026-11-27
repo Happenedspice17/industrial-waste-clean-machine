@@ -66,9 +66,14 @@ its verification or its test link. The full text is in Appendix C.
 | SR-019 | R6 | M6 | must | AprilTag app logs camera events and ≥ 20 frame records/s; only validated poses to MCU | TP-V02 step 6 | — |
 | SR-020 | R6 | M6 | must | AprilTag app keeps images on the robot (no disk, no network) unless STREAM is set in code | `/frame.jpg` → 404; no image files | Privacy (LFPDPPP) |
 | SR-021 | R6 | M6 | should | Mount calibration measures camera height and pitch from ≥ 20 views in 2 s, session-only | Within 0.02 m and 1° | — |
+| SR-022 | R1 | M3 | must | Spray solution ahead of the brush at the TP-S02 dose (estimate 20 mL/m² ± 25 %) only while moving in cleaning mode with the brush on; stop ≤ 1 s when either ends or the e-stop opens | Dose ± 25 % over 5 runs; pump off ≤ 1 s in 10 of 10 | — |
+| SR-023 | R5 | M4 | must | Foam never reaches the vacuum port during a full 20 L fill | 0 foam at port, 0 early float trips in 5 fills | — |
+| SR-024 | R7 | M3 | must | After one pass: no standing liquid; slip resistance ≥ clean dry floor − 10 % | Friction ≥ 0.9 × dry on 5 strips | NOM-001-STPS 7.4 b |
+| SR-025 | R5 | M3 | must | Water-based, low-foam, quick-break, silicone-free degreaser, no flammable solvent, with SDS | SDS and label on file | NOM-018-STPS-2015 |
 
-All 21 SRs are in status **draft**: none can be "verified" until its physical test passes. SR-018–SR-021 already
-point to test protocol TP-V02.
+All 25 SRs are in status **draft**: none can be "verified" until its physical test passes. SR-018–SR-021 already
+point to test protocol TP-V02, and SR-001 and SR-022–SR-025 to TP-S02. SR-022–SR-025 were added on 25 November 2026
+with the degreaser decision (ADR-0008).
 
 ## Ethical value requirements (IEEE 7000-2021)
 
@@ -79,7 +84,7 @@ requirements (EVRs) that can be verified like any other requirement.
 | ID | Value | Ethical value requirement | Measurable criterion | Traces to |
 |---|---|---|---|---|
 | EVR-01 | **Worker safety** | The robot shall never put a person at risk to gain cleaning speed | Speed ≤ 0.38 m/s (0.15 m/s cleaning); stop ≤ 7.4 cm on oil (calculation) / ≤ 0.10 m (test); e-stop cuts every actuator in hardware; no automatic restart | SR-004, SR-005, SR-006, SR-013, SR-014 |
-| EVR-02 | **Environmental responsibility** | The two waste streams shall never mix and shall never overflow | Liquid stream ≤ 5 % solids; float cuts suction before overflow; streams delivered only to authorized handlers | SR-002, SR-003, SR-008 |
+| EVR-02 | **Environmental responsibility** | The two waste streams shall never mix and shall never overflow, and no chemical shall be added beyond what the cleaning needs | Liquid stream ≤ 5 % solids; float cuts suction before overflow; streams delivered only to authorized handlers, oily water never to drain; degreaser dose limited and measured; water-based, non-flammable agent | SR-002, SR-003, SR-008, SR-022, SR-025 |
 | EVR-03 | **Privacy and accountability** | Camera data shall stay on board and no image of a person shall be stored; each run shall be tied to an authorized operator | No images to disk or network by default; RFID card per cycle; log keeps operator ID and time with a privacy notice and limited retention | SR-010, SR-020 |
 
 **Value conflict and priority.** Coverage speed (productivity, M3) conflicts with worker safety. The rule adopted:

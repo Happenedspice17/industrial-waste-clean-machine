@@ -59,11 +59,16 @@ then). The Talon wheels need a printed 6 mm → 12 mm hex hub (`cad/parts/wheel_
 | 12 V wet/dry vacuum unit, Mikels AA-12 (80 W) | C12 | 1 | 522.00 |
 | MPX5010DP vacuum sensor | C13 | 1 | 535.00 |
 | BTS7960 driver (brush) | C24 | 1 | 121.00 |
+| 5 L clean-solution tank (ADR-0008) | — | 1 | ≈ 1,000 for the dosing set (estimate, not quoted) |
+| 12 V diaphragm pump, MOSFET channel | — | 1 | (in the dosing set) |
+| Spray bar with 2 flat-fan nozzles, tubing | — | 1 | (in the dosing set) |
 
 Interfaces: front sub-frame on the lower rails, quick-release hose clamp; 12 V switched, vacuum motor through a 40 A
 relay; brush PWM, vacuum on/off, sensor analog; hose → M4 inlet. Notes: the brush throws waste toward the nozzle and
 the squeegee behind it leaves the floor dry; the vacuum motor pulls air from the sealed M4/M5 volume (wet-vac
-principle). The slipping brush belt acts as a mechanical fuse on jams.
+principle). The slipping brush belt acts as a mechanical fuse on jams. Dosing (ADR-0008): the pump runs only while the
+robot moves in cleaning mode with the brush on (MCU gate), from the e-stop-switched bus through a 3 A fuse, so the
+e-stop stops it in hardware; ≈ 1.4 L of solution per 12 × 8 m cycle, so the 5 L tank lasts ≈ 3 cycles (estimate).
 
 ### M4 · Separation and compaction
 
@@ -165,7 +170,7 @@ The vacuum motor pulls air from the sealed separation chamber and tank, so waste
 </g>
 <g text-anchor="middle" fill="#1d2329">
 <text x="52" y="40">Floor</text><text x="52" y="55" font-size="9.5">oil + chips</text>
-<text x="172" y="40">Brush +</text><text x="172" y="55">squeegee</text>
+<text x="172" y="40">Spray, brush</text><text x="172" y="55">+ squeegee</text>
 <text x="292" y="40">Nozzle +</text><text x="292" y="55">oil hose</text>
 <text x="420" y="40">Mesh basket</text><text x="420" y="55" font-size="9.5">coarse solids</text>
 <text x="555" y="40">Magnet bars</text><text x="555" y="55" font-size="9.5">ferrous chips</text>
@@ -189,7 +194,7 @@ The vacuum motor pulls air from the sealed separation chamber and tank, so waste
 <text x="560" y="100" font-size="9.5" fill="#2b6cb0" text-anchor="middle">drained oil</text>
 <text x="430" y="85" font-size="9.5" fill="#2b6cb0">liquid (gravity)</text>
 </svg>
-<figcaption>Material flow from the floor to two separate streams. Grey: solids · blue: liquid · dashed: air.</figcaption>
+<figcaption>Material flow from the floor to two separate streams. Grey: solids · blue: liquid · dashed: air. Since ADR-0008 a 5 L supply tank → 12 V pump → spray bar wets the strip ahead of the brush; the spent solution joins the liquid stream and the oil is decanted from it (still two waste streams).</figcaption>
 </figure>
 
 ## Power and safety architecture
@@ -216,7 +221,7 @@ The vacuum motor pulls air from the sealed separation chamber and tank, so waste
 <text x="410" y="30">Fuse 15 A → 2 × BTS7960 → drive motors</text>
 <text x="410" y="66">Fuse 20 A → BTS7960 → brush · 40 A relay → vacuum</text>
 <text x="410" y="102">Fuse 10 A → BTS7960 → linear actuator</text>
-<text x="410" y="138">MOSFET → signal tower (12 V)</text>
+<text x="410" y="138">MOSFET → tower · fuse 3 A → MOSFET → dosing pump</text>
 <text x="410" y="178">Fuse 5 A · 5 V logic: UNO Q, LiDAR, IMU, camera,</text>
 <text x="410" y="194">RFID, LCD, sensors (stays on to report faults)</text>
 </g>
@@ -248,6 +253,7 @@ The vacuum motor pulls air from the sealed separation chamber and tank, so waste
 | I11 | M4 → M5 | Fluid | Liquid by gravity; compactor drain to the tank |
 | I12 | M5 → M3 | Air | Vacuum port with float shut-off to the vacuum motor |
 | I13 | M1 ↔ all | Mechanical | 2040 T-slot rails, M5 T-nuts; each module removable on its own |
+| I14 | M8/M7 → M3 | Power + data | Dosing pump MOSFET (MCU gate = motion AND brush) on the e-stop-switched bus, fused 3 A (ADR-0008) |
 
 ## Control and software architecture
 
@@ -256,13 +262,13 @@ The Arduino UNO Q splits the work between its real-time MCU and its Linux proces
 
 | Domain | Runs | Responsibilities | Must never |
 |---|---|---|---|
-| **STM32U585 MCU** (Zephyr + Arduino core) | Real time, deterministic loops | Motor PWM + encoder speed loops; brush/vacuum/compactor sequencing; floats, MPX5010DP, HX711, bumpers, e-stop state, battery voltage; stall/current cut; watchdog: stop all motion if no valid command within T_stale; execute one motion order autonomously and stop by itself | Wait on Linux to stop; allocate memory dynamically in control loops; block > 1 ms in an interrupt |
+| **STM32U585 MCU** (Zephyr + Arduino core) | Real time, deterministic loops | Motor PWM + encoder speed loops; brush/vacuum/compactor/dosing-pump sequencing (pump only while moving in cleaning mode with the brush on); floats, MPX5010DP, HX711, bumpers, e-stop state, battery voltage; stall/current cut; watchdog: stop all motion if no valid command within T_stale; execute one motion order autonomously and stop by itself | Wait on Linux to stop; allocate memory dynamically in control loops; block > 1 ms in an interrupt |
 | **QRB2210 MPU** (Debian, Python) | Best effort | LiDAR mapping and localization against the saved map; coverage route; vision task; web UI (calibration, routes, status); RFID check; raw logging ≈ 20 Hz; replay | Command actuators directly; assume real-time timing; use wall-clock time for intervals (use `time.monotonic()`) |
 | **Hardware** | Always | E-stop opens the 40 A main relay coil (actuators lose power, logic stays on); fuses per branch; float shut-off at the vacuum port; slipping brush belt | Depend on software |
 
 ### Command protocol (Bridge RPC, proposed)
 
-- Linux → MCU: `move(segment_id, v, distance_mm | heading_deg, timeout_ms)`, `set_tool(brush, vacuum)`,
+- Linux → MCU: `move(segment_id, v, distance_mm | heading_deg, timeout_ms)`, `set_tool(brush, vacuum, dose)`,
   `compact(max_force_n)`, `stop()`, heartbeat every 100 ms.
 - MCU → Linux: `status(state, segment_id, odom, faults[], sensors{})` at 20 Hz; `done(segment_id, reason)`.
 - The MCU stops if: heartbeat lost > 300 ms (T_stale, to be tuned with the measured RPC latency), bumper, e-stop,
@@ -339,7 +345,7 @@ firmware/mcu/
 
 | Priority | Items |
 |---|---|
-| Must | MPX5010DP, 3 floats, 6 limit switches (4 bumpers + 2 lid interlock), 50 kg load cell + HX711, battery voltage divider, RPLIDAR A1M8 (buy last, reserve early) |
+| Must | MPX5010DP, 3 floats, dosing pump + spray nozzles, 6 limit switches (4 bumpers + 2 lid interlock), 50 kg load cell + HX711, battery voltage divider, RPLIDAR A1M8 (buy last, reserve early) |
 | Should | BNO055, RC522, INA219/INA226, ACS712 (vacuum), 2 × DS18B20 |
 | Nice | Webcam + LED, 2 × VL53L0X downward (drains/edges), capacitive level, IR reflectance (residual film) |
 

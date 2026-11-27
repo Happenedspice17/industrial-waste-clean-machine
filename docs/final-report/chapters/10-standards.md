@@ -46,17 +46,18 @@ and areas of workplaces; it requires the employer to keep them free of risks to 
 | NOM-001-STPS-2008 | 7.1.2 | Delimited areas (yellow ≥ 5 cm) | Robot operates inside delimited zone | Zone plan, LiDAR map match |
 | NOM-001-STPS-2008 | 5.2, 5.3 | Verifications + records kept 1 year | Exportable digital log | Log export |
 | NOM-004-STPS-1999 | — | Guards and safety devices on machinery | Covered brush/compactor; lid interlock; e-stop | Interlock test |
-| NOM-010-STPS-2014 | — | Chemical agents in the work environment | Less manual handling of fluids; vacuum exhaust is clean air after the sealed chamber | Exposure reduction (hours avoided) |
+| NOM-010-STPS-2014 | — | Chemical agents in the work environment | Less manual handling of fluids; vacuum exhaust is clean air after the sealed chamber; water-based, non-flammable degreaser (SR-025) | Exposure reduction (hours avoided), SDS |
 | NOM-011-STPS-2001 | — | Noise exposure limits | Robot runs while the area is empty | Noise test |
-| NOM-017-STPS-2008 | — | Personal protective equipment | Nitrile gloves + safety glasses when emptying | Training record |
+| NOM-017-STPS-2008 | — | Personal protective equipment | Nitrile gloves + safety glasses when emptying and when refilling the solution tank (P-001) | Training record |
+| NOM-018-STPS-2015 | — | Hazard communication for chemicals (GHS: safety data sheets, labels) | Degreaser SDS and labels at the refill station; labeled, differently colored solution and recovery tanks (P-002) | SDS on file, label photos |
 | NOM-026-STPS-2008 | — | Safety colors: red stop, yellow caution, green safe, blue mandatory | Tower green/amber/red; red mushroom e-stop; yellow zone marking | Photo, HMI spec |
 | NOM-029-STPS-2011 | — | Safe electrical maintenance | Fuses, lockable e-stop, battery disconnect | Maintenance procedure |
 | NOM-035-STPS-2018 | — | Psychosocial risk factors | Change management: inform, train and involve cleaning staff | Training and communication record |
-| NOM-052-SEMARNAT-2005 + LGPGIR | — | Hazardous-waste classification, handling, management plans for used oil | Two labeled streams to authorized handlers; battery returned for recycling | Delivery records |
+| NOM-052-SEMARNAT-2005 + LGPGIR | — | Hazardous-waste classification, handling, management plans for used oil | Two labeled streams to authorized handlers; decanted oil and oily water from the degreaser, never to drain (P-003, SC-011); battery returned for recycling | Delivery records |
 | ISO 12100:2010 | — | Risk assessment and reduction | DFMEA + 10 protection terms | `risk/dfmea.csv` |
 | ISO 13849-1:2023 | — | Performance level of safety functions | Safety in hardware; a certified version would need a safety relay with monitored contacts | PL estimate (future) |
 | ISO 13850:2015 / IEC 60204-1 | — | E-stop design; electrical equipment of machines | Category 0 stop via relay | Diagram |
-| IEC 60529 | — | IP code | IP54 target electronics bay | Enclosure spec/test |
+| IEC 60529 | — | IP code | IP54 electronics bay; IPX4 below the deck (conductive solution, F-013) | Enclosure spec, spray test |
 | ISO 45001:2018 | — | OH&S management | Robot logs feed plant OH&S indicators | — |
 | IEEE 7000-2021 | — | Value-based engineering (ethics by design) | EVR-01–EVR-03 (Section 3.4) | Requirements, presentation |
 | IEC 62443 (series) | — | Industrial cybersecurity | Threat model, target SL 1–2 | `docs/security/threat-model.md` |

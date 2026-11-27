@@ -26,17 +26,30 @@ $$d = \frac{0.38^2}{2 \times 0.1 \times 9.81} = 0.074\ \text{m}$$
 The test requirement (SR-005) allows 0.10 m, so the margin over the worst calculated case is 26 mm. A LiDAR stop zone
 of 30 cm leaves a wide margin for detection latency: at 0.38 m/s, even 300 ms of detection delay (T_stale) adds only
 11.4 cm. **Calculation** (constant deceleration, motor braking assumed to reach the friction limit; to be measured,
-SC-005).
+SC-005). On the soapy film left by the degreaser μ is unknown; TP-S02 part G measures it and the stopping distance is
+recomputed with the measured value instead of an assumed μ = 0.1.
 
 ## Energy and runtime
 
-Usable energy (equation 9): $E_{use} = 0.5 \times 12 \times 24 = 144$ Wh. With the 160 W average load (Section 4.10):
+Usable energy (equation 9): $E_{use} = 0.5 \times 12 \times 24 = 144$ Wh. With the 160 W average load of the dry
+concept (Section 4.10):
 
 $$t = \frac{144\ \text{Wh}}{160\ \text{W}} = 0.90\ \text{h} \approx 54\text{–}55\ \text{min}$$
 
-`tools/wcca.py` reports 54 min at 160 W. Per cleaning cycle in the simulated cell (25.6 min) the energy is 68 Wh, so
-one charge gives ≈ 2.1 cycles. Energy from the grid per cycle ≈ 0.15 kWh including charger losses (estimate), or
+The dosing pump of ADR-0008 adds ≈ 5 W on average, so the load is 165 W and $t = 144/165 = 0.87$ h ≈ **52 min**
+(`tools/wcca.py`: 52 min at 165 W). Per cleaning cycle in the simulated cell (25.6 min) the energy is 68 Wh at 160 W
+(≈ 2.1 cycles per charge) or ≈ 70 Wh at 165 W (≈ 2.0 cycles per charge, deduced by scaling). Energy from the grid per cycle ≈ 0.15 kWh including charger losses (estimate), or
 ≈ 135 kWh/yr for 900 cycles. **Estimate.**
+
+## Degreaser dose (ADR-0008)
+
+At the estimated dose of 20 mL/m² over the 71.5 m² cleaned per simulated cycle (96 % of 74.5 m²):
+
+$$V = 0.020\ \text{L/m}^2 \times 71.5\ \text{m}^2 \approx 1.4\ \text{L per cycle}$$
+
+so the 5 L supply tank lasts ≈ 3 cycles and adds ≈ 5.5 kg when full. Over 900 cycles a year that is ≈ 1,290 L of
+solution (`tools/econ.py`: 1,287 L/yr), of which ≈ 40 L is concentrate at 3 %. **Estimates** — the dose is set by
+TP-S02 part C, and it is the second most sensitive economic parameter (Chapter 14).
 
 ## Coverage rate
 
@@ -98,7 +111,8 @@ UNO Q documentation).
 | Collection branch | 10 A nominal, 25 A peak, 20 A fuse, 12 AWG (20 A) | Fuse ≤ wire ampacity | ✔ |
 | Separation branch | 2 A nominal, 8 A peak, 10 A fuse, 16 AWG (10 A) | Fuse ≤ wire ampacity | ✔ |
 | Logic branch | 1.5 A nominal, 3 A peak, 5 A fuse, 18 AWG (7 A) | Fuse ≤ wire ampacity | ✔ |
-| Runtime | 144 Wh usable, 160 W | 54 min | ✔ |
+| Dosing pump branch (ADR-0008) | 0.7 A nominal, 2 A peak, 3 A fuse, 18 AWG (7 A); pump data estimated | Fuse ≤ wire ampacity | ✔ |
+| Runtime | 144 Wh usable, 165 W | 52 min | ✔ |
 
 **Action.** The battery-sense divider margin (4.1 %) is too thin: retune the divider (e.g. a larger bottom resistor
 ratio) and re-run with measured parts. The analysis uses datasheet tolerances; UNO Q supply limits are still to

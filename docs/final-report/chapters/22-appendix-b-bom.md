@@ -75,7 +75,18 @@ lubricant for tests; belt and pulleys for the brush; M5 screws, base plate and s
 squeegee; leak-tray sheet; LED light for the camera; printed wheel hubs; MOSFET board. Assumes a 3D printer and basic
 lab tools (soldering station, multimeter).
 
-## B.4 Price sources
+## B.4 Dosing system added by ADR-0008 (estimate, not quoted)
+
+| Item | Qty | Note |
+|---|:-:|---|
+| 5 L clean-solution tank (color and cap different from the recovery tank, P-002) | 1 | — |
+| 12 V diaphragm pump | 1 | ≈ 0.7 A nominal, 2 A peak (estimate; check datasheet) |
+| Spray bar with 2 flat-fan nozzles, tubing, fittings | 1 set | — |
+| MOSFET channel, 3 A fuse, 18 AWG wiring | 1 | On the e-stop-switched bus (I14) |
+| Water-based, low-foam, quick-break degreaser concentrate | — | Consumable (≈ 40 L/yr, ≈ MXN 2,500/yr) |
+| **Hardware total** | | **≈ MXN 1,000 → budget with contingency ≈ MXN 21,310** |
+
+## B.5 Price sources
 
 UNIT Electronics (uelectronics.com): UNO Q, BNO055, BTS7960, RC522, LCD 20×4, LAY37, XL4015, MPX5010DP, float
 sensor, load cell/HX711, ME-8108, motor 775, magnets, linear actuator, perforated PCB, PETG, heat-shrink ·

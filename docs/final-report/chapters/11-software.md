@@ -106,7 +106,8 @@ go through `release/vX.Y.Z`. Commits follow Conventional Commits with a scope pe
 blocked by a local hook.
 
 **Releases so far.** v0.1.0 (21 Nov 2026, initial design baseline), v0.2.0 (22 Nov 2026, AprilTag bench app and
-final presentation v2), v0.2.1 (24 Nov 2026, presentation v3 with the Business Model Canvas). Full history in
+final presentation v2), v0.2.1 (24 Nov 2026, presentation v3 with the Business Model Canvas); on `develop` since then: TP-S01 evidence,
+ADR-0008, TP-S02 and presentation v4 (#19, 25 Nov 2026) and this report. Full history in
 Appendix E.
 
 ## AI agents and commands in the repository (`.claude/`)

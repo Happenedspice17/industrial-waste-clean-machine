@@ -67,7 +67,7 @@ segregated [11].
 | Kärcher KIRA B 50 autonomous scrubber | ✔ | ✘ (cleans with water) | ✘ | ✘ | ≈ MXN 2.0 million [42] |
 | Tennant T380AMR autonomous scrubber | ✔ | ✘ (cleans with water) | ✘ | ✘ | ≈ USD 75,000 [43] |
 | Patents reviewed (Table 1.3) | ◐ | ✘ | ◐ | ✘ | — |
-| **This project** | **✔** | **✔** | **✔** | **✔** | **≈ MXN 31,600 unit cost; ≈ 60,000 proposed price (estimate)** |
+| **This project** | **✔** | **◐ (oil + low-dose solution, oil decanted; ADR-0008)** | **✔** | **✔** | **≈ MXN 32,700 unit cost; ≈ 60,000 proposed price (estimate)** |
 
 Legend: ✔ yes · ◐ partial · ✘ no.
 
@@ -92,7 +92,9 @@ draft of the proposal made an absolute novelty claim; it was corrected in the im
 
 Metalworking plants need a mobile robot that can work unattended during shift changes, recover liquid contaminants
 (lubricant and oil) and solid contaminants (ferrous chips) from the same surface, and store them in separate
-containers so that the lubricant is never mixed with metal and no water, steam or chemical is added. Solving this
+containers so that the lubricant is never mixed with metal and no third waste stream is created. (The semester-1
+concept added no water or chemicals at all; after the first suction pre-test the team accepted a low-dose degreaser,
+ADR-0008, that still leaves only two waste streams.) Solving this
 requires three subsystems that the literature has developed separately:
 
 - a mechanical and traction platform that stays stable and controllable on low-friction, oily floors;
@@ -109,7 +111,8 @@ vacuum, separating them on board and never mixing the two streams, safely, with 
 
 ## Hypothesis
 
-If a differential-drive, oil-compatible mobile platform integrates a rotary brush and squeegee that direct residues to
+If a differential-drive, oil-compatible mobile platform integrates a low-dose, low-foam degreaser spray and a rotary
+brush and squeegee that direct residues to
 a vacuum nozzle, a sealed separation chamber (stainless mesh basket, neodymium magnets and a force-limited compactor)
 and an independent liquid tank, controlled by an Arduino UNO Q with LiDAR, IMU and encoder localization and a hardware
 emergency stop, then, on a controlled test floor with the reference lubricant and ferrous machining chips, the
@@ -161,7 +164,9 @@ analytics and manipulator tasks. The project does not claim certified industrial
 floors or automatic lubricant reusability; filtering does not establish that the lubricant is suitable for reuse.
 
 **Removed from the proposal on purpose.** Pressurized water, heating or steam outlets and the auxiliary-product
-container (soap, acid): they would add a third waste stream and contaminate the recovered lubricant. Line sensors
+container (soap, acid): they would add a third waste stream and contaminate the recovered lubricant. This principle
+was revised in part on 25 November 2026 (ADR-0008): a low-dose degreaser is sprayed from a small supply tank; the
+supply is not a waste stream, the spent solution joins the liquid stream and the oil is decanted from it. Line sensors
 (oil fouls floor markings), swerve drive, separate Wi-Fi and logging modules (the UNO Q has them), industrial vibrator
 and brush-lifting motors.
 
@@ -171,9 +176,10 @@ and brush-lifting motors.
 
 **Initial design, not frozen (November 2026).** Requirements, component selection, conceptual design, nine modules,
 priced bill of materials, scenarios, economics, simulations, risk analyses and the presentation are complete. A bench
-software tool (AprilTag localization) runs on the UNO Q. **No physical prototype exists and no physical performance
-test has been run.** The next gate is the suction rig test (ADR-0004), which decides the collection architecture
-before the design is frozen.
+software tool (AprilTag localization) runs on the UNO Q. **No prototype exists.** The only physical test is an
+exploratory suction pre-test with a handheld vacuum and no brush (TP-S01, 24 November 2026), which led to the
+degreaser decision (ADR-0008). The next gate is the suction rig with brush, degreaser and wet trap (TP-S02), which
+decides the collection architecture (ADR-0004) before the design is frozen.
 
 </div>
 

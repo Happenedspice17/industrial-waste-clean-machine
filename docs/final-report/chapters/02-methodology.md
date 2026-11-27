@@ -10,10 +10,11 @@ cannot be bent to fit the results.
 
 | V-model stage | What the team did | Where | Status |
 |---|---|---|---|
-| Requirements | Need, literature, five patents, ten weighted stakeholder requirements (R1–R10), 21 system requirements, three ethical value requirements | Ch. 1, 3 · `requirements/requirements.yaml` | Done |
+| Requirements | Need, literature, five patents, ten weighted stakeholder requirements (R1–R10), 25 system requirements, three ethical value requirements | Ch. 1, 3 · `requirements/requirements.yaml` | Done |
 | System design | Quality matrix (0/1/3/9), 231-pair comparison, black box, white boxes, morphological matrix (18 functions) | Ch. 3, 5 | Done |
 | Architecture | Nine modules, 13 interfaces, MCU/Linux split, safety chain, states, sensor hierarchy | Ch. 6 · `docs/02-architecture.md` | Done |
 | Domain design | Priced BOM, calculations, WCCA, DFMA, first CAD part, bench software | Ch. 7, 9, 11 | Partial (by plan) |
+| First evidence | Handheld suction pre-test TP-S01 → degreaser decision ADR-0008 → rig protocol TP-S02 | Ch. 12, 13 | Exploratory test done |
 | Analysis of the concept | Scenarios, simulation, DFMEA, SCCAF, threat model, economics, impact | Ch. 7–9, 14–16 | Done |
 | Integration and verification | Suction rig → modules → integration → M1–M3 and safety tests → pilot | Ch. 13, 18 | Next semester |
 
@@ -61,8 +62,9 @@ table maps each one to the part of this report that contains its result. The cou
 | PROJECT.02 Second partial evaluation | 23 Oct 2026 | Improved proposal: revised proposal, design analysis, theoretical framework (39 references), conceptual design, calendar, one-pager | Ch. 1–5 | `Improved_Proposal_Waste_Robot.pdf` |
 | Standards table (in-class) | Oct 2026 | ISO 3691-4 and NOM-001-STPS-2008 in the course table format | Ch. 10 | `Standards_Table_Waste_Robot.pdf` |
 | RA1000 ACT.06 Technological impact analysis | 30 Oct 2026 | Economic, social, cultural, safety-health, ethical and global impact | Ch. 14 | `Activity06_Technological_Impact.pdf` |
-| Ethical Design Evidence (IEEE 7000-2021) | Nov 2026 | Ethical value requirements EVR-01–EVR-03, stakeholders, value conflict | 3.3 | Presentation v2/v3 |
-| PROJECT.03 Final evaluation | 27 Nov 2026 | This technical report + final presentation + team evaluation | All | `docs/final-report/`, `Final_Presentation_Waste_Robot_v3.pdf` |
+| Suction pre-test (team initiative) | 24–25 Nov 2026 | TP-S01 measured; ADR-0008 low-dose degreaser; TP-S02 rig protocol; presentation v4 | 12.8, 13.3 | `docs/test-reports/TP-S01-…`, `Final_Presentation_Waste_Robot_v4.pdf` |
+| Ethical Design Evidence (IEEE 7000-2021) | Nov 2026 | Ethical value requirements EVR-01–EVR-03, stakeholders, value conflict | 3.4 | Presentation v2–v4 |
+| PROJECT.03 Final evaluation | 27 Nov 2026 | This technical report + final presentation + team evaluation | All | `docs/final-report/`, `Final_Presentation_Waste_Robot_v4.pdf` |
 
 All archived files are in `docs/semester-1-deliverables/` of the repository, in English (the Spanish originals of
 the standards table and the pairwise workbook were translated with the same content, formulas and layout).
@@ -98,6 +100,7 @@ learning, so they are recorded here.
 | Improved proposal | 23 Oct 2026 | Full rewrite for the second evaluation (corrections above), theoretical framework and weekly calendar |
 | Repository | 21 Nov 2026 | All deliverables consolidated into one repository with requirements, risk registers, checks and decision records (v0.1.0) |
 | Presentation v2/v3 | 22–24 Nov 2026 | Ten-slide final deck with IEEE 7000 EVRs, then the Business Model Canvas slide (v0.2.0, v0.2.1) |
+| TP-S01 + ADR-0008 | 24–25 Nov 2026 | First physical pre-test; low-dose degreaser adopted; SR-022–SR-025, DFMEA F-010–F-014, PFMEA, SCCAF SC-008–SC-011, economics updated; presentation v4 with the test slide |
 
 ## Tools used by the team
 

@@ -49,17 +49,17 @@ may complain if you are on `main`/`develop` and about to commit: create a work b
 
 | Command | Output | Report |
 |---|---|---|
-| `python tools/fmea.py risk/dfmea.csv` | RPN ranking, mandatory actions (S ≥ 9), YC/YS classes checked against the SCCAF register | 9.1–9.2 |
-| `python tools/wcca.py risk/wcca.yaml` | Divider worst case (EVA + RSS), logic-level margins, fuse vs wire per branch, runtime | 7.8 |
-| `python tools/dfma.py risk/dfma/m4_separation_example.csv` | Parts, theoretical minimum, assembly time, design efficiency | 9.4 |
-| `python tools/econ.py` | Base, optimistic and pessimistic net benefit, payback, NPV; tornado sensitivity | 14.2 |
+| `python tools/fmea.py risk/dfmea.csv` | RPN ranking, mandatory actions (S ≥ 9), YC/YS classes checked against the SCCAF register | 9.1–9.3 |
+| `python tools/wcca.py risk/wcca.yaml` | Divider worst case (EVA + RSS), logic-level margins, fuse vs wire per branch, runtime | 7.9 |
+| `python tools/dfma.py risk/dfma/m4_separation_example.csv` | Parts, theoretical minimum, assembly time, design efficiency | 9.5 |
+| `python tools/econ.py` | Activity 06 (dry) and degreaser base, optimistic, pessimistic: net benefit, payback, NPV; tornado | 14.2–14.3 |
 | `python tools/check_traceability.py` | Checks R → SR → test links in `requirements.yaml` | 3.3 |
 | `pytest -q` | Unit tests for the tools (and the AprilTag app if OpenCV is installed) | 11 |
 
 To try a "what if", edit the input file (for example a fuse value in `risk/wcca.yaml`, a severity in
 `risk/dfmea.csv` or a parameter in `tools/econ.py`) and run the tool again.
 
-Expected output of the risk and circuit tools at release v0.2.1:
+Expected output of the tools on `develop` (27 Nov 2026, after ADR-0008):
 
 ```text
 $ python tools/fmea.py risk/dfmea.csv
@@ -68,11 +68,16 @@ F-005      108   9  YC    MANDATORY (S>=9)
 F-002       81   9  YC    MANDATORY (S>=9)
 F-006       81   9  YC    MANDATORY (S>=9)
 F-003       80  10  YC    MANDATORY (S>=9)
-F-001      168   7  YS
-F-004      160   8  YS
-F-008      100   5  YS
-F-007       96   4
-F-009       54   6
+F-001      168   7  YS    
+F-004      160   8  YS    
+F-010      160   8  YS    
+F-011      160   8  YS    
+F-013      140   7  YS    
+F-008      100   5  YS    
+F-007       96   4        
+F-012       63   7        
+F-009       54   6        
+F-014       45   3
 
 $ python tools/wcca.py risk/wcca.yaml
 divider battery_sense: Vout 2.057..2.973 V (nom 2.548, RSS max 2.959) limit 3.1 V margin 4.1 % WARN
@@ -82,19 +87,22 @@ branch drive: nom 3.0 A peak 12.0 A fuse 15 A wire 14 AWG (ampacity 15 A) OK
 branch collection: nom 10.0 A peak 25.0 A fuse 20 A wire 12 AWG (ampacity 20 A) OK
 branch separation: nom 2.0 A peak 8.0 A fuse 10 A wire 16 AWG (ampacity 10 A) OK
 branch logic: nom 1.5 A peak 3.0 A fuse 5 A wire 18 AWG (ampacity 7 A) OK
-runtime: 54 min at 160 W
+branch dosing_pump: nom 0.7 A peak 2.0 A fuse 3 A wire 18 AWG (ampacity 7 A) OK
+runtime: 52 min at 165 W
 
 $ python tools/dfma.py risk/dfma/m4_separation_example.csv
 parts 27, theoretical minimum 6, assembly time 159.3 s, design efficiency 11.3 %
 
 $ python tools/econ.py
-base         net     56,968/yr  invest    31,560  payback   6.6 mo  NPV    105,269
-optimistic   net     66,479/yr  invest    31,560  payback   5.7 mo  NPV    128,111
-pessimistic  net     23,011/yr  invest    47,340  payback  24.7 mo  NPV      7,928
+activity06   net     56,968/yr  invest    31,560  payback   6.6 mo  NPV    105,269
+base         net     46,731/yr  invest    32,710  payback   8.4 mo  NPV     79,529
+optimistic   net     56,241/yr  invest    32,710  payback   7.0 mo  NPV    102,371
+pessimistic  net     15,879/yr  invest    49,065  payback  37.1 mo  NPV    -10,926
 tornado (NPV delta low/high):
   hours_saved_day       -45,684     22,842
-  disposal_mxn_kg       -24,254     24,254
-  hardware              -10,080      6,048
+  solution_l_m2         -24,575     12,287
+  disposal_mxn_kg       -11,889     11,889
+  hardware              -10,655      6,393
   scrap_mxn_kg           -4,621      4,621
 ```
 
