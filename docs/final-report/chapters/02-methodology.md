@@ -64,7 +64,7 @@ table maps each one to the part of this report that contains its result. The cou
 | RA1000 ACT.06 Technological impact analysis | 30 Oct 2026 | Economic, social, cultural, safety-health, ethical and global impact | Ch. 14 | `Activity06_Technological_Impact.pdf` |
 | Suction pre-test (team initiative) | 24–25 Nov 2026 | TP-S01 measured; ADR-0008 low-dose degreaser; TP-S02 rig protocol; presentation v4 | 12.8, 13.3 | `docs/test-reports/TP-S01-…`, `Final_Presentation_Waste_Robot_v4.pdf` |
 | Ethical Design Evidence (IEEE 7000-2021) | Nov 2026 | Ethical value requirements EVR-01–EVR-03, stakeholders, value conflict | 3.4 | Presentation v2–v4 |
-| PROJECT.03 Final evaluation | 27 Nov 2026 | This technical report + final presentation + team evaluation | All | `docs/final-report/`, `Final_Presentation_Waste_Robot_v4.pdf` |
+| PROJECT.03 Final evaluation | 27 Nov 2026 | This technical report + final presentation (v3, the deck presented; v4 adds a TP-S01 slide) + team evaluation | All | `docs/final-report/`, `Final_Presentation_Waste_Robot_v3.pdf` |
 
 All archived files are in `docs/semester-1-deliverables/` of the repository, in English (the Spanish originals of
 the standards table and the pairwise workbook were translated with the same content, formulas and layout).

@@ -33,8 +33,9 @@ changed, validation and the requirement/risk IDs touched. Stage narratives live 
 
 #### #20 · 2026-11-27 · docs · Final technical report (PROJECT.03) {.unnumbered}
 - New `docs/final-report/`: chapter sources (Markdown), cover, styles, build script and generated appendices; built
-  `report.pdf` (113 pages) with the repository highlighted on the cover, a "Read this first" section and a full
-  repository guide (Appendix A).
+  `report.pdf` (123 pages) with the repository highlighted on the cover, a "Read this first" section and a full
+  repository guide (Appendix A). Includes #19: TP-S01 (with photos), ADR-0008, SR-022–SR-025, PFMEA, SCCAF
+  SC-008–SC-011, economics with degreaser and TP-S02.
 - Engineering log `docs/engineering-log/2026-11-26-final-technical-report.md`; `.gitignore` excludes the HTML/DOCX
   build outputs and the local submission bundle.
 - Validation: `python tools/check_all.py`; report rendered to PDF and checked visually. Refs: R1–R10 (documentation only).
